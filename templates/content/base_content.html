@@ -1,0 +1,742 @@
+{% extends "base.html" %}
+
+{% block title %}{{ device.name }} Camera Settings — Blackmagic Camera{% endblock %}
+{% block description %}Optimal Blackmagic Camera settings for {{ device.name }} ({{ device.chip }}). Step-by-step guide with screenshots + free LUTs.{% endblock %}
+
+{% block head %}
+<meta name="robots" content="noindex, nofollow" />
+<style>
+  .restore-bar {
+    background: rgba(245,197,24,0.06);
+    border-bottom: 1px solid rgba(245,197,24,0.18);
+    padding: 10px 0; text-align: center;
+    font-size: 0.8rem; color: var(--muted);
+  }
+  .restore-bar a {
+    color: var(--accent); font-weight: 600;
+    font-family: ui-monospace, 'SF Mono', monospace; font-size: 0.78rem;
+    background: rgba(245,197,24,0.1); padding: 1px 7px; border-radius: 4px;
+    display: inline-block; max-width: 100%;
+    overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    vertical-align: middle;
+  }
+  .restore-bar .copy-btn {
+    background: none; border: 1px solid rgba(245,197,24,0.25);
+    color: var(--muted); padding: 2px 10px; border-radius: 4px;
+    cursor: pointer; margin-left: 8px; font-size: 0.78rem;
+    transition: border-color 0.15s, color 0.15s;
+  }
+  .restore-bar .copy-btn:hover { border-color: var(--accent); color: var(--accent); }
+
+  @media (max-width: 640px) {
+    .restore-bar .container {
+      display: flex; flex-direction: column; align-items: stretch;
+      gap: 8px; padding-left: 12px; padding-right: 12px;
+    }
+    .restore-bar a {
+      max-width: 100%; font-size: 0.72rem;
+    }
+    .restore-bar .copy-btn {
+      margin-left: 0; align-self: center;
+    }
+  }
+
+  @media (min-width: 769px) {
+    .sidebar-heading { display: block !important; }
+    .sidebar-toggle { display: none !important; }
+    .content-sidebar.collapsed .sidebar-nav { display: block !important; }
+  }
+
+  /* AI Assistant chat widget */
+  html.ai-open, html.ai-open body { overflow: hidden; }
+
+  .ai-widget {
+    position: fixed;
+    bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+    inset-inline-end: calc(20px + env(safe-area-inset-right, 0px));
+    z-index: 1000;
+    font-family: inherit;
+  }
+  .ai-toggle {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #000;
+    border: none;
+    box-shadow: 0 6px 24px rgba(245,197,24,0.35);
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: transform 0.18s, box-shadow 0.18s;
+    position: relative;
+  }
+  .ai-toggle:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(245,197,24,0.5); }
+  .ai-toggle svg { width: 26px; height: 26px; }
+  .ai-toggle .ai-icon-close { display: none; }
+  .ai-widget.active .ai-toggle .ai-icon-open { display: none; }
+  .ai-widget.active .ai-toggle .ai-icon-close { display: block; }
+  .ai-toggle-badge {
+    position: absolute; top: -4px; inset-inline-end: -4px;
+    background: #ff3c00; color: #fff;
+    font-size: 0.55rem; font-weight: 800;
+    padding: 2px 6px; border-radius: 10px;
+    letter-spacing: 0.04em;
+  }
+  .ai-widget.active .ai-toggle-badge { display: none; }
+
+  .ai-window {
+    position: absolute;
+    bottom: 70px; inset-inline-end: 0;
+    width: 360px; max-width: calc(100vw - 32px);
+    height: 520px; max-height: calc(100dvh - 110px);
+    background: var(--bg2);
+    border: 1px solid rgba(245,197,24,0.18);
+    border-radius: 16px;
+    box-shadow: 0 16px 48px rgba(0,0,0,0.6);
+    display: none;
+    flex-direction: column;
+    overflow: hidden;
+  }
+  .ai-widget.active .ai-window { display: flex; }
+
+  .ai-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px;
+    background: var(--bg3);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .ai-header-info { display: flex; align-items: center; gap: 10px; }
+  .ai-avatar {
+    width: 36px; height: 36px; border-radius: 50%;
+    background: var(--accent); color: #000;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+  }
+  .ai-avatar svg { width: 18px; height: 18px; }
+  .ai-title { font-weight: 700; color: var(--text); font-size: 0.95rem; line-height: 1.2; }
+  .ai-subtitle {
+    font-size: 0.72rem; color: var(--muted);
+    display: flex; align-items: center; gap: 6px; margin-top: 2px;
+  }
+  .ai-subtitle::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: #4caf50; box-shadow: 0 0 6px #4caf50;
+  }
+  .ai-close {
+    background: none; border: none; color: var(--muted);
+    cursor: pointer; padding: 6px; border-radius: 6px;
+    display: flex; align-items: center; justify-content: center;
+    transition: color 0.15s, background 0.15s;
+  }
+  .ai-close:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .ai-close svg { width: 16px; height: 16px; }
+
+  .ai-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 14px;
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .ai-messages::-webkit-scrollbar { width: 5px; }
+  .ai-messages::-webkit-scrollbar-track { background: transparent; }
+  .ai-messages::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 4px; }
+
+  .ai-msg { display: flex; }
+  .ai-msg.user { justify-content: flex-end; }
+  .ai-bubble {
+    max-width: 84%;
+    padding: 10px 13px;
+    border-radius: 14px;
+    font-size: 0.86rem;
+    line-height: 1.45;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+  }
+  .ai-msg.ai .ai-bubble {
+    background: var(--bg3);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.05);
+    border-bottom-inline-start-radius: 4px;
+  }
+  .ai-msg.user .ai-bubble {
+    background: var(--accent);
+    color: #000;
+    border-bottom-inline-end-radius: 4px;
+    font-weight: 500;
+  }
+  .ai-bubble strong { color: var(--accent); font-weight: 700; }
+  .ai-msg.user .ai-bubble strong { color: #000; }
+
+  .ai-typing { display: inline-flex; gap: 4px; align-items: center; padding: 4px 0; }
+  .ai-typing span {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: var(--muted);
+    animation: aiTyping 1.2s infinite ease-in-out;
+  }
+  .ai-typing span:nth-child(2) { animation-delay: 0.15s; }
+  .ai-typing span:nth-child(3) { animation-delay: 0.3s; }
+  @keyframes aiTyping {
+    0%, 60%, 100% { opacity: 0.3; transform: translateY(0); }
+    30% { opacity: 1; transform: translateY(-3px); }
+  }
+
+  .ai-quick {
+    display: flex; flex-wrap: wrap; gap: 6px;
+    padding: 0 14px 10px;
+  }
+  .ai-quick-btn {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid rgba(245,197,24,0.25);
+    padding: 8px 12px;
+    border-radius: 16px;
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: background 0.15s, border-color 0.15s;
+    -webkit-tap-highlight-color: transparent;
+    line-height: 1.2;
+  }
+  .ai-quick-btn:hover {
+    background: rgba(245,197,24,0.1);
+    border-color: var(--accent);
+  }
+
+  .ai-input-row {
+    display: flex; gap: 8px;
+    padding: 12px 14px;
+    background: var(--bg3);
+    border-top: 1px solid rgba(255,255,255,0.06);
+  }
+  .ai-input {
+    flex: 1;
+    min-width: 0;
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 8px;
+    padding: 10px 12px;
+    /* 16px prevents iOS Safari from auto-zooming on focus */
+    font-size: 16px;
+    font-family: inherit;
+    outline: none;
+    transition: border-color 0.15s;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  .ai-input:focus { border-color: var(--accent); }
+  .ai-input:disabled { opacity: 0.5; cursor: not-allowed; }
+  .ai-send {
+    background: var(--accent); color: #000;
+    border: none; border-radius: 8px;
+    width: 44px; min-height: 44px; flex-shrink: 0;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, opacity 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .ai-send:hover { background: var(--accent2); }
+  .ai-send:disabled { opacity: 0.4; cursor: not-allowed; }
+  .ai-send svg { width: 16px; height: 16px; }
+
+  .ai-remaining {
+    font-size: 0.7rem;
+    color: var(--muted);
+    text-align: center;
+    padding: 4px 14px 8px;
+    background: var(--bg3);
+    min-height: 0;
+  }
+  .ai-remaining:empty { display: none; }
+
+  @media (max-width: 640px) {
+    .ai-widget {
+      bottom: calc(14px + env(safe-area-inset-bottom, 0px));
+      inset-inline-end: 14px;
+    }
+    .ai-window {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      max-width: 100vw;
+      height: 100dvh;
+      max-height: 100dvh;
+      border-radius: 0;
+      border: none;
+      bottom: auto;
+    }
+    .ai-widget.active .ai-toggle { display: none; }
+    .ai-header { padding-top: calc(14px + env(safe-area-inset-top, 0px)); }
+    .ai-input-row {
+      padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
+    }
+    .ai-quick-btn { padding: 9px 14px; font-size: 0.82rem; }
+    .ai-close { padding: 10px; }
+    .ai-close svg { width: 20px; height: 20px; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="restore-bar">
+  <div class="container">
+    {{ t.content_save_link }} <a href="/access/{{ token }}" id="access-link">/access/{{ token }}</a>
+    <button onclick="copyLink(event)" class="copy-btn">{{ t.content_copy }}</button>
+  </div>
+</div>
+
+<section class="content-page">
+  <div class="container">
+    <div class="device-header">
+      <div class="device-header-icon">
+        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="color:var(--accent)"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5"/></svg>
+      </div>
+      <div class="device-header-info">
+        <h1>{{ device.name }} — Blackmagic Camera Settings</h1>
+        <p>{{ device.chip }} · {{ t.content_optimized }}<span class="time-badge">
+          <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          ~5 min
+        </span></p>
+      </div>
+    </div>
+
+    <div class="content-layout">
+
+      <aside class="content-sidebar collapsed" id="content-sidebar">
+        <button class="sidebar-toggle" id="sidebar-toggle" onclick="toggleSidebar()" aria-expanded="false">
+          <span>{{ t.sidebar_contents }}</span>
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <h3 class="sidebar-heading" style="display:none;">{{ t.sidebar_contents }}</h3>
+        <div class="sidebar-progress">
+          <span class="sidebar-progress-label" id="progress-label">0 / 0</span>
+          <div class="progress-bar"><div class="progress-bar-fill" id="progress-fill"></div></div>
+        </div>
+        <ul class="sidebar-nav">
+          <li><a href="#settings">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            {{ t.sidebar_settings }}
+          </a></li>
+          <li><a href="#setup">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            {{ t.sidebar_setup }}
+          </a></li>
+          <li><a href="#luts-download">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            {{ t.sidebar_luts_get }}
+          </a></li>
+          <li><a href="#luts-import">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            {{ t.sidebar_luts_import }}
+          </a></li>
+          <li><a href="#luts-use">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+            {{ t.sidebar_luts_use }}
+          </a></li>
+          <li><a href="#" data-action="open-ai">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="13" cy="10" r="1" fill="currentColor"/><circle cx="17" cy="10" r="1" fill="currentColor"/></svg>
+            {{ t.sidebar_ai }}
+          </a></li>
+        </ul>
+      </aside>
+
+      <div class="content-body">
+        {% block device_content %}{% endblock %}
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div id="ai-widget" class="ai-widget"
+  data-token="{{ token }}"
+  data-lang="{{ lang }}"
+  data-err-network="{{ t.ai_chat_error }}"
+  data-err-quota="{{ t.ai_chat_quota_exceeded }}"
+  data-remaining-tpl="{{ t.ai_chat_remaining }}">
+  <div class="ai-window" id="ai-window" role="dialog" aria-label="{{ t.ai_chat_title }}">
+    <div class="ai-header">
+      <div class="ai-header-info">
+        <div class="ai-avatar">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="10" rx="2"/><circle cx="12" cy="5" r="2"/><path d="M12 7v4"/><line x1="8" y1="16" x2="8" y2="16"/><line x1="16" y1="16" x2="16" y2="16"/></svg>
+        </div>
+        <div>
+          <div class="ai-title">{{ t.ai_chat_title }}</div>
+          <div class="ai-subtitle">{{ t.ai_chat_subtitle }}</div>
+        </div>
+      </div>
+      <button class="ai-close" id="ai-close" aria-label="Close">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div class="ai-messages" id="ai-messages">
+      <div class="ai-msg ai">
+        <div class="ai-bubble">{{ t.ai_chat_greeting_prefix }} <strong>{{ device.name }}</strong> ({{ device.chip }}). {{ t.ai_chat_greeting_suffix }}</div>
+      </div>
+    </div>
+    <div class="ai-quick" id="ai-quick">
+      <button class="ai-quick-btn" type="button" data-q="{{ t.ai_quick_scene }}">{{ t.ai_quick_scene }}</button>
+      <button class="ai-quick-btn" type="button" data-q="{{ t.ai_quick_shaky }}">{{ t.ai_quick_shaky }}</button>
+      <button class="ai-quick-btn" type="button" data-q="{{ t.ai_quick_lut_import }}">{{ t.ai_quick_lut_import }}</button>
+      <button class="ai-quick-btn" type="button" data-q="{{ t.ai_quick_fps }}">{{ t.ai_quick_fps }}</button>
+    </div>
+    <form class="ai-input-row" id="ai-form" autocomplete="off">
+      <input type="text" class="ai-input" id="ai-input" placeholder="{{ t.ai_chat_placeholder }}" maxlength="500" autocomplete="off">
+      <button type="submit" class="ai-send" id="ai-send" aria-label="{{ t.ai_chat_send }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </form>
+    <div class="ai-remaining" id="ai-remaining"></div>
+  </div>
+  <button class="ai-toggle" id="ai-toggle" aria-label="{{ t.ai_chat_open }}">
+    <svg class="ai-icon-open" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/><circle cx="9" cy="10" r="1" fill="currentColor"/><circle cx="13" cy="10" r="1" fill="currentColor"/><circle cx="17" cy="10" r="1" fill="currentColor"/></svg>
+    <svg class="ai-icon-close" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    <span class="ai-toggle-badge">AI</span>
+  </button>
+</div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function toggleSidebar() {
+  var sidebar = document.getElementById('content-sidebar');
+  var btn = document.getElementById('sidebar-toggle');
+  var isCollapsed = sidebar.classList.toggle('collapsed');
+  btn.setAttribute('aria-expanded', isCollapsed ? 'false' : 'true');
+}
+
+(function() {
+  var token = '{{ token }}';
+  if (token) {
+    localStorage.setItem('bmc_access_token', token);
+    localStorage.setItem('bmc_device', '{{ device.slug }}');
+  }
+})();
+
+function copyLink(ev) {
+  var btn = (ev && ev.currentTarget) || (typeof event !== 'undefined' && event.target);
+  var link = window.location.href;
+  var copy = window.bmcCopy ? window.bmcCopy(link) : Promise.resolve(false);
+  copy.then(function(ok) {
+    if (!btn || !ok) return;
+    btn.textContent = window.BMC_I18N.content_copied;
+    setTimeout(function() { btn.textContent = window.BMC_I18N.content_copy; }, 2000);
+  });
+}
+
+(function() {
+  var steps = document.querySelectorAll('.steps-list .step');
+  var total = steps.length;
+  var storageKey = 'bmc_done_' + '{{ device.slug }}';
+  var saved = JSON.parse(localStorage.getItem(storageKey) || '[]');
+  var label = document.getElementById('progress-label');
+  var fill = document.getElementById('progress-fill');
+
+  function updateProgress() {
+    var count = document.querySelectorAll('.steps-list .step.done').length;
+    var pct = total > 0 ? Math.round(count / total * 100) : 0;
+    if (label) label.textContent = count + ' / ' + total;
+    if (fill) fill.style.width = pct + '%';
+    var done = [];
+    steps.forEach(function(s, i) { if (s.classList.contains('done')) done.push(i); });
+    localStorage.setItem(storageKey, JSON.stringify(done));
+  }
+
+  saved.forEach(function(i) { if (steps[i]) steps[i].classList.add('done'); });
+  updateProgress();
+
+  steps.forEach(function(step) {
+    step.addEventListener('click', function(e) {
+      if (e.target.closest('a, button, img, figure')) return;
+      step.classList.toggle('done');
+      updateProgress();
+    });
+  });
+})();
+
+(function() {
+  var sections = document.querySelectorAll('.content-body h2[id]');
+  var links = document.querySelectorAll('.sidebar-nav a');
+  if (!sections.length || !links.length) return;
+
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        links.forEach(function(a) { a.classList.remove('active'); });
+        var active = document.querySelector('.sidebar-nav a[href="#' + entry.target.id + '"]');
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(function(s) { observer.observe(s); });
+})();
+
+(function() {
+  var widget = document.getElementById('ai-widget');
+  if (!widget) return;
+
+  var token   = widget.dataset.token || '';
+  var lang    = widget.dataset.lang || 'en';
+  var errNet  = widget.dataset.errNetwork || 'Error';
+  var errQuot = widget.dataset.errQuota || 'Daily limit reached';
+  var remTpl  = widget.dataset.remainingTpl || '{n} of {limit} left today';
+
+  var toggleBtn = document.getElementById('ai-toggle');
+  var closeBtn  = document.getElementById('ai-close');
+  var msgs      = document.getElementById('ai-messages');
+  var quick     = document.getElementById('ai-quick');
+  var form      = document.getElementById('ai-form');
+  var input     = document.getElementById('ai-input');
+  var sendBtn   = document.getElementById('ai-send');
+  var remEl     = document.getElementById('ai-remaining');
+
+  var history = [];
+  var loading = false;
+  var quotaReached = false;
+  var currentAbort = null;
+
+  var isMobile = function() { return window.matchMedia('(max-width: 640px)').matches; };
+  function open()  {
+    widget.classList.add('active');
+    if (isMobile()) document.documentElement.classList.add('ai-open');
+    setTimeout(function(){ input.focus(); }, 50);
+  }
+  function close() {
+    widget.classList.remove('active');
+    document.documentElement.classList.remove('ai-open');
+    // Cancel any in-flight Groq stream so closing the chat actually stops the request.
+    if (currentAbort) { try { currentAbort.abort(); } catch (e) {} }
+  }
+
+  toggleBtn.addEventListener('click', function() {
+    widget.classList.contains('active') ? close() : open();
+  });
+  closeBtn.addEventListener('click', close);
+
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && widget.classList.contains('active')) close();
+  });
+
+  document.querySelectorAll('[data-action="open-ai"]').forEach(function(a) {
+    a.addEventListener('click', function(e) { e.preventDefault(); open(); });
+  });
+
+  function scrollDown() { msgs.scrollTop = msgs.scrollHeight; }
+
+  function clearChildren(el) { while (el.firstChild) el.removeChild(el.firstChild); }
+
+  // Renders text with **bold** + newlines as safe DOM nodes only (no HTML parsing).
+  function setSafeMarkdown(el, text) {
+    clearChildren(el);
+    var lines = String(text).split('\n');
+    for (var li = 0; li < lines.length; li++) {
+      var parts = lines[li].split(/(\*\*[^*]+\*\*)/);
+      for (var i = 0; i < parts.length; i++) {
+        var p = parts[i];
+        if (!p) continue;
+        if (p.length > 4 && p.indexOf('**') === 0 && p.lastIndexOf('**') === p.length - 2) {
+          var strong = document.createElement('strong');
+          strong.textContent = p.slice(2, -2);
+          el.appendChild(strong);
+        } else {
+          el.appendChild(document.createTextNode(p));
+        }
+      }
+      if (li < lines.length - 1) el.appendChild(document.createElement('br'));
+    }
+  }
+
+  function appendUser(text) {
+    var row = document.createElement('div');
+    row.className = 'ai-msg user';
+    var bub = document.createElement('div');
+    bub.className = 'ai-bubble';
+    bub.textContent = text;
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollDown();
+  }
+
+  function appendAi(text) {
+    var row = document.createElement('div');
+    row.className = 'ai-msg ai';
+    var bub = document.createElement('div');
+    bub.className = 'ai-bubble';
+    if (text) bub.textContent = text;
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollDown();
+    return bub;
+  }
+
+  function showTyping() {
+    var row = document.createElement('div');
+    row.className = 'ai-msg ai';
+    row.id = 'ai-typing';
+    var bub = document.createElement('div');
+    bub.className = 'ai-bubble';
+    var dots = document.createElement('div');
+    dots.className = 'ai-typing';
+    for (var i = 0; i < 3; i++) dots.appendChild(document.createElement('span'));
+    bub.appendChild(dots);
+    row.appendChild(bub);
+    msgs.appendChild(row);
+    scrollDown();
+  }
+
+  function hideTyping() {
+    var t = document.getElementById('ai-typing');
+    if (t) t.remove();
+  }
+
+  function setQuotaReached() {
+    quotaReached = true;
+    input.disabled = true;
+    sendBtn.disabled = true;
+    input.placeholder = errQuot;
+  }
+
+  async function send(text) {
+    text = (text || '').trim();
+    if (!text || loading || quotaReached) return;
+    loading = true;
+    sendBtn.disabled = true;
+    input.disabled = true;
+    input.value = '';
+    if (quick) quick.style.display = 'none';
+
+    appendUser(text);
+    history.push({ role: 'user', content: text });
+    showTyping();
+
+    var attempt = 0;
+    var MAX_ATTEMPTS = 2;
+
+    while (attempt < MAX_ATTEMPTS) {
+      attempt++;
+      var ctrl = new AbortController();
+      currentAbort = ctrl;
+      var bubble = null;
+      var full = '';
+
+      try {
+        var resp = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            token: token,
+            message: text,
+            history: history.slice(0, -1),
+            lang: lang
+          }),
+          signal: ctrl.signal
+        });
+
+        if (!resp.ok) {
+          hideTyping();
+          var err = await resp.json().catch(function() { return {}; });
+          if (resp.status === 429 || err.error === 'quota_exceeded') {
+            appendAi(errQuot);
+            setQuotaReached();
+          } else {
+            appendAi(errNet);
+          }
+          break;
+        }
+
+        hideTyping();
+        bubble = appendAi('');
+        var reader = resp.body.getReader();
+        var decoder = new TextDecoder();
+        var buffer = '';
+
+        // Telegram's WebView sometimes silently stalls long-lived streams when the
+        // app is backgrounded. Bail out if we go too long with no data.
+        var STALL_MS = 15000;
+        var stallTimer = null;
+        var resetStall = function() {
+          if (stallTimer) clearTimeout(stallTimer);
+          stallTimer = setTimeout(function() { try { ctrl.abort('stall'); } catch (e) {} }, STALL_MS);
+        };
+        resetStall();
+
+        while (true) {
+          var chunk = await reader.read();
+          if (chunk.done) break;
+          resetStall();
+          buffer += decoder.decode(chunk.value, { stream: true });
+          var lines = buffer.split('\n');
+          buffer = lines.pop();
+          for (var i = 0; i < lines.length; i++) {
+            var line = lines[i];
+            if (!line.startsWith('data: ')) continue;
+            var json = line.slice(6).trim();
+            if (!json) continue;
+            try {
+              var evt = JSON.parse(json);
+              if (evt.error) {
+                bubble.textContent = errNet;
+                full = '';
+              } else if (evt.delta) {
+                full += evt.delta;
+                setSafeMarkdown(bubble, full);
+                scrollDown();
+              } else if (evt.done && remEl && typeof evt.remaining === 'number') {
+                var label = remTpl
+                  .replace('{n}', String(evt.remaining))
+                  .replace('{limit}', String(evt.limit || ''));
+                remEl.textContent = label;
+              }
+            } catch (e) {}
+          }
+        }
+        if (stallTimer) clearTimeout(stallTimer);
+
+        if (full) history.push({ role: 'assistant', content: full });
+        if (history.length > 20) history = history.slice(-20);
+        break;
+      } catch (e) {
+        // User-initiated abort (chat closed) → stop quietly, no retry.
+        if (ctrl.signal.aborted && ctrl.signal.reason !== 'stall') {
+          if (bubble && !full) bubble.remove();
+          hideTyping();
+          break;
+        }
+        // Stall or network drop → retry once, otherwise surface the error.
+        if (attempt >= MAX_ATTEMPTS) {
+          hideTyping();
+          if (bubble) {
+            if (!full) bubble.textContent = errNet;
+          } else {
+            appendAi(errNet);
+          }
+        } else if (bubble && !full) {
+          bubble.remove();
+        }
+      } finally {
+        if (currentAbort === ctrl) currentAbort = null;
+      }
+    }
+
+    loading = false;
+    if (!quotaReached) {
+      sendBtn.disabled = false;
+      input.disabled = false;
+      input.focus();
+    }
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    send(input.value);
+  });
+
+  if (quick) {
+    quick.querySelectorAll('.ai-quick-btn').forEach(function(b) {
+      b.addEventListener('click', function() { send(b.dataset.q || b.textContent); });
+    });
+  }
+})();
+</script>
+{% endblock %}

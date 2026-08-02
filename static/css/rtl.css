@@ -1,0 +1,18 @@
+body { font-family: -apple-system, 'Segoe UI', Arial, sans-serif; }
+.nav-inner { flex-direction: row-reverse; }
+.hero-btns { flex-direction: row-reverse; flex-wrap: wrap; }
+.features-grid { direction: rtl; }
+.step { flex-direction: row-reverse; text-align: right; }
+.step-num { margin-right: 0; margin-left: 16px; }
+.price-list li { flex-direction: row-reverse; text-align: right; }
+.price-list .check { margin-right: 0; margin-left: 8px; }
+.content-layout { direction: rtl; }
+.content-sidebar { text-align: right; }
+.sidebar-nav a { text-align: right; display: block; }
+.tg-banner { flex-direction: row-reverse; text-align: right; }
+.settings-table { direction: rtl; }
+.settings-table th, .settings-table td { text-align: right; }
+.restore-bar { direction: rtl; }
+.device-header { flex-direction: row-reverse; text-align: right; }
+.lang-switcher { flex-direction: row-reverse; }
+footer p { direction: rtl; }

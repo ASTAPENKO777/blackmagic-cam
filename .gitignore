@@ -1,0 +1,12 @@
+.env
+.env*.local
+*.db
+
+__pycache__/
+.vercel
+
+.DS_Store
+
+.playwright-mcp/
+
+static/video/

@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+
+{% block title %}Choose Your iPhone Model — Blackmagic Camera Settings Guide{% endblock %}
+
+{% block content %}
+
+<section class="select-page">
+  <div class="container">
+    <div class="section-title">
+      <h2>{{ t.select_title }}</h2>
+      <p>{{ t.select_subtitle }}</p>
+    </div>
+
+    {% set groups = {
+      'a': t.group_a, 'b': t.group_b, 'c': t.group_c, 'd': t.group_d,
+      'e': t.group_e, 'f': t.group_f, 'g': t.group_g, 'h': t.group_h
+    } %}
+
+    {% for group_key, group_label in groups.items() %}
+      {% set group_devices = devices | selectattr('group', 'equalto', group_key) | list %}
+      {% if group_devices %}
+        <div class="device-group-label">{{ group_label }}</div>
+        <div class="device-grid" data-stagger>
+          {% for device in group_devices %}
+            <div class="device-card" data-slug="{{ device.slug }}" data-name="{{ device.name }}" onclick="selectDevice(this)">
+              <div class="device-img-wrap">
+                <img src="{{ device.image }}" alt="{{ device.name }}" class="device-img" loading="lazy" />
+              </div>
+              <div class="device-name">{{ device.name }}</div>
+              <div class="device-chip">{{ device.chip }}</div>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endfor %}
+
+    <div class="select-footer">
+      <p id="selection-status" class="selection-status">{{ t.select_no_device }}</p>
+
+      <form action="/checkout/card" method="post" id="pay-form" class="pay-form">
+        <input type="hidden" name="device" id="pay-device" value="">
+
+        <label for="pay-email" class="pay-label">Email</label>
+        <input type="email" name="email" id="pay-email" required
+               placeholder="{{ t.select_crypto_email_placeholder }}"
+               class="pay-input" autocomplete="email">
+
+        <p class="tg-only-hint" style="background:#0d1a2a;border:1px solid #2a4d7a;border-radius:8px;padding:0.65rem 0.85rem;color:#9bbbdc;font-size:0.82rem;margin:0.5rem 0 0.75rem;line-height:1.4;text-align:left;">
+          ℹ️ {{ t.tg_card_hint }}
+        </p>
+
+        <button type="submit" id="buy-btn" class="btn-buy pay-primary active" disabled>
+          {{ t.select_buy_btn }}
+        </button>
+
+        <div class="pay-divider"><span>{{ t.select_crypto_hint }}</span></div>
+
+        {% if networks %}
+          <div class="crypto-net-picker" role="radiogroup" aria-label="{{ t.select_network_label }}">
+            {% for key, net in networks.items() %}
+              {% set parts = net.network_label.split(' (', 1) %}
+              <label class="crypto-net-option" title="{{ net.network_label }}">
+                <input type="radio" name="network" value="{{ key }}" {% if loop.first %}checked{% endif %}>
+                <span class="crypto-net-short">{{ parts[0] }}</span>
+              </label>
+            {% endfor %}
+          </div>
+        {% endif %}
+
+        <button type="submit" id="crypto-btn" class="pay-secondary"
+                formaction="/crypto/checkout" disabled>
+          {{ t.select_crypto_btn }}
+        </button>
+      </form>
+
+      <p class="select-secure-text">{{ t.select_secure }}</p>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function selectDevice(card) {
+  document.querySelectorAll('.device-card').forEach(function(c) { c.classList.remove('selected'); });
+  card.classList.add('selected');
+  var name = card.dataset.name;
+  var slug = card.dataset.slug;
+
+  var status = document.getElementById('selection-status');
+  status.textContent = (window.BMC_I18N ? window.BMC_I18N.select_selected : '') + name;
+  status.classList.add('has-device');
+
+  var buyBtn = document.getElementById('buy-btn');
+  if (buyBtn && window.BMC_I18N && window.BMC_I18N.select_buy_device) {
+    buyBtn.textContent = window.BMC_I18N.select_buy_device.replace('{name}', name);
+  }
+  if (buyBtn) buyBtn.disabled = false;
+
+  var cryptoBtn = document.getElementById('crypto-btn');
+  if (cryptoBtn) cryptoBtn.disabled = false;
+
+  var deviceInput = document.getElementById('pay-device');
+  if (deviceInput) deviceInput.value = slug;
+
+  var form = document.getElementById('pay-form');
+  if (form) {
+    form.classList.remove('is-armed');
+    void form.offsetWidth;
+    form.classList.add('is-armed');
+  }
+
+  var prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  setTimeout(function() {
+    if (form) form.scrollIntoView({ behavior: prefersReduced ? 'auto' : 'smooth', block: 'center' });
+  }, 120);
+
+  setTimeout(function() {
+    var email = document.getElementById('pay-email');
+    if (email && !email.value && window.matchMedia('(min-width: 768px)').matches) {
+      email.focus({ preventScroll: true });
+    }
+  }, prefersReduced ? 0 : 700);
+}
+</script>
+{% endblock %}

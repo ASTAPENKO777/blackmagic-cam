@@ -1,0 +1,663 @@
+{% extends "base.html" %}
+
+{% block title %}Blackmagic Camera Settings for iPhone — Device-Specific Guide{% endblock %}
+{% block description %}Get perfect Blackmagic Camera app settings for your specific iPhone model. Device-optimized guide with screenshots + free LUTs from Telegram. One-time $4.99.{% endblock %}
+{% block og_title %}Blackmagic Camera Settings for iPhone — Device-Specific Guide{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Blackmagic Camera Settings Guide for iPhone",
+  "description": "Device-specific Blackmagic Camera app settings for every iPhone from XS to 17 Pro Max. Includes ISO range, codec selection (ProRes/BRAW/H.265), frame rate, white balance, shutter angle, and free cinematic LUTs.",
+  "brand": { "@type": "Brand", "name": "BlackmagicCam" },
+  "offers": {
+    "@type": "Offer",
+    "price": "4.99",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock",
+    "url": "{{ request.host_url }}select"
+  },
+  "aggregateRating": {
+    "@type": "AggregateRating",
+    "ratingValue": "4.9",
+    "reviewCount": "1200"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is the Blackmagic Camera app?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Blackmagic Camera is a free professional camera app for iPhone made by Blackmagic Design. It provides manual control over ISO, shutter angle, white balance, codec, and supports ProRes and BRAW recording on supported models."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Why do Blackmagic Camera settings differ between iPhone models?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Every iPhone model uses a different chip (A12 through A19 Pro) with a unique camera system, sensor size, and ISP. Settings optimized for one model will underperform on another — ISO range, noise floor, codec availability, and dynamic range all differ between chips."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Does the guide work with ProRes recording?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "Yes. For iPhones that support ProRes (iPhone 15 Pro, 16, 17 series), the guide includes specific settings for ProRes, BRAW, and H.265. For older models the guide covers H.265 and BRAW with chip-specific optimizations."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Which iPhones are supported?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "All iPhones from iPhone XS (A12) through iPhone 17 Pro Max (A19 Pro) are supported — 32 models total across 8 chip groups."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "What are cinematic LUTs and how do I use them?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "LUTs (Look-Up Tables) are color grading presets that transform flat footage into a cinematic look. The guide includes access to a free LUT pack from our Telegram channel and shows step-by-step how to import and apply them inside Blackmagic Camera as a monitor LUT while shooting."
+      }
+    },
+    {
+      "@type": "Question",
+      "name": "Is this a subscription or a one-time purchase?",
+      "acceptedAnswer": {
+        "@type": "Answer",
+        "text": "One-time purchase of $4.99. You receive a permanent access link by email. No subscription, no account required. The link works on any device and browser, forever."
+      }
+    }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<div id="bmc-intro" aria-hidden="true">
+  <div class="intro-inner">
+    <div class="intro-logo">
+      <span class="intro-brand">Blackmagic</span><span class="intro-cam">Cam</span>
+    </div>
+    <div class="intro-line"></div>
+    <div class="intro-rec">
+      <span class="intro-dot"></span>
+      <span class="intro-rec-label">REC</span>
+    </div>
+  </div>
+</div>
+
+<section class="hero">
+  <div class="hero-video-bg">
+    <video autoplay muted loop playsinline preload="none"
+           poster="{{ url_for('static', filename='img/hero-poster.jpg') }}">
+      <source src="https://pub-8fb494845cea47208e5a569a242eab94.r2.dev/hero.mp4" type="video/mp4">
+    </video>
+    <div class="hero-overlay"></div>
+  </div>
+  <div class="container">
+    <div class="hero-badge">{{ t.hero_badge }}</div>
+    <h1>{{ t.hero_h1_part1 }}<br><em>{{ t.hero_h1_part2 }}</em></h1>
+    <p>{{ t.hero_desc }}</p>
+    <div class="hero-btns">
+      <a href="{{ lang_link('/select') }}" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        {{ t.hero_cta_primary }}
+      </a>
+      <a href="#what-you-get" class="btn btn-outline">{{ t.hero_cta_secondary }}</a>
+    </div>
+  </div>
+  <div class="hero-wave" aria-hidden="true">
+    <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M0,32 C240,72 480,8 720,40 C960,72 1200,8 1440,32 L1440,80 L0,80 Z" fill="#0a0a0a"/>
+    </svg>
+  </div>
+</section>
+
+<section class="manifesto" id="manifesto">
+  <div class="container">
+    <div class="manifesto-inner">
+      <div class="manifesto-label" data-reveal>
+        {% if lang == 'ru' %}Новая эра{% elif lang == 'ar' %}عصر جديد{% else %}A New Era{% endif %}
+      </div>
+      <h2 class="manifesto-title" data-reveal>
+        {% if lang == 'ru' %}
+          iPhone теперь снимает<br><span>настоящее кино</span>
+        {% elif lang == 'ar' %}
+          iPhone يصنع الآن<br><span>أفلاماً حقيقية</span>
+        {% else %}
+          iPhone now shoots<br><span>real cinema</span>
+        {% endif %}
+      </h2>
+      <div class="manifesto-body" data-reveal>
+        <p>
+          {% if lang == 'ru' %}
+            Режиссёры снимают полнометражные фильмы на iPhone. Музыканты записывают клипы. Документалисты путешествуют по миру с одним телефоном в кармане — и привозят материал, который попадает на фестивали.
+          {% elif lang == 'ar' %}
+            المخرجون يصوّرون أفلاماً طويلة بـ iPhone. الموسيقيون يسجّلون مقاطع موسيقية. يسافر المصوّرون الوثائقيون حول العالم بهاتف واحد في جيبهم — ويعودون بلقطات تصل إلى المهرجانات.
+          {% else %}
+            Directors shoot feature films on iPhone. Musicians record videos. Documentarians travel the world with a single phone in their pocket — and come back with footage that makes it to festivals.
+          {% endif %}
+        </p>
+        <p>
+          {% if lang == 'ru' %}
+            Это стало возможным благодаря одной вещи: <strong>правильным настройкам</strong>. Тот же iPhone в руках двух людей даёт совершенно разный результат. Разница — не в оборудовании. Разница — в том, как вы его настроили.
+          {% elif lang == 'ar' %}
+            أصبح هذا ممكناً بسبب شيء واحد: <strong>الإعدادات الصحيحة</strong>. نفس الـ iPhone في يد شخصين يُنتج نتيجتين مختلفتين تماماً. الفرق ليس في المعدات. الفرق في كيفية ضبطها.
+          {% else %}
+            This became possible because of one thing: <strong>the right settings</strong>. The same iPhone in two people's hands produces completely different results. The difference isn't the hardware. The difference is how you configured it.
+          {% endif %}
+        </p>
+      </div>
+      <div class="manifesto-stats" data-reveal>
+        <div class="mstat">
+          <div class="mstat-num">4K</div>
+          <div class="mstat-label">{% if lang == 'ru' %}до 120fps{% elif lang == 'ar' %}حتى 120fps{% else %}up to 120fps{% endif %}</div>
+        </div>
+        <div class="mstat-divider"></div>
+        <div class="mstat">
+          <div class="mstat-num">ProRes</div>
+          <div class="mstat-label">{% if lang == 'ru' %}уровень кино{% elif lang == 'ar' %}جودة سينمائية{% else %}cinema-grade{% endif %}</div>
+        </div>
+        <div class="mstat-divider"></div>
+        <div class="mstat">
+          <div class="mstat-num">14+</div>
+          <div class="mstat-label">{% if lang == 'ru' %}остановок DR{% elif lang == 'ar' %}درجة ديناميكية{% else %}stops dynamic range{% endif %}</div>
+        </div>
+        <div class="mstat-divider"></div>
+        <div class="mstat">
+          <div class="mstat-num">$4.99</div>
+          <div class="mstat-label">{% if lang == 'ru' %}разблокирует всё{% elif lang == 'ar' %}يفتح الكل{% else %}unlocks it all{% endif %}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="features" id="what-you-get">
+  <div class="container">
+    <div class="features-layout">
+
+      <div class="features-mockup" data-reveal>
+        <div class="iphone-frame">
+          <div class="iphone-di"></div>
+          <div class="iphone-screen">
+            <div class="bmc-top">
+              <span class="bmc-val">4K</span>
+              <span class="bmc-val">H.265</span>
+              <span class="bmc-sep"></span>
+              <span class="bmc-val accent">24fps</span>
+              <span class="bmc-sep"></span>
+              <span class="bmc-val">ISO&nbsp;400</span>
+              <span class="bmc-val">1/48</span>
+              <div class="bmc-rec-timer" id="bmc-rec-timer">
+                <span class="bmc-rec-dot"></span>
+                <span class="bmc-rec-time" id="bmc-rec-time">00:00</span>
+              </div>
+            </div>
+            <div class="bmc-vf">
+              <video autoplay muted loop playsinline class="bmc-vf-photo">
+                <source src="https://pub-8fb494845cea47208e5a569a242eab94.r2.dev/bmc-shot.mp4" type="video/mp4">
+              </video>
+              <div class="bmc-grid-line bmc-gl-v1"></div>
+              <div class="bmc-grid-line bmc-gl-v2"></div>
+              <div class="bmc-grid-line bmc-gl-h1"></div>
+              <div class="bmc-grid-line bmc-gl-h2"></div>
+              <div class="bmc-center-cross">
+                <div class="bmc-cx-h"></div>
+                <div class="bmc-cx-v"></div>
+              </div>
+              <div class="bmc-wb-label">AWB</div>
+              <div class="bmc-exp-bar">
+                <div class="bmc-exp-fill"></div>
+                <div class="bmc-exp-marker"></div>
+              </div>
+            </div>
+            <div class="bmc-bottom">
+              <div class="bmc-side-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+              </div>
+              <div class="bmc-rec-btn" id="bmc-rec-btn" role="button" aria-label="Record">
+                <div class="bmc-rec-inner"></div>
+              </div>
+              <div class="bmc-side-btn">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 21V9"/></svg>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="iphone-glow"></div>
+      </div>
+
+      <div class="features-content">
+        <div class="section-title features-title-left">
+          <h2>{{ t.features_title }}</h2>
+          <p>{{ t.features_subtitle }}</p>
+        </div>
+        <div class="features-grid" data-stagger>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18" stroke-width="2.5"/></svg>
+            </div>
+            <h3>{{ t.feat1_title }}</h3>
+            <p>{{ t.feat1_desc }}</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+            <h3>{{ t.feat2_title }}</h3>
+            <p>{{ t.feat2_desc }}</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 2a10 10 0 0 1 0 20"/><path d="M2 12h20"/><path d="M12 2c2.5 3 4 6.5 4 10s-1.5 7-4 10"/></svg>
+            </div>
+            <h3>{{ t.feat3_title }}</h3>
+            <p>{{ t.feat3_desc }}</p>
+          </div>
+          <div class="feature-card">
+            <div class="feature-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            </div>
+            <h3>{{ t.feat4_title }}</h3>
+            <p>{{ t.feat4_desc }}</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="section-divider" aria-hidden="true">
+  <div class="section-divider-line"></div>
+  <span class="section-divider-label">how it works</span>
+  <div class="section-divider-line"></div>
+</div>
+
+<section class="timeline-section">
+  <div class="container">
+    <div class="section-title">
+      <h2>{{ t.guide_title }}</h2>
+      <p>{{ t.guide_subtitle }}</p>
+    </div>
+    <div class="timeline" data-stagger>
+      <div class="tl-step">
+        <div class="tl-num">1</div>
+        <div class="tl-body">
+          <h4>{{ t.guide_step1_title }}</h4>
+          <p>{{ t.guide_step1_desc }}</p>
+        </div>
+      </div>
+      <div class="tl-arrow" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">2</div>
+        <div class="tl-body">
+          <h4>{{ t.guide_step2_title }}</h4>
+          <p>{{ t.guide_step2_desc }}</p>
+        </div>
+      </div>
+      <div class="tl-arrow" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">3</div>
+        <div class="tl-body">
+          <h4>{{ t.guide_step3_title }}</h4>
+          <p>{{ t.guide_step3_desc }}</p>
+        </div>
+      </div>
+      <div class="tl-arrow" aria-hidden="true">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </div>
+      <div class="tl-step">
+        <div class="tl-num">4</div>
+        <div class="tl-body">
+          <h4>{{ t.guide_step4_title }}</h4>
+          <p>{{ t.guide_step4_desc }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="cinematic-break" aria-hidden="true">
+  <div class="cinematic-break-inner">
+    <div class="cinematic-break-line"></div>
+    <span class="cinematic-break-icon">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><polygon points="10 8 16 12 10 16 10 8" fill="currentColor" stroke="none"/></svg>
+    </span>
+    <div class="cinematic-break-line"></div>
+  </div>
+  <p class="cinematic-break-quote">{% if lang == 'ru' %}"Лучшая камера — та, что с тобой."{% elif lang == 'ar' %}"أفضل كاميرا هي التي معك."{% else %}"The best camera is the one you have with you."{% endif %}</p>
+</div>
+
+<section class="testimonials" id="testimonials">
+  <div class="container">
+    <div class="section-title">
+      <h2>{{ t.testimonials_title }}</h2>
+      <p>{{ t.testimonials_subtitle }}</p>
+    </div>
+
+    {% macro testimonial_card(tm) %}
+      <div class="testimonial-card" role="group" aria-label="Testimonial">
+        <div class="testimonial-stars" aria-label="{{ tm.rating }}/5">
+          {% for _ in range(tm.rating) %}<span aria-hidden="true">★</span>{% endfor %}
+        </div>
+        <div class="testimonial-quote">{{ tm.quotes[lang] or tm.quotes['en'] }}</div>
+        <div class="testimonial-author">
+          <span class="testimonial-avatar" style="background:{{ tm.color }};">{{ tm.name[0] }}</span>
+          <span class="testimonial-meta">
+            <strong>{{ tm.name }}</strong>
+            <small>{{ tm.device }}</small>
+          </span>
+        </div>
+      </div>
+    {% endmacro %}
+
+    {% set featured = testimonials | selectattr('featured', 'defined') | selectattr('featured') | list | first %}
+    {% if featured %}
+      <div class="testimonial-featured" role="group" aria-label="Featured testimonial" data-reveal>
+        <span class="testimonial-featured-mark" aria-hidden="true">&ldquo;</span>
+        <div class="testimonial-featured-quote">{{ featured.quotes[lang] or featured.quotes['en'] }}</div>
+        <div class="testimonial-featured-author">
+          <span class="testimonial-avatar" style="background:{{ featured.color }};">{{ featured.name[0] }}</span>
+          <span class="testimonial-meta">
+            <strong>{{ featured.name }}</strong>
+            <small>{{ featured.device }}</small>
+          </span>
+          <span class="testimonial-stars" aria-label="{{ featured.rating }}/5">
+            {% for _ in range(featured.rating) %}<span aria-hidden="true">★</span>{% endfor %}
+          </span>
+        </div>
+      </div>
+    {% endif %}
+
+    {% set rest = testimonials | rejectattr('featured', 'defined') | list %}
+    {% set half = (rest | length // 2) %}
+    {% set row1 = rest[:half] %}
+    {% set row2 = rest[half:] %}
+    <div class="testimonials-marquee" data-reveal>
+      <div class="marquee-row marquee-row--ltr">
+        <div class="marquee-track">
+          {% for tm in row1 %}{{ testimonial_card(tm) }}{% endfor %}
+          {% for tm in row1 %}{{ testimonial_card(tm) }}{% endfor %}
+        </div>
+      </div>
+      <div class="marquee-row marquee-row--rtl">
+        <div class="marquee-track">
+          {% for tm in row2 %}{{ testimonial_card(tm) }}{% endfor %}
+          {% for tm in row2 %}{{ testimonial_card(tm) }}{% endfor %}
+        </div>
+      </div>
+    </div>
+
+    <p class="testimonials-source">
+      {{ t.testimonials_source_pre }}
+      <a href="https://t.me/blackmagicamera" target="_blank" rel="noopener">@blackmagicamera</a>
+      {{ t.testimonials_source_post }}
+    </p>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="container">
+    <h2>{{ t.pricing_title }}</h2>
+    <p>{{ t.pricing_subtitle }}</p>
+    <div class="pricing-card" data-reveal>
+      <div class="price-tag"><sup>$</sup>4<span style="font-size:2rem;">.99</span></div>
+      <div class="price-desc">{{ t.price_desc }}</div>
+      <ul class="price-list">
+        <li><span class="check">✓</span> {{ t.price_li1 }}</li>
+        <li><span class="check">✓</span> {{ t.price_li2 }}</li>
+        <li><span class="check">✓</span> {{ t.price_li3 }}</li>
+        <li><span class="check">✓</span> {{ t.price_li4 }}</li>
+        <li><span class="check">✓</span> {{ t.price_li5 }}</li>
+      </ul>
+      <a href="{{ lang_link('/select') }}" class="btn btn-primary" style="width:100%; justify-content:center; font-size:1rem;">
+        {{ t.price_cta }}
+      </a>
+      <div class="price-social">
+        <div class="price-avatars">
+          <div class="price-avatar" style="background:#c084fc;">M</div>
+          <div class="price-avatar" style="background:#60a5fa;">A</div>
+          <div class="price-avatar" style="background:#34d399;">K</div>
+          <div class="price-avatar" style="background:#f97316;">J</div>
+        </div>
+        <span>{% if lang == 'ru' %}Уже используют 1200+ операторов{% elif lang == 'ar' %}يستخدمه أكثر من 1200 مصوّر{% else %}Joined 1,200+ filmmakers{% endif %}</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="devices-section">
+  <div class="container">
+    <div class="section-title">
+      <h2>{{ t.devices_title }}</h2>
+      <p>{{ t.devices_subtitle }}</p>
+    </div>
+    <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:700px; margin:0 auto;">
+      {% set names = ["XS","XS Max","XR","11","11 Pro","11 Pro Max","12 mini","12","12 Pro","12 Pro Max","13 mini","13","13 Pro","13 Pro Max","14","14 Plus","14 Pro","14 Pro Max","15","15 Plus","15 Pro","15 Pro Max","16","16 Plus","16 Pro","16 Pro Max","17","17 Air","17 Pro","17 Pro Max"] %}
+      {% for n in names %}
+        <span style="background:var(--bg2); border:1px solid var(--border); padding:5px 12px; border-radius:20px; font-size:0.82rem; color:var(--muted);">iPhone {{ n }}</span>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section class="faq-section" id="faq" style="padding:80px 0; background:#0a0a0a; border-top:1px solid var(--border);">
+  <div class="container" style="max-width:720px;">
+    <div class="section-title">
+      <h2>
+        {% if lang == 'ru' %}Часто задаваемые вопросы{% elif lang == 'ar' %}الأسئلة الشائعة{% else %}Frequently Asked Questions{% endif %}
+      </h2>
+    </div>
+    <div class="faq-list" data-stagger>
+
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-q">{% if lang == 'ru' %}Что такое приложение Blackmagic Camera?{% elif lang == 'ar' %}ما هو تطبيق Blackmagic Camera؟{% else %}What is the Blackmagic Camera app?{% endif %}</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </span>
+        </summary>
+        <div class="faq-body"><div><p class="faq-a">
+          {% if lang == 'ru' %}Blackmagic Camera — бесплатное профессиональное приложение для iPhone от Blackmagic Design (создатели DaVinci Resolve). Оно даёт ручное управление ISO, выдержкой, балансом белого, кодеком и поддерживает запись в ProRes и BRAW на совместимых моделях.{% elif lang == 'ar' %}Blackmagic Camera هو تطبيق كاميرا احترافي مجاني لـ iPhone من Blackmagic Design (صانعو DaVinci Resolve). يمنحك تحكمًا يدويًا في ISO والغالق وتوازن اللون والكودك، ويدعم تسجيل ProRes وBRAW على الأجهزة المدعومة.{% else %}Blackmagic Camera is a free professional camera app for iPhone made by Blackmagic Design (the creators of DaVinci Resolve). It gives you manual control over ISO, shutter angle, white balance, codec, and supports ProRes and BRAW recording on supported models.{% endif %}
+        </p></div></div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-q">{% if lang == 'ru' %}Почему настройки отличаются для разных моделей iPhone?{% elif lang == 'ar' %}لماذا تختلف الإعدادات بين موديلات iPhone؟{% else %}Why do settings differ between iPhone models?{% endif %}</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </span>
+        </summary>
+        <div class="faq-body"><div><p class="faq-a">
+          {% if lang == 'ru' %}Каждый iPhone использует разный чип (от A12 до A19 Pro) с уникальной системой камер, размером матрицы и процессором изображения. ISO диапазон, порог шума, доступные кодеки и динамический диапазон — всё это различается между моделями. Универсальные настройки не дают оптимального результата.{% elif lang == 'ar' %}كل iPhone يستخدم شريحة مختلفة (من A12 إلى A19 Pro) مع نظام كاميرا فريد وحجم مستشعر ومعالج صور مختلف. نطاق ISO وعتبة الضوضاء والكودك المتاح والمدى الديناميكي — كلها تختلف بين الموديلات. الإعدادات العامة لا تُعطي أفضل النتائج.{% else %}Every iPhone uses a different chip (A12 through A19 Pro) with a unique camera system, sensor size, and image processor. ISO range, noise floor, available codecs, and dynamic range all differ between models. Generic settings won't perform optimally on your specific device.{% endif %}
+        </p></div></div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-q">{% if lang == 'ru' %}Работает ли гайд с ProRes и BRAW?{% elif lang == 'ar' %}هل يعمل الدليل مع ProRes وBRAW؟{% else %}Does the guide work with ProRes and BRAW?{% endif %}</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </span>
+        </summary>
+        <div class="faq-body"><div><p class="faq-a">
+          {% if lang == 'ru' %}Да. Для iPhone с поддержкой ProRes (серии 15 Pro, 16, 17) гайд включает настройки для ProRes, BRAW и H.265. Для более старых моделей — оптимальные настройки H.265 и BRAW с учётом чипа.{% elif lang == 'ar' %}نعم. لأجهزة iPhone التي تدعم ProRes (سلسلة 15 Pro و16 و17)، يتضمن الدليل إعدادات محددة لـ ProRes وBRAW وH.265. للموديلات الأقدم — إعدادات H.265 وBRAW المحسّنة للشريحة.{% else %}Yes. For iPhones that support ProRes (15 Pro, 16, 17 series), the guide includes specific settings for ProRes, BRAW, and H.265. For older models it covers H.265 and BRAW optimized for that specific chip.{% endif %}
+        </p></div></div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-q">{% if lang == 'ru' %}Что такое кинематографические LUT-пресеты?{% elif lang == 'ar' %}ما هي LUTs السينمائية؟{% else %}What are cinematic LUTs?{% endif %}</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </span>
+        </summary>
+        <div class="faq-body"><div><p class="faq-a">
+          {% if lang == 'ru' %}LUT (Look-Up Table) — это пресеты цветокоррекции, которые преобразуют плоское или log-видео в готовый киношный вид. В гайде есть доступ к бесплатному паку LUT из нашего Telegram-канала и инструкция по их установке и применению прямо внутри Blackmagic Camera.{% elif lang == 'ar' %}LUTs (جداول البحث) هي إعدادات مسبقة لتصحيح الألوان تحوّل اللقطات المسطحة أو log إلى مظهر سينمائي جاهز. يتضمن الدليل الوصول إلى مجموعة LUT مجانية من قناتنا على Telegram وتعليمات خطوة بخطوة لاستيرادها واستخدامها داخل Blackmagic Camera.{% else %}LUTs (Look-Up Tables) are color grading presets that transform flat or log footage into a finished cinematic look. The guide includes access to a free LUT pack from our Telegram channel, with step-by-step instructions to import and apply them inside Blackmagic Camera as a monitor LUT while shooting.{% endif %}
+        </p></div></div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-q">{% if lang == 'ru' %}Это разовая покупка или подписка?{% elif lang == 'ar' %}هل هذا شراء لمرة واحدة أم اشتراك؟{% else %}Is this a one-time purchase or a subscription?{% endif %}</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </span>
+        </summary>
+        <div class="faq-body"><div><p class="faq-a">
+          {% if lang == 'ru' %}Разовая оплата $4.99. Вы получаете постоянную ссылку на почту. Никакой подписки, никакого аккаунта. Ссылка работает на любом устройстве и браузере бессрочно.{% elif lang == 'ar' %}دفعة واحدة بقيمة $4.99. تحصل على رابط وصول دائم عبر البريد الإلكتروني. لا اشتراك، لا حساب مطلوب. الرابط يعمل على أي جهاز أو متصفح، للأبد.{% else %}One-time payment of $4.99. You receive a permanent access link by email. No subscription, no account required. The link works on any device and browser, forever.{% endif %}
+        </p></div></div>
+      </details>
+
+      <details class="faq-item">
+        <summary class="faq-summary">
+          <span class="faq-q">{% if lang == 'ru' %}Какие iPhone поддерживаются?{% elif lang == 'ar' %}ما هي أجهزة iPhone المدعومة؟{% else %}Which iPhone models are supported?{% endif %}</span>
+          <span class="faq-icon" aria-hidden="true">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M6 9l6 6 6-6"/></svg>
+          </span>
+        </summary>
+        <div class="faq-body"><div><p class="faq-a">
+          {% if lang == 'ru' %}Все iPhone от XS (A12) до 17 Pro Max (A19 Pro) — 32 модели в 8 чип-группах. Если у вас iPhone XS и новее — гайд для вас есть.{% elif lang == 'ar' %}جميع أجهزة iPhone من XS (A12) إلى 17 Pro Max (A19 Pro) — 32 موديلاً في 8 مجموعات شرائح. إذا كان لديك iPhone XS أو أحدث — هناك دليل لك.{% else %}All iPhones from XS (A12) through 17 Pro Max (A19 Pro) — 32 models across 8 chip groups. If you have an iPhone XS or newer, there's a guide for your exact model.{% endif %}
+        </p></div></div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function () {
+  var recBtn = document.getElementById('bmc-rec-btn');
+  var recTimer = document.getElementById('bmc-rec-timer');
+  var recTime = document.getElementById('bmc-rec-time');
+  if (!recBtn) return;
+
+  var recording = false;
+  var timerInterval = null;
+  var seconds = 0;
+
+  function fmt(s) {
+    var m = Math.floor(s / 60);
+    var sec = s % 60;
+    return (m < 10 ? '0' : '') + m + ':' + (sec < 10 ? '0' : '') + sec;
+  }
+
+  function makeCtx() {
+    return new (window.AudioContext || window.webkitAudioContext)();
+  }
+
+  function playStart() {
+    try {
+      var ctx = makeCtx();
+      var t = ctx.currentTime;
+
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(1047, t);
+      gain.gain.setValueAtTime(0.5, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.09);
+      osc.start(t);
+      osc.stop(t + 0.09);
+
+      var osc2 = ctx.createOscillator();
+      var gain2 = ctx.createGain();
+      osc2.connect(gain2);
+      gain2.connect(ctx.destination);
+      osc2.type = 'sine';
+      osc2.frequency.setValueAtTime(2094, t);
+      gain2.gain.setValueAtTime(0.12, t);
+      gain2.gain.exponentialRampToValueAtTime(0.001, t + 0.06);
+      osc2.start(t);
+      osc2.stop(t + 0.06);
+    } catch (e) {}
+  }
+
+  function beep(freqStart, freqEnd, duration, delay) {
+    try {
+      var ctx = makeCtx();
+      var osc = ctx.createOscillator();
+      var gain = ctx.createGain();
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freqStart, ctx.currentTime + delay);
+      osc.frequency.linearRampToValueAtTime(freqEnd, ctx.currentTime + delay + duration * 0.6);
+      gain.gain.setValueAtTime(0, ctx.currentTime + delay);
+      gain.gain.linearRampToValueAtTime(0.28, ctx.currentTime + delay + 0.01);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + delay + duration);
+      osc.start(ctx.currentTime + delay);
+      osc.stop(ctx.currentTime + delay + duration);
+    } catch (e) {}
+  }
+
+  function playStop() {
+    beep(1175, 880, 0.11, 0);
+    beep(1046, 784, 0.10, 0.13);
+  }
+
+  recBtn.addEventListener('click', function () {
+    if (!recording) {
+      recording = true;
+      playStart();
+      seconds = 0;
+      recTime.textContent = fmt(0);
+      recTimer.classList.add('active');
+      recBtn.classList.add('recording');
+      timerInterval = setInterval(function () {
+        seconds++;
+        recTime.textContent = fmt(seconds);
+      }, 1000);
+    } else {
+      recording = false;
+      playStop();
+      clearInterval(timerInterval);
+      recTimer.classList.remove('active');
+      recBtn.classList.remove('recording');
+      seconds = 0;
+      recTime.textContent = fmt(0);
+    }
+  });
+})();
+</script>
+<script>
+(function () {
+  var intro = document.getElementById('bmc-intro');
+  if (!intro) return;
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    intro.remove(); return;
+  }
+  document.body.style.overflow = 'hidden';
+  setTimeout(function () {
+    intro.classList.add('intro-exit');
+    document.body.style.overflow = '';
+  }, 2200);
+  setTimeout(function () { intro.remove(); }, 2800);
+})();
+</script>
+{% endblock %}

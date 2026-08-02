@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block title %}Select Your iPhone — Blackmagic Camera Settings{% endblock %}
+{% block content %}
+
+<section class="select-page">
+  <div class="container">
+    <div class="section-title">
+      <h2>Select Your iPhone Model</h2>
+      <p>Choose your device to receive your personalized guide.</p>
+    </div>
+
+    {% set groups = {
+      'a': t.group_a, 'b': t.group_b, 'c': t.group_c, 'd': t.group_d,
+      'e': t.group_e, 'f': t.group_f, 'g': t.group_g, 'h': t.group_h
+    } %}
+
+    <form id="pick-form" method="POST" action="/pick/{{ token }}/confirm" onsubmit="return !!document.getElementById('pick-input').value">
+      {% for group_key, group_label in groups.items() %}
+        {% set group_devices = devices | selectattr('group', 'equalto', group_key) | list %}
+        {% if group_devices %}
+          <div class="device-group-label">{{ group_label }}</div>
+          <div class="device-grid" data-stagger>
+            {% for device in group_devices %}
+              <div class="device-card" data-slug="{{ device.slug }}" data-name="{{ device.name }}" onclick="pickDevice(this)">
+                <div class="device-img-wrap">
+                  <img src="{{ device.image }}" alt="{{ device.name }}" class="device-img" loading="lazy" />
+                </div>
+                <div class="device-name">{{ device.name }}</div>
+                <div class="device-chip">{{ device.chip }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        {% endif %}
+      {% endfor %}
+
+      <input type="hidden" name="device" id="pick-input" value="" />
+
+      <div class="select-footer">
+        <p id="pick-status" style="color:var(--muted);font-size:0.9rem;">Select your iPhone above</p>
+        <button type="submit" class="btn-buy" id="pick-btn" disabled>
+          Get My Guide →
+        </button>
+      </div>
+    </form>
+  </div>
+</section>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+function pickDevice(card) {
+  document.querySelectorAll('.device-card').forEach(function(c) { c.classList.remove('selected'); });
+  card.classList.add('selected');
+  document.getElementById('pick-input').value = card.dataset.slug;
+  var status = document.getElementById('pick-status');
+  status.textContent = 'Selected: ' + card.dataset.name;
+  status.style.color = 'var(--accent)';
+  var btn = document.getElementById('pick-btn');
+  btn.disabled = false;
+  btn.classList.add('active');
+  btn.textContent = 'Get My Guide for ' + card.dataset.name + ' \u2192';
+}
+</script>
+{% endblock %}

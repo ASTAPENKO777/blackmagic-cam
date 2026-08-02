@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}{{ t.error_h2 }} — Blackmagic Camera Settings{% endblock %}
+{% block content %}
+<div class="error-page">
+  <h1>{{ t.error_h1 }}</h1>
+  <h2>{{ t.error_h2 }}</h2>
+  <p>{{ message }}</p>
+  <a href="{{ lang_link('/') }}" class="btn btn-primary" style="margin-top: 8px;">{{ t.error_back }}</a>
+</div>
+{% endblock %}

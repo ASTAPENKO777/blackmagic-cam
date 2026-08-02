@@ -1,0 +1,497 @@
+{# ── MACRO: screenshot slot ─────────────────────────────────────────────────── #}
+{# Usage: {{ scr('guide-03-shutter', 'Shutter → Auto') }} — not available in includes, using raw HTML blocks instead #}
+
+{% set supports_apple_log = 'A17' in device.chip or 'A18' in device.chip or 'A19' in device.chip %}
+<div class="device-callout">
+  <div class="device-callout-icon">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+  </div>
+  <div class="device-callout-body">
+    {% if supports_apple_log %}
+      {% if lang == 'ru' %}<strong>{{ device.chip }} поддерживает Apple Log</strong> — максимальный динамический диапазон, доступный только на Pro-моделях. Используйте Log LUT-ы для лучшего результата.
+      {% elif lang == 'ar' %}<strong>{{ device.chip }} يدعم Apple Log</strong> — أقصى نطاق ديناميكي، متاح فقط على طرازات Pro. استخدم Log LUTs للحصول على أفضل نتيجة.
+      {% else %}<strong>{{ device.chip }} supports Apple Log</strong> — maximum dynamic range, available only on Pro models. Use Log LUTs for the best results.{% endif %}
+    {% else %}
+      {% if lang == 'ru' %}<strong>Оптимальные настройки для {{ device.chip }}</strong> — следуйте гайду последовательно. Используйте LUT-ы формата <span class="val">Rec.709</span> — они идеально подходят для вашего чипа.
+      {% elif lang == 'ar' %}<strong>الإعدادات المثلى لـ {{ device.chip }}</strong> — اتبع الدليل خطوة بخطوة. استخدم LUTs بتنسيق <span class="val">Rec.709</span> — فهي مثالية لشريحتك.
+      {% else %}<strong>Optimal settings for {{ device.chip }}</strong> — follow the guide step by step. Use <span class="val">Rec.709</span> LUTs — they're the perfect match for your chip.{% endif %}
+    {% endif %}
+  </div>
+</div>
+
+<div class="quick-ref">
+  <div class="quick-ref-title">
+    {% if lang == 'ru' %}Шпаргалка — все ключевые значения{% elif lang == 'ar' %}ورقة مرجعية — جميع القيم الرئيسية{% else %}Cheat sheet — all key settings{% endif %}
+  </div>
+  <div class="quick-ref-grid">
+    <div class="quick-ref-item"><div class="qr-label">Shutter</div><div class="qr-value">Auto</div></div>
+    <div class="quick-ref-item"><div class="qr-label">ISO</div><div class="qr-value">Auto</div></div>
+    <div class="quick-ref-item"><div class="qr-label">WB</div><div class="qr-value">Auto</div></div>
+    <div class="quick-ref-item"><div class="qr-label">Tint</div><div class="qr-value">Auto</div></div>
+    <div class="quick-ref-item"><div class="qr-label">Codec</div><div class="qr-value">HEVC H.265</div></div>
+    <div class="quick-ref-item"><div class="qr-label">Resolution</div><div class="qr-value">4K</div></div>
+    <div class="quick-ref-item"><div class="qr-label">FPS</div><div class="qr-value">50 / 60</div></div>
+    <div class="quick-ref-item"><div class="qr-label">Color</div><div class="qr-value">{% if supports_apple_log %}Apple Log{% else %}Rec.709{% endif %}</div></div>
+  </div>
+</div>
+
+<div class="download-banner">
+  <div class="download-banner-icon">📱</div>
+  <div class="download-banner-info">
+    <h3>Blackmagic Camera</h3>
+    <p>{% if lang == 'ru' %}Бесплатное приложение от Blackmagic Design для iPhone
+    {% elif lang == 'ar' %}تطبيق مجاني من Blackmagic Design لأجهزة iPhone
+    {% else %}Free app by Blackmagic Design for iPhone{% endif %}</p>
+  </div>
+  <a href="https://apps.apple.com/app/blackmagic-camera/id6449580241"
+     target="_blank" rel="noopener" class="btn-appstore">
+    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+    {% if lang == 'ru' %}Скачать
+    {% elif lang == 'ar' %}تحميل
+    {% else %}Download{% endif %}
+  </a>
+</div>
+
+<h2 id="settings">⚙️
+{% if lang == 'ru' %}Основные настройки камеры
+{% elif lang == 'ar' %}إعدادات الكاميرا الرئيسية
+{% else %}Main Camera Controls{% endif %}
+</h2>
+
+<p>{% if lang == 'ru' %}Откройте <strong>Blackmagic Camera</strong> на вашем {{ device.name }} и установите следующие значения:
+{% elif lang == 'ar' %}افتح <strong>Blackmagic Camera</strong> على {{ device.name }} واضبط القيم التالية:
+{% else %}Open <strong>Blackmagic Camera</strong> on your {{ device.name }} and set the following:{% endif %}</p>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Откройте Blackmagic Camera{% elif lang == 'ar' %}افتح Blackmagic Camera{% else %}Open Blackmagic Camera{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Запустите приложение. Вы увидите видоискатель с параметрами вверху экрана — Shutter, ISO, WB, Tint, FPS и переключатель объектива.
+    {% elif lang == 'ar' %}شغّل التطبيق. ستظهر شاشة الكاميرا مع الإعدادات في الأعلى — Shutter وISO وWB وTint وFPS ومبدّل العدسة.
+    {% else %}Launch the app. You'll see the viewfinder with controls at the top — Shutter, ISO, WB, Tint, FPS, and the lens switcher.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-01-viewfinder.jpg') }}" alt="Blackmagic Camera viewfinder" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Главный экран приложения{% elif lang == 'ar' %}لقطة شاشة: الشاشة الرئيسية للتطبيق{% else %}Screenshot: Main viewfinder screen{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-body">
+    <h4>SHUTTER → Auto</h4>
+    <p>{% if lang == 'ru' %}Убедитесь, что иконка <strong>замка не нажата</strong> — её фон должен быть прозрачным, а не синим. Только тогда выдержка работает автоматически. Если фон синий — нажмите на замок, чтобы снять блокировку.
+    {% elif lang == 'ar' %}تأكد أن أيقونة <strong>القفل غير مضغوطة</strong> — يجب أن تكون خلفيتها شفافة وليست زرقاء. فقط عندها تعمل سرعة الغالق تلقائياً. إذا كانت الخلفية زرقاء — اضغط على القفل لإلغاء التثبيت.
+    {% else %}Make sure the <strong>lock icon is not pressed</strong> — its background should be transparent, not blue. Only then does the shutter work automatically. If the background is blue — tap the lock to deactivate it.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-02-shutter.jpg') }}" alt="Shutter Auto" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Shutter → Auto{% elif lang == 'ar' %}لقطة شاشة: Shutter → Auto{% else %}Screenshot: Shutter → Auto{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">3</div>
+  <div class="step-body">
+    <h4>ISO → Auto</h4>
+    <p>{% if lang == 'ru' %}ISO уже стоит на <strong>Auto</strong> по умолчанию — ничего менять не нужно. Приложение автоматически адаптирует чувствительность под освещение.
+    {% elif lang == 'ar' %}ISO مضبوط على <strong>Auto</strong> تلقائياً بشكل افتراضي — لا حاجة لتغيير أي شيء. يتكيّف التطبيق تلقائياً مع ظروف الإضاءة.
+    {% else %}ISO is already set to <strong>Auto</strong> by default — no need to change anything. The app automatically adapts sensitivity to the lighting conditions.{% endif %}</p>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">4</div>
+  <div class="step-body">
+    <h4>WB → Auto</h4>
+    <p>{% if lang == 'ru' %}Нажмите на значение WB (баланс белого). Выберите <strong>Auto</strong> — приложение определит баланс белого автоматически.
+    {% elif lang == 'ar' %}اضغط على قيمة WB (توازن اللون الأبيض). اختر <strong>Auto</strong> — سيحدد التطبيق توازن الألوان تلقائياً.
+    {% else %}Tap the WB (White Balance) value. Select <strong>Auto</strong> — the app will detect white balance automatically.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-04-wb.jpg') }}" alt="WB Auto" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: WB → Auto{% elif lang == 'ar' %}لقطة شاشة: WB → Auto{% else %}Screenshot: WB → Auto{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">5</div>
+  <div class="step-body">
+    <h4>TINT → Auto</h4>
+    <p>{% if lang == 'ru' %}Рядом с WB находится значение Tint (оттенок). Нажмите на него и выберите <strong>Auto</strong>.
+    {% elif lang == 'ar' %}بجوار WB يوجد قيمة Tint. اضغط عليها واختر <strong>Auto</strong>.
+    {% else %}Next to WB is the Tint value. Tap it and select <strong>Auto</strong>.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-05-tint.jpg') }}" alt="Tint Auto" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Tint → Auto{% elif lang == 'ar' %}لقطة شاشة: Tint → Auto{% else %}Screenshot: Tint → Auto{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">6</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}FPS — выберите под вашу страну{% elif lang == 'ar' %}FPS — اختر حسب بلدك{% else %}FPS — choose for your region{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Нажмите на показатель FPS (частота кадров). Выберите:
+      <br>• <strong>50 fps</strong> — Европа, Африка, Австралия, большинство Азии (сеть 50 Гц)
+      <br>• <strong>60 fps</strong> — США, Канада, Мексика, Япония, Корея, Тайвань (сеть 60 Гц)
+      <br>Это важно для съёмки при искусственном освещении — правильный FPS устраняет мерцание ламп.
+    {% elif lang == 'ar' %}اضغط على مؤشر FPS (معدل الإطارات). اختر:
+      <br>• <strong>50 fps</strong> — أوروبا، أفريقيا، أستراليا، معظم آسيا (شبكة 50 هرتز)
+      <br>• <strong>60 fps</strong> — الولايات المتحدة، كندا، المكسيك، اليابان، كوريا، تايوان (شبكة 60 هرتز)
+      <br>هذا مهم عند التصوير تحت الإضاءة الاصطناعية — الـ FPS الصحيح يزيل وميض المصابيح.
+    {% else %}Tap the FPS (frame rate) indicator. Choose:
+      <br>• <strong>50 fps</strong> — Europe, Africa, Australia, most of Asia (50 Hz power grid)
+      <br>• <strong>60 fps</strong> — USA, Canada, Mexico, Japan, Korea, Taiwan (60 Hz power grid)
+      <br>This matters under artificial lighting — the correct FPS eliminates bulb flicker.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-06-fps.jpg') }}" alt="FPS 50 or 60" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: FPS → 50 или 60{% elif lang == 'ar' %}لقطة شاشة: FPS → 50 أو 60{% else %}Screenshot: FPS → 50 or 60{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="pro-tip">
+  <div class="pro-tip-icon">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+  </div>
+  <div>
+    <div class="pro-tip-label">Pro tip</div>
+    <div class="pro-tip-body">
+      {% if lang == 'ru' %}Снимаете в помещении с флуоресцентными или LED-лампами? <strong>Неправильный FPS вызывает мерцание</strong> в кадре — его не всегда видно на телефоне, но отлично видно на большом экране. Сверьтесь с частотой сети вашей страны.
+      {% elif lang == 'ar' %}تصوّر في الداخل مع مصابيح فلورية أو LED؟ <strong>FPS الخاطئ يسبب وميضاً</strong> في الإطار — قد لا يظهر على الهاتف لكنه واضح على الشاشة الكبيرة. راجع تردد الشبكة في بلدك.
+      {% else %}Shooting indoors under fluorescent or LED lights? <strong>Wrong FPS causes flicker</strong> in the frame — often invisible on the phone screen but very obvious on a large display. Match FPS to your country's power grid frequency.{% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">7</div>
+  <div class="step-body">
+    <h4>LENS</h4>
+    <p>{% if lang == 'ru' %}Внизу экрана находятся кнопки переключения объективов (зум). Нажмите на нужный объектив — <strong>0.5×</strong> (сверхширокий), <strong>1×</strong> (основной) или <strong>2×</strong> / <strong>3×</strong> (телефото), в зависимости от того, что снимаете. Переключать можно в любой момент прямо во время записи.
+    {% elif lang == 'ar' %}في الجزء السفلي من الشاشة توجد أزرار تبديل العدسات (التكبير). اضغط على العدسة المطلوبة — <strong>0.5×</strong> (فائق الزاوية) أو <strong>1×</strong> (رئيسية) أو <strong>2×</strong> / <strong>3×</strong> (تيليفوتو) — حسب ما تصوّره. يمكن التبديل في أي وقت حتى أثناء التسجيل.
+    {% else %}At the bottom of the screen are the lens switcher buttons (zoom). Tap the lens you need — <strong>0.5×</strong> (ultrawide), <strong>1×</strong> (main), or <strong>2×</strong> / <strong>3×</strong> (telephoto) — depending on what you're shooting. You can switch at any moment, even while recording.{% endif %}</p>
+  </div>
+</div>
+
+<h2 id="setup">📋
+{% if lang == 'ru' %}Настройки приложения
+{% elif lang == 'ar' %}إعدادات التطبيق
+{% else %}App Settings{% endif %}
+</h2>
+
+<p>{% if lang == 'ru' %}Теперь откройте <strong>Settings</strong> (иконка шестерёнки в правом нижнем углу) и настройте формат записи:
+{% elif lang == 'ar' %}الآن افتح <strong>Settings</strong> (أيقونة الترس في الزاوية السفلية اليمنى) واضبط تنسيق التسجيل:
+{% else %}Now open <strong>Settings</strong> (gear icon in the bottom-right corner) and configure the recording format:{% endif %}</p>
+
+<div class="step">
+  <div class="step-num">8</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Откройте Settings{% elif lang == 'ar' %}افتح Settings{% else %}Open Settings{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Нажмите на иконку <strong>⚙️</strong> (шестерёнка) в правом нижнем углу видоискателя. Откроется меню настроек.
+    {% elif lang == 'ar' %}اضغط أيقونة <strong>⚙️</strong> (الترس) في الزاوية السفلية اليمنى من شاشة الكاميرا. ستفتح قائمة الإعدادات.
+    {% else %}Tap the <strong>⚙️</strong> (gear) icon in the bottom-right corner of the viewfinder. The settings menu will open.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-08-settings.jpg') }}" alt="Open Settings" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Кнопка Settings (шестерёнка){% elif lang == 'ar' %}لقطة شاشة: زر Settings (الترس){% else %}Screenshot: Settings button (gear icon){% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">9</div>
+  <div class="step-body">
+    <h4>Codec → HEVC H.265</h4>
+    <p>{% if lang == 'ru' %}В разделе Codec выберите <span class="val">HEVC H.265</span>. Это лучший кодек для вашего iPhone — высокое качество при меньшем размере файла.
+    {% elif lang == 'ar' %}في قسم Codec اختر <span class="val">HEVC H.265</span>. هذا أفضل ترميز لـ iPhone — جودة عالية مع حجم ملف أصغر.
+    {% else %}In the Codec section select <span class="val">HEVC H.265</span>. This is the best codec for your iPhone — high quality with a smaller file size.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-09-codec.jpg') }}" alt="Codec HEVC H.265" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Codec → HEVC H.265{% elif lang == 'ar' %}لقطة شاشة: Codec → HEVC H.265{% else %}Screenshot: Codec → HEVC H.265{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">10</div>
+  <div class="step-body">
+    <h4>Resolution → 4K</h4>
+    <p>{% if lang == 'ru' %}В разделе Resolution установите <span class="val">4K (3840×2160)</span>. Максимальное качество для последующего цветокора с LUT-ами.
+    {% elif lang == 'ar' %}في قسم Resolution اضبط <span class="val">4K (3840×2160)</span>. أعلى جودة لتصحيح الألوان لاحقاً مع LUTs.
+    {% else %}In the Resolution section set <span class="val">4K (3840×2160)</span>. Maximum quality for later color grading with LUTs.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-10-resolution.jpg') }}" alt="Resolution 4K" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Resolution → 4K{% elif lang == 'ar' %}لقطة شاشة: Resolution → 4K{% else %}Screenshot: Resolution → 4K{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">11</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Цветовой профиль: Rec.709 или Apple Log{% elif lang == 'ar' %}ملف الألوان: Rec.709 أو Apple Log{% else %}Color Profile: Rec.709 or Apple Log{% endif %}</h4>
+    <p>{% if lang == 'ru' %}В разделе Color Space выберите профиль в зависимости от используемых LUT-ов:
+      <br>• <span class="val">Rec.709</span> — для стандартных LUT-ов (если LUT предназначен для Rec.709)
+      <br>• <span class="val">Apple Log</span> — для Log LUT-ов (максимальный динамический диапазон; доступно на iPhone 15 Pro и новее)
+      <br>LUT-ы из нашего Telegram-канала: смотрите описание в посте — там указано, для какого профиля они предназначены.
+    {% elif lang == 'ar' %}في قسم Color Space اختر الملف حسب LUTs التي ستستخدمها:
+      <br>• <span class="val">Rec.709</span> — للـ LUTs القياسية (إذا كان الـ LUT مصمماً لـ Rec.709)
+      <br>• <span class="val">Apple Log</span> — لـ Log LUTs (أقصى نطاق ديناميكي؛ متاح على iPhone 15 Pro وأحدث)
+      <br>لـ LUTs قناتنا على تيليجرام: راجع وصف المنشور — يوضح لأي ملف تُستخدم.
+    {% else %}In the Color Space section choose the profile based on which LUTs you'll use:
+      <br>• <span class="val">Rec.709</span> — for standard LUTs (if the LUT is designed for Rec.709)
+      <br>• <span class="val">Apple Log</span> — for Log LUTs (maximum dynamic range; available on iPhone 15 Pro and newer)
+      <br>For LUTs from our Telegram channel: check the post description — it states which profile they're designed for.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-11-color-profile.jpg') }}" alt="Color Profile" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Color → Rec.709 или Apple Log{% elif lang == 'ar' %}لقطة شاشة: Color → Rec.709 أو Apple Log{% else %}Screenshot: Color → Rec.709 or Apple Log{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="pro-tip">
+  <div class="pro-tip-icon">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+  </div>
+  <div>
+    <div class="pro-tip-label">Pro tip</div>
+    <div class="pro-tip-body">
+      {% if supports_apple_log %}
+        {% if lang == 'ru' %}<strong>Apple Log даёт больше пространства при цветокоре</strong> — видео выглядит «плоско» в записи, но LUT раскрывает детали в тенях и светах. Если не планируете цветокор — снимайте в <span class="val">Rec.709</span>, картинка будет готовой сразу.
+        {% elif lang == 'ar' %}<strong>Apple Log يمنحك مساحة أكبر لتصحيح الألوان</strong> — يبدو الفيديو «مسطحاً» عند التسجيل، لكن الـ LUT يكشف التفاصيل في الظلال والإضاءات. إذا لم تخطط لتصحيح الألوان — صوّر بـ <span class="val">Rec.709</span> والصورة ستكون جاهزة فوراً.
+        {% else %}<strong>Apple Log gives more room for color grading</strong> — footage looks «flat» when recorded, but a LUT unlocks detail in shadows and highlights. If you don't plan to color grade — shoot in <span class="val">Rec.709</span> and the image will look great straight out of camera.{% endif %}
+      {% else %}
+        {% if lang == 'ru' %}<strong>Rec.709 — правильный выбор для вашего чипа.</strong> LUT-ы из Telegram-канала специально откалиброваны под этот профиль. Картинка выглядит готовой сразу после съёмки — никакого постпродакшена не нужно.
+        {% elif lang == 'ar' %}<strong>Rec.709 هو الخيار الصحيح لشريحتك.</strong> LUTs من قناة تيليجرام معايَرة خصيصاً لهذا الملف. تبدو الصورة جاهزة مباشرة بعد التصوير — لا حاجة لأي معالجة لاحقة.
+        {% else %}<strong>Rec.709 is the right choice for your chip.</strong> The LUTs from the Telegram channel are calibrated specifically for this profile. The image looks ready right out of camera — no post-production needed.{% endif %}
+      {% endif %}
+    </div>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">12</div>
+  <div class="step-body">
+    <h4>Enable Vertical Video ✓</h4>
+    <p>{% if lang == 'ru' %}Найдите опцию <strong>Enable Vertical Video</strong> и включите её (поставьте галочку). Это позволяет снимать вертикальное видео (9:16) для Reels, TikTok и Shorts.
+    {% elif lang == 'ar' %}ابحث عن خيار <strong>Enable Vertical Video</strong> وفعّله (ضع علامة). يتيح ذلك تصوير فيديو رأسي (9:16) لـ Reels وTikTok وShorts.
+    {% else %}Find the <strong>Enable Vertical Video</strong> option and turn it on (check the box). This allows shooting vertical video (9:16) for Reels, TikTok, and Shorts.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-12-vertical-video.jpg') }}" alt="Enable Vertical Video" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Enable Vertical Video → включено{% elif lang == 'ar' %}لقطة شاشة: Enable Vertical Video → مفعّل{% else %}Screenshot: Enable Vertical Video → on{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<h2 id="luts-download">🎨
+{% if lang == 'ru' %}Скачайте LUT-ы из Telegram
+{% elif lang == 'ar' %}حمّل LUTs من تيليجرام
+{% else %}Download LUTs from Telegram{% endif %}
+</h2>
+
+<div class="tg-banner">
+  <div class="tg-icon">✈️</div>
+  <div>
+    <h4>@blackmagicamera — Telegram</h4>
+    <p>{% if lang == 'ru' %}Вступите в наш Telegram-канал, чтобы скачать бесплатный пакет кинематографических LUT-ов.
+    {% elif lang == 'ar' %}انضم إلى قناتنا على تيليجرام لتنزيل حزمة LUT السينمائية المجانية.
+    {% else %}Join our Telegram channel to download the free cinematic LUT pack.{% endif %}
+    <br><a href="https://t.me/blackmagicamera" target="_blank" rel="noopener">→ t.me/blackmagicamera</a></p>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Вступите в канал и найдите пост с LUT-ами{% elif lang == 'ar' %}انضم للقناة وابحث عن منشور LUTs{% else %}Join the channel and find the LUT post{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Откройте Telegram, перейдите по ссылке выше и нажмите <strong>Join Channel</strong>. Найдите закреплённый пост с пакетом LUT-ов или поищите по слову <strong>«LUT»</strong>.
+    {% elif lang == 'ar' %}افتح تيليجرام، اذهب للرابط أعلاه واضغط <strong>Join Channel</strong>. ابحث عن المنشور المثبت مع حزمة LUTs أو ابحث عن كلمة <strong>"LUT"</strong>.
+    {% else %}Open Telegram, go to the link above and tap <strong>Join Channel</strong>. Find the pinned post with the LUT pack, or search for <strong>"LUT"</strong> in the channel.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-13-tg-join.jpg') }}" alt="Join Telegram" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Telegram-канал @blackmagicamera{% elif lang == 'ar' %}لقطة شاشة: قناة Telegram @blackmagicamera{% else %}Screenshot: Telegram channel @blackmagicamera{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Скачайте и распакуйте архив{% elif lang == 'ar' %}حمّل وافك الضغط عن الأرشيف{% else %}Download and unzip the archive{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Нажмите на файл-архив (.zip) в посте. Выберите <strong>Сохранить в Файлы</strong> → <strong>На iPhone</strong> (или iCloud Drive). Затем откройте приложение <strong>Файлы</strong>, найдите скачанный архив и нажмите на него — iOS сам распакует папку с LUT-ами.
+    {% elif lang == 'ar' %}اضغط على ملف الأرشيف (.zip) في المنشور. اختر <strong>Save to Files</strong> → <strong>On My iPhone</strong> (أو iCloud Drive). ثم افتح تطبيق <strong>الملفات</strong>، ابحث عن الأرشيف المحمّل واضغط عليه — سيفك iOS الضغط تلقائياً وينشئ مجلداً مع LUTs.
+    {% else %}Tap the archive file (.zip) in the post. Choose <strong>Save to Files</strong> → <strong>On My iPhone</strong> (or iCloud Drive). Then open the <strong>Files</strong> app, find the downloaded archive and tap it — iOS will unzip it automatically, creating a folder with LUTs.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-14-tg-download.jpg') }}" alt="Download and unzip LUTs" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Скачать архив → Сохранить в Файлы{% elif lang == 'ar' %}لقطة شاشة: تحميل الأرشيف → حفظ في الملفات{% else %}Screenshot: Download archive → Save to Files{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<h2 id="luts-import">📲
+{% if lang == 'ru' %}Импорт LUT-ов в Blackmagic Camera
+{% elif lang == 'ar' %}استيراد LUTs إلى Blackmagic Camera
+{% else %}Import LUTs into Blackmagic Camera{% endif %}
+</h2>
+
+<div class="step">
+  <div class="step-num">13</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Откройте LUTs Manager{% elif lang == 'ar' %}افتح LUTs Manager{% else %}Open LUTs Manager{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Вернитесь в настройки (иконка шестерёнки в правом нижнем углу) и нажмите на раздел <strong>LUTs Manager</strong>.
+    {% elif lang == 'ar' %}ارجع إلى الإعدادات (أيقونة الترس في الزاوية السفلية اليمنى) واضغط على قسم <strong>LUTs Manager</strong>.
+    {% else %}Go back to Settings (gear icon in the bottom-right corner) and tap the <strong>LUTs Manager</strong> section.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-15-lut-manager.jpg') }}" alt="Open LUT Manager" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Иконка LUTs → LUTs Manager{% elif lang == 'ar' %}لقطة شاشة: أيقونة LUTs → LUTs Manager{% else %}Screenshot: LUTs icon → LUTs Manager{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">14</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Прокрутите вниз и нажмите Import LUT{% elif lang == 'ar' %}اسحب للأسفل واضغط Import LUT{% else %}Scroll to the bottom and tap Import LUT{% endif %}</h4>
+    <p>{% if lang == 'ru' %}В менеджере LUT-ов прокрутите список до самого низа. Нажмите кнопку <strong>Import LUT</strong>.
+    {% elif lang == 'ar' %}في مدير LUTs، اسحب القائمة للأسفل حتى النهاية. اضغط زر <strong>Import LUT</strong>.
+    {% else %}In the LUT Manager, scroll the list all the way to the bottom. Tap the <strong>Import LUT</strong> button.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-16-import-lut-btn.jpg') }}" alt="Import LUT button" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Кнопка Import LUT внизу списка{% elif lang == 'ar' %}لقطة شاشة: زر Import LUT في أسفل القائمة{% else %}Screenshot: Import LUT button at the bottom{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">15</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Перейдите в папку с LUT-ами{% elif lang == 'ar' %}انتقل إلى مجلد LUTs{% else %}Navigate to the LUTs folder{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Откроется файловый выбор iOS. Перейдите в папку, куда вы сохранили и распаковали LUT-ы (та, что скачали из Telegram-канала).
+    {% elif lang == 'ar' %}سيفتح منتقي ملفات iOS. انتقل إلى المجلد الذي حفظت وفككت فيه LUTs (ذلك الذي نزّلته من قناة تيليجرام).
+    {% else %}The iOS Files picker will open. Navigate to the folder where you saved and unzipped the LUTs (the one downloaded from the Telegram channel).{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-17-select-folder.jpg') }}" alt="Select LUTs folder" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Выбор папки с LUT-ами в Файлах{% elif lang == 'ar' %}لقطة شاشة: اختيار مجلد LUTs في الملفات{% else %}Screenshot: Selecting LUTs folder in Files{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">16</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Выберите все LUT-ы → Открыть{% elif lang == 'ar' %}اختر جميع LUTs → افتح{% else %}Select all LUTs → Open{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Внутри папки нажмите <strong>Выбрать</strong> (Select) в правом верхнем углу, затем <strong>Выбрать всё</strong> — отметятся все .cube файлы. Нажмите <strong>Открыть</strong>. Все LUT-ы импортируются в приложение.
+    {% elif lang == 'ar' %}داخل المجلد اضغط <strong>Select</strong> في الزاوية العلوية اليمنى، ثم <strong>Select All</strong> — ستُحدد جميع ملفات .cube. اضغط <strong>Open</strong>. ستُستورد جميع LUTs إلى التطبيق.
+    {% else %}Inside the folder tap <strong>Select</strong> in the top-right corner, then <strong>Select All</strong> — all .cube files will be checked. Tap <strong>Open</strong>. All LUTs will be imported into the app.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-18-select-all.jpg') }}" alt="Select all LUTs and Open" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Выбрать всё → Открыть{% elif lang == 'ar' %}لقطة شاشة: تحديد الكل → فتح{% else %}Screenshot: Select All → Open{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="tg-banner" style="margin-top: 8px;">
+  <div class="tg-icon">✅</div>
+  <div>
+    <h4>{% if lang == 'ru' %}Всё готово!{% elif lang == 'ar' %}اكتمل الإعداد!{% else %}All done!{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Все LUT-ы добавлены. Приложение готово к работе. Нажмите на любой LUT в менеджере, чтобы применить его как Monitor LUT — и можно снимать.
+    {% elif lang == 'ar' %}تمت إضافة جميع LUTs. التطبيق جاهز للعمل. اضغط على أي LUT في المدير لتطبيقه كـ Monitor LUT — ويمكنك البدء بالتصوير.
+    {% else %}All LUTs are added. The app is ready to use. Tap any LUT in the manager to apply it as a Monitor LUT — and you're ready to shoot.{% endif %}</p>
+  </div>
+</div>
+
+<div class="pro-tip">
+  <div class="pro-tip-icon">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+  </div>
+  <div>
+    <div class="pro-tip-label">Pro tip</div>
+    <div class="pro-tip-body">
+      {% if lang == 'ru' %}В LUTs Manager можно <strong>предпросмотреть любой LUT</strong> прямо через видоискатель — без выхода из приложения. Просто нажмите на название и смотрите как меняется картинка в реальном времени. Найдите тот, что подходит под ваш свет.
+      {% elif lang == 'ar' %}في LUTs Manager يمكنك <strong>معاينة أي LUT</strong> مباشرة من خلال العدسة — دون مغادرة التطبيق. فقط اضغط على الاسم وشاهد تغيّر الصورة في الوقت الحقيقي. اختر ما يناسب إضاءتك.
+      {% else %}In the LUTs Manager you can <strong>preview any LUT</strong> directly through the viewfinder — without leaving the app. Just tap a name and watch the image change in real time. Find the one that suits your lighting.{% endif %}
+    </div>
+  </div>
+</div>
+
+<h2 id="luts-use">🎬
+{% if lang == 'ru' %}Применение LUT во время съёмки
+{% elif lang == 'ar' %}تطبيق LUT أثناء التصوير
+{% else %}Applying a LUT while shooting{% endif %}
+</h2>
+
+<div class="step">
+  <div class="step-num">1</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Выберите LUT в менеджере{% elif lang == 'ar' %}اختر LUT من المدير{% else %}Select a LUT in the manager{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Нажмите на нужный LUT из списка. Справа нажмите кнопку <strong>ON</strong> — её фон станет синим, LUT активирован на экране. Слева напротив кнопки ON нажмите иконку запуска видео — её фон тоже должен стать синим, это означает что видео будет сохраняться уже с применённым LUT-ом. Обе кнопки должны подсвечиваться синим.
+    {% elif lang == 'ar' %}اضغط على الـ LUT المطلوب من القائمة. على اليمين اضغط زر <strong>ON</strong> — سيتحوّل لونه إلى الأزرق وسيُفعَّل الـ LUT على الشاشة. على اليسار بجوار زر ON اضغط أيقونة تشغيل الفيديو — يجب أن تتحوّل هي الأخرى إلى اللون الأزرق، وهذا يعني أن الفيديو سيُحفظ مع الـ LUT مطبقاً عليه. يجب أن يتحوّل لون الزرَّين إلى الأزرق.
+    {% else %}Tap the LUT you want from the list. On the right, tap the <strong>ON</strong> button — its background turns blue, the LUT is now active on screen. On the left next to the ON button, tap the video record icon — its background should also turn blue, meaning the video will be saved with the LUT applied. Both buttons must have a blue background.{% endif %}</p>
+    <figure class="step-screenshot">
+      <img src="{{ url_for('static', filename='screenshots/guide/guide-19-apply-lut.jpg') }}" alt="Apply Monitor LUT" class="screenshot-img" loading="lazy" decoding="async" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <figcaption class="screenshot-placeholder" style="display:none;">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="12" cy="12" r="4"/><line x1="12" y1="3" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="21"/></svg>
+        {% if lang == 'ru' %}Скриншот: Apply as Monitor LUT{% elif lang == 'ar' %}لقطة شاشة: Apply as Monitor LUT{% else %}Screenshot: Apply as Monitor LUT{% endif %}
+      </figcaption>
+    </figure>
+  </div>
+</div>
+
+<div class="step">
+  <div class="step-num">2</div>
+  <div class="step-body">
+    <h4>{% if lang == 'ru' %}Save Clips to → In-App and Photo Library{% elif lang == 'ar' %}Save Clips to → In-App and Photo Library{% else %}Save Clips to → In-App and Photo Library{% endif %}</h4>
+    <p>{% if lang == 'ru' %}Вернитесь в настройки (иконка шестерёнки в правом нижнем углу). Найдите раздел Save Clips to и выберите <span class="val">In-App and Photo Library</span>. Теперь все видео будут автоматически сохраняться в галерею телефона.
+    {% elif lang == 'ar' %}ارجع إلى الإعدادات (أيقونة الترس في الزاوية السفلية اليمنى). ابحث عن قسم Save Clips to واختر <span class="val">In-App and Photo Library</span>. الآن ستُحفظ جميع مقاطع الفيديو تلقائياً في معرض الصور بالهاتف.
+    {% else %}Go back to Settings (gear icon in the bottom-right corner). Find the Save Clips to section and select <span class="val">In-App and Photo Library</span>. All videos will now be automatically saved to your phone's photo library.{% endif %}</p>
+  </div>
+</div>

@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="{{ lang }}"{% if lang == 'ar' %} dir="rtl"{% endif %}>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <script>
+    // Telegram in-app browser detection — set early so CSS can react before paint.
+    (function () {
+      var ua = navigator.userAgent || '';
+      if (/Telegram/i.test(ua) || window.TelegramWebviewProxy) {
+        document.documentElement.setAttribute('data-tg', '1');
+      }
+    })();
+  </script>
+  <link rel="preconnect" href="https://pub-8fb494845cea47208e5a569a242eab94.r2.dev" crossorigin />
+  <link rel="dns-prefetch" href="https://pub-8fb494845cea47208e5a569a242eab94.r2.dev" />
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+  <title>{% block title %}Blackmagic Camera Settings{% endblock %}</title>
+  <meta name="description" content="{% block description %}Perfect Blackmagic Camera app settings for your iPhone — device-specific guide with screenshots and free LUTs.{% endblock %}" />
+  <meta name="theme-color" content="#0a0a0a" />
+  <link rel="icon" type="image/svg+xml" href="{{ url_for('static', filename='favicon.svg') }}" />
+  <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32.png') }}" />
+  <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16.png') }}" />
+  <link rel="shortcut icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+  <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}" />
+  <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}" />
+  <meta name="apple-mobile-web-app-title" content="BlackmagicCam" />
+  <meta name="application-name" content="BlackmagicCam" />
+  <meta property="og:title" content="{% block og_title %}Blackmagic Camera Settings{% endblock %}" />
+  <meta property="og:description" content="{% block og_description %}Perfect camera settings for your iPhone. One-time $4.99.{% endblock %}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="{{ request.url }}" />
+  <meta property="og:image" content="{{ request.host_url }}static/img/og-image.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="{{ request.host_url }}static/img/og-image.jpg" />
+  {% set host = request.host_url.rstrip('/') %}
+  {% if is_seo_localized %}
+  <link rel="canonical" href="{{ host }}{{ lang_alternates[lang] }}" />
+  {% for alt_lang, alt_path in lang_alternates.items() %}
+  <link rel="alternate" hreflang="{{ alt_lang }}" href="{{ host }}{{ alt_path }}" />
+  {% endfor %}
+  <link rel="alternate" hreflang="x-default" href="{{ host }}{{ lang_alternates['en'] }}" />
+  {% else %}
+  <meta name="robots" content="noindex, nofollow" />
+  {% endif %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  {% if lang == 'ar' %}
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/rtl.css') }}" />
+  {% endif %}
+  <script src="{{ url_for('static', filename='js/clipboard.js') }}" defer></script>
+  {% block head %}{% endblock %}
+  <script>
+    // Pre-cover the page if we just navigated from a language switch,
+    // so the outro animation reveals the new content (not a flash of unstyled load).
+    (function () {
+      try {
+        var raw = sessionStorage.getItem('bmc_lt');
+        if (!raw) return;
+        var data = JSON.parse(raw);
+        if (data && data.target && data.target === '{{ lang }}') {
+          document.documentElement.classList.add('lt-out');
+          document.documentElement.dataset.ltCode = data.code || '{{ lang | upper }}';
+          document.documentElement.dataset.ltSub = data.sub || '';
+        }
+        sessionStorage.removeItem('bmc_lt');
+      } catch (e) {}
+    })();
+  </script>
+  <script>
+    window.BMC_I18N = {
+      restore_bar_text: {{ t.restore_bar_text | tojson }},
+      restore_bar_link: {{ t.restore_bar_link | tojson }},
+      content_copy: {{ t.content_copy | tojson }},
+      content_copied: {{ t.content_copied | tojson }},
+      select_selected: {{ t.select_selected | tojson }},
+      select_buy_device: {{ t.select_buy_device | tojson }}
+    };
+  </script>
+</head>
+<body>
+
+  <div id="lang-transition" aria-hidden="true">
+    <div class="lt-panel lt-panel-1"></div>
+    <div class="lt-panel lt-panel-2"></div>
+    <div class="lt-panel lt-panel-3"></div>
+    <div class="lt-label">
+      <span class="lt-label-code" data-lt-code>EN</span>
+      <span class="lt-label-sub" data-lt-sub>SWITCHING LANGUAGE</span>
+    </div>
+  </div>
+
+  <nav>
+    <div class="nav-inner">
+      <a href="{{ lang_link('/') }}" class="nav-logo">Blackmagic<span>Cam</span></a>
+      <div style="display:flex; align-items:center; gap:12px;">
+        <div class="lang-switcher" style="display:flex; gap:6px; align-items:center;">
+          <a href="{{ lang_alternates['en'] }}" class="lang-btn{% if lang == 'en' %} lang-active{% endif %}" title="English" hreflang="en">EN</a>
+          <a href="{{ lang_alternates['ru'] }}" class="lang-btn{% if lang == 'ru' %} lang-active{% endif %}" title="Русский" hreflang="ru">RU</a>
+          <a href="{{ lang_alternates['ar'] }}" class="lang-btn{% if lang == 'ar' %} lang-active{% endif %}" title="العربية" hreflang="ar">AR</a>
+        </div>
+        <a href="{{ lang_link('/select') }}" class="nav-cta">
+          <span class="nav-cta-full">{{ t.nav_cta }}</span>
+          <span class="nav-cta-short">$4.99</span>
+        </a>
+      </div>
+    </div>
+  </nav>
+
+  {% block content %}{% endblock %}
+
+  <footer class="site-footer">
+    <div class="footer-glow" aria-hidden="true"></div>
+    <div class="container">
+
+      <div class="footer-main">
+
+        <div class="footer-brand">
+          <a href="{{ lang_link('/') }}" class="footer-logo">Blackmagic<span>Cam</span></a>
+          <p class="footer-tagline">
+            {% if lang == 'ru' %}Идеальные настройки для каждого iPhone{% elif lang == 'ar' %}الإعدادات المثالية لكل iPhone{% else %}Perfect settings for every iPhone{% endif %}
+          </p>
+          <a href="{{ lang_link('/select') }}" class="btn btn-primary footer-cta">
+            {{ t.footer_get_settings }} — $4.99
+          </a>
+        </div>
+
+        <div class="footer-links">
+          <div class="footer-col">
+            <h4>{% if lang == 'ru' %}Продукт{% elif lang == 'ar' %}المنتج{% else %}Product{% endif %}</h4>
+            <ul>
+              <li><a href="{{ lang_link('/select') }}">{% if lang == 'ru' %}Выбрать iPhone{% elif lang == 'ar' %}اختر iPhone{% else %}Choose iPhone{% endif %}</a></li>
+              <li><a href="{{ lang_link('/') }}#what-you-get">{% if lang == 'ru' %}Что внутри{% elif lang == 'ar' %}ما بالداخل{% else %}What's included{% endif %}</a></li>
+              <li><a href="{{ lang_link('/') }}#pricing">{% if lang == 'ru' %}Цена{% elif lang == 'ar' %}السعر{% else %}Pricing{% endif %}</a></li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>{% if lang == 'ru' %}Сообщество{% elif lang == 'ar' %}المجتمع{% else %}Community{% endif %}</h4>
+            <ul>
+              <li>
+                <a href="https://t.me/blackmagicamera" target="_blank" rel="noopener">
+                  <span class="footer-bmc-icon" aria-hidden="true">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M23 7l-7 5 7 5V7z"/>
+                      <rect x="1" y="5" width="15" height="14" rx="2"/>
+                    </svg>
+                  </span>
+                  {{ t.footer_telegram }}
+                </a>
+              </li>
+              <li>
+                <a href="https://t.me/blackmagicamera/92" target="_blank" rel="noopener">
+                  {% if lang == 'ru' %}Скачать LUT-пресеты{% elif lang == 'ar' %}تحميل LUT{% else %}Download LUT presets{% endif %}
+                </a>
+              </li>
+            </ul>
+          </div>
+          <div class="footer-col">
+            <h4>{% if lang == 'ru' %}Реклама{% elif lang == 'ar' %}إعلانات{% else %}Advertising{% endif %}</h4>
+            <ul>
+              <li>
+                <a href="https://t.me/astapenko777" target="_blank" rel="noopener" class="footer-ads-link">
+                  <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.562 8.161-2.024 9.538c-.145.658-.537.818-1.084.508l-3-2.21-1.447 1.394c-.16.16-.295.295-.605.295l.213-3.053 5.56-5.023c.242-.213-.054-.333-.373-.12L7.48 14.67l-2.95-.924c-.64-.203-.653-.64.136-.948l11.5-4.435c.535-.194 1.003.13.396.798z"/></svg>
+                  @astapenko777
+                </a>
+              </li>
+              <li class="footer-ads-hint">
+                {% if lang == 'ru' %}По вопросам рекламы — пишите в личку{% elif lang == 'ar' %}للإعلانات — راسلني على الخاص{% else %}For ad inquiries — DM me{% endif %}
+              </li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="footer-bottom">
+        <span>© 2026 BlackmagicCam</span>
+        <span class="footer-badge">
+          <span class="footer-badge-dot" aria-hidden="true"></span>
+          {% if lang == 'ru' %}30+ устройств поддерживается{% elif lang == 'ar' %}30+ جهاز مدعوم{% else %}30+ devices supported{% endif %}
+        </span>
+      </div>
+
+    </div>
+  </footer>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  {% block scripts %}{% endblock %}
+  <script>
+  (function () {
+    var sel = '[data-reveal], [data-stagger], .steps-list';
+    function revealAll() {
+      document.querySelectorAll(sel).forEach(function (el) {
+        el.classList.add('is-visible');
+      });
+    }
+    if (!('IntersectionObserver' in window)) { revealAll(); return; }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add('is-visible');
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    document.querySelectorAll(sel).forEach(function (el) { io.observe(el); });
+  })();
+  </script>
+</body>
+</html>

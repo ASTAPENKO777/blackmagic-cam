@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 210">
+  <defs>
+    <linearGradient id="gg-frame" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#383838"/>
+      <stop offset="50%" stop-color="#222222"/>
+      <stop offset="100%" stop-color="#141414"/>
+    </linearGradient>
+    <linearGradient id="gg-screen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0a0a0a"/>
+      <stop offset="100%" stop-color="#060606"/>
+    </linearGradient>
+    <linearGradient id="gg-highlight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.2)"/>
+      <stop offset="15%" stop-color="rgba(255,255,255,0.07)"/>
+      <stop offset="85%" stop-color="rgba(255,255,255,0.05)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.18)"/>
+    </linearGradient>
+    <filter id="gg-shadow">
+      <feDropShadow dx="0" dy="5" stdDeviation="7" flood-color="rgba(0,0,0,0.7)"/>
+    </filter>
+  </defs>
+  <rect x="5" y="8" width="90" height="200" rx="18" fill="rgba(0,0,0,0.45)" filter="url(#gg-shadow)"/>
+  <!-- Black Titanium -->
+  <rect x="1" y="1" width="98" height="208" rx="18" fill="url(#gg-frame)"/>
+  <rect x="1" y="1" width="98" height="208" rx="18" fill="url(#gg-highlight)"/>
+  <line x1="18" y1="1" x2="82" y2="1" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
+  <rect x="5" y="14" width="90" height="180" rx="14" fill="#040404"/>
+  <rect x="6" y="15" width="88" height="178" rx="13" fill="url(#gg-screen)"/>
+  <!-- Grid -->
+  <line x1="6" y1="74" x2="94" y2="74" stroke="rgba(255,255,255,0.05)" stroke-width="0.6"/>
+  <line x1="6" y1="134" x2="94" y2="134" stroke="rgba(255,255,255,0.05)" stroke-width="0.6"/>
+  <line x1="35" y1="15" x2="35" y2="193" stroke="rgba(255,255,255,0.05)" stroke-width="0.6"/>
+  <line x1="65" y1="15" x2="65" y2="193" stroke="rgba(255,255,255,0.05)" stroke-width="0.6"/>
+  <!-- Focus ring gold - strong contrast on black -->
+  <circle cx="50" cy="104" r="15" fill="none" stroke="rgba(245,197,24,0.65)" stroke-width="1.4"/>
+  <line x1="35" y1="104" x2="38.5" y2="104" stroke="rgba(245,197,24,0.9)" stroke-width="1.4"/>
+  <line x1="61.5" y1="104" x2="65" y2="104" stroke="rgba(245,197,24,0.9)" stroke-width="1.4"/>
+  <line x1="50" y1="89" x2="50" y2="92.5" stroke="rgba(245,197,24,0.9)" stroke-width="1.4"/>
+  <line x1="50" y1="115.5" x2="50" y2="119" stroke="rgba(245,197,24,0.9)" stroke-width="1.4"/>
+  <!-- REC -->
+  <circle cx="82" cy="28" r="3.5" fill="#e05252"/>
+  <circle cx="82" cy="28" r="5.5" fill="none" stroke="rgba(224,82,82,0.3)" stroke-width="0.8"/>
+  <!-- Labels -->
+  <text x="12" y="28" font-family="monospace" font-size="5.5" fill="rgba(245,197,24,0.75)" letter-spacing="0.3">ISO</text>
+  <text x="12" y="36" font-family="monospace" font-size="6.5" fill="rgba(255,255,255,0.6)" letter-spacing="0.5">100</text>
+  <text x="12" y="186" font-family="monospace" font-size="5" fill="rgba(255,255,255,0.35)">180°</text>
+  <text x="62" y="186" font-family="monospace" font-size="5" fill="rgba(255,255,255,0.35)">24fps</text>
+  <!-- Dynamic Island -->
+  <rect x="34" y="16" width="32" height="10" rx="5" fill="#040404"/>
+  <!-- Volume left -->
+  <rect x="-1" y="48" width="2.5" height="10" rx="1" fill="#2a2a2a"/>
+  <rect x="-1" y="64" width="2.5" height="22" rx="1" fill="#2a2a2a"/>
+  <rect x="-1" y="90" width="2.5" height="22" rx="1" fill="#2a2a2a"/>
+  <!-- Power + Camera Control right — longer button for Camera Control -->
+  <rect x="98.5" y="60" width="2.5" height="26" rx="1" fill="#2a2a2a"/>
+  <!-- Camera Control button (distinctive elongated button on right, lower) -->
+  <rect x="98.5" y="96" width="2.5" height="36" rx="1.2" fill="#3a3a3a"/>
+  <rect x="98.5" y="97" width="2.5" height="34" rx="1.1" fill="rgba(245,197,24,0.15)"/>
+  <!-- USB-C -->
+  <rect x="40" y="200" width="20" height="3" rx="1.5" fill="rgba(255,255,255,0.09)"/>
+  <text x="50" y="182" font-family="monospace" font-size="4.5" fill="rgba(255,255,255,0.2)" text-anchor="middle">iPhone 16 Pro</text>
+</svg>

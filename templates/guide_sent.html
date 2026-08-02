@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ t.guide_sent_title }}{% endblock %}
+{% block content %}
+
+<section style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:2rem;">
+  <div style="max-width:480px;width:100%;text-align:center;">
+    <div style="font-size:3rem;margin-bottom:1rem;">✓</div>
+    <h2 style="margin-bottom:0.5rem;">{{ t.guide_sent_h2 }}</h2>
+    <p style="color:var(--muted);margin-bottom:2rem;">
+      {{ t.guide_sent_desc_pre }} <strong>{{ email }}</strong> {{ t.guide_sent_desc_post }}<br>
+      {{ t.guide_sent_spam }}
+    </p>
+    <a href="{{ lang_link('/') }}" style="color:var(--accent);text-decoration:none;">{{ t.guide_sent_back }}</a>
+  </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}{{ t.crypto_pay_heading }} — Blackmagic Camera Settings{% endblock %}
+{% block content %}
+
+<section style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:2rem 1rem;">
+  <div style="max-width:520px;width:100%;text-align:center;">
+
+    <h2 style="margin-bottom:0.5rem;">{{ t.crypto_pay_heading }}</h2>
+    <p style="color:var(--muted);margin-bottom:1.5rem;">
+      {{ t.crypto_pay_instruction.replace('{device}', device.name).replace('{email}', email) }}
+    </p>
+
+    <div class="crypto-card">
+      <div class="crypto-label">{{ t.crypto_pay_amount_label }}</div>
+      <div class="crypto-amount">
+        <span class="amount-num">{{ "%.2f"|format(amount) }}</span>
+        <span class="crypto-unit">{{ coin }}</span>
+      </div>
+      <button type="button" class="btn-copy js-copy" data-copy="{{ "%.2f"|format(amount) }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="13" height="13" rx="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        <span class="btn-copy-label" data-label="{{ t.copy_btn }}" data-label-copied="{{ t.content_copied }}"></span>
+      </button>
+    </div>
+
+    <div class="crypto-card">
+      <div class="crypto-label">{{ t.crypto_pay_address_label_generic.replace('{network}', network_label) }}</div>
+      <div class="crypto-addr" id="addr-val" style="user-select:all;-webkit-user-select:all;">{{ address }}</div>
+      <div class="crypto-qr" id="qr"></div>
+      <button type="button" class="btn-copy js-copy" data-copy="{{ address }}">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="9" y="9" width="13" height="13" rx="2"/>
+          <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>
+        </svg>
+        <span class="btn-copy-label" data-label="{{ t.copy_btn }}" data-label-copied="{{ t.content_copied }}"></span>
+      </button>
+    </div>
+
+    <div class="tg-hint" hidden style="background:#0d1a2a;border:1px solid #2a4d7a;border-radius:8px;padding:0.7rem 0.85rem;color:#9bbbdc;font-size:0.85rem;margin:0.5rem 0;text-align:left;">
+      ℹ️ {{ t.tg_copy_hint }}
+    </div>
+
+    <div style="background:#3a1a0d;border:1px solid #ff3c00;border-radius:8px;padding:0.85rem;color:#ff9980;font-size:0.9rem;margin:0.75rem 0;text-align:left;">
+      ⚠️ {{ t.crypto_pay_warning_generic.replace('{coin}', coin).replace('{network}', network_label) }}
+    </div>
+
+    <div style="background:#0d1f1a;border:1px solid #2a4a3a;border-radius:8px;padding:0.85rem;color:#9bdcbf;font-size:0.9rem;margin:0.75rem 0;text-align:left;">
+      ✓ {{ t.crypto_pay_after_label.replace('{email}', email) }}
+    </div>
+
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+<script>
+  (function() {
+    var address = {{ address|tojson }};
+    if (window.QRCode && address.length > 0) {
+      QRCode.toCanvas(document.getElementById('qr'), address, { width: 170, margin: 1 });
+    }
+    document.querySelectorAll('.js-copy').forEach(function(btn) {
+      btn.addEventListener('click', function() {
+        var text = btn.getAttribute('data-copy') || '';
+        (window.bmcCopy ? window.bmcCopy(text) : Promise.resolve(false)).then(function(ok) {
+          if (!ok) return;
+          btn.classList.add('copied');
+          setTimeout(function() { btn.classList.remove('copied'); }, 1200);
+        });
+      });
+    });
+
+    // Show the Telegram-only copy hint when the in-app browser is detected.
+    if (document.documentElement.getAttribute('data-tg') === '1') {
+      document.querySelectorAll('.tg-hint').forEach(function(el) { el.hidden = false; });
+    }
+  })();
+</script>
+
+{% endblock %}

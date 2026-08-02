@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /access/
+Disallow: /checkout
+Disallow: /kofi/
+Disallow: /debug/
+
+Sitemap: https://blackmagiccam.com/sitemap.xml

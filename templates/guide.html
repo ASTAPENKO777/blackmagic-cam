@@ -1,0 +1,352 @@
+{% extends "base.html" %}
+
+{% block title %}Blackmagic Camera Settings for {{ device.name }} ({{ device.chip }}) — Full Guide{% endblock %}
+{% block description %}Optimal Blackmagic Camera app settings for {{ device.name }} with {{ device.chip }} chip. Step-by-step guide covering ISO, codec, ProRes, frame rate, white balance, and free cinematic LUTs. One-time $4.99.{% endblock %}
+{% block og_title %}Blackmagic Camera Settings for {{ device.name }} — Device-Specific Guide{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Product",
+  "name": "Blackmagic Camera Settings Guide for {{ device.name }}",
+  "description": "Device-specific Blackmagic Camera app settings for {{ device.name }} ({{ device.chip }}). Includes ISO range, codec selection, ProRes configuration, frame rate, white balance, shutter angle, and free cinematic LUTs.",
+  "offers": {
+    "@type": "Offer",
+    "price": "4.99",
+    "priceCurrency": "USD",
+    "availability": "https://schema.org/InStock",
+    "url": "{{ request.url }}"
+  }
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position": 1,
+      "name": "Home",
+      "item": "{{ request.host_url }}"
+    },
+    {
+      "@type": "ListItem",
+      "position": 2,
+      "name": "Choose your iPhone",
+      "item": "{{ request.host_url }}select"
+    },
+    {
+      "@type": "ListItem",
+      "position": 3,
+      "name": "{{ device.name }} Guide",
+      "item": "{{ request.url }}"
+    }
+  ]
+}
+</script>
+<style>
+  .guide-hero {
+    padding: 100px 0 60px;
+    background: linear-gradient(180deg, #111 0%, #0a0a0a 100%);
+    border-bottom: 1px solid var(--border);
+  }
+  .guide-hero-inner {
+    display: flex;
+    align-items: center;
+    gap: 40px;
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 0 24px;
+  }
+  .guide-hero-text { flex: 1; }
+  .guide-chip-badge {
+    display: inline-block;
+    background: rgba(245,197,24,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(245,197,24,0.25);
+    border-radius: 20px;
+    padding: 4px 14px;
+    font-size: 0.78rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+    font-family: ui-monospace, 'SF Mono', monospace;
+  }
+  .guide-hero h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 700;
+    line-height: 1.25;
+    margin: 0 0 16px;
+    color: var(--fg);
+  }
+  .guide-hero h1 em { color: var(--accent); font-style: normal; }
+  .guide-hero-desc {
+    font-size: 1rem;
+    color: var(--muted);
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+  .guide-hero-phone {
+    width: 120px;
+    flex-shrink: 0;
+    opacity: 0.9;
+  }
+  .guide-hero-phone img { width: 100%; border-radius: 16px; }
+
+  .guide-preview {
+    padding: 60px 0;
+    background: #0a0a0a;
+  }
+  .guide-preview .container { max-width: 860px; }
+  .guide-section-label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .guide-preview h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 32px;
+    color: var(--fg);
+  }
+  .settings-preview-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 48px;
+  }
+  .settings-preview-card {
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .settings-preview-card .sp-label {
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+    margin-bottom: 6px;
+  }
+  .settings-preview-card .sp-val {
+    font-size: 1.1rem;
+    font-weight: 700;
+    color: var(--fg);
+    font-family: ui-monospace, 'SF Mono', monospace;
+  }
+  .settings-preview-card .sp-val.locked {
+    color: var(--muted);
+    filter: blur(5px);
+    user-select: none;
+  }
+  .guide-cta-box {
+    background: linear-gradient(135deg, rgba(245,197,24,0.08), rgba(245,197,24,0.03));
+    border: 1px solid rgba(245,197,24,0.2);
+    border-radius: 16px;
+    padding: 36px 32px;
+    text-align: center;
+  }
+  .guide-cta-box h3 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--fg);
+    margin-bottom: 10px;
+  }
+  .guide-cta-box p {
+    color: var(--muted);
+    margin-bottom: 24px;
+    font-size: 0.95rem;
+  }
+  .guide-cta-box .btn { min-width: 220px; justify-content: center; }
+  .guide-cta-price {
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin-top: 12px;
+  }
+
+  .guide-includes {
+    padding: 60px 0;
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+  .guide-includes .container { max-width: 860px; }
+  .guide-includes h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 28px;
+    color: var(--fg);
+  }
+  .includes-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  .includes-list li {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    font-size: 0.95rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+  .includes-list .ic {
+    color: var(--accent);
+    font-size: 1rem;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .includes-list strong { color: var(--fg); }
+
+  .guide-faq {
+    padding: 60px 0 80px;
+    background: #0a0a0a;
+  }
+  .guide-faq .container { max-width: 720px; }
+  .guide-faq h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 28px;
+    color: var(--fg);
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border);
+    padding: 18px 0;
+  }
+  .faq-item:first-of-type { border-top: 1px solid var(--border); }
+  .faq-q {
+    font-weight: 600;
+    color: var(--fg);
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+  }
+  .faq-a {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.6;
+  }
+
+  @media (max-width: 600px) {
+    .guide-hero-inner { flex-direction: column; }
+    .guide-hero-phone { display: none; }
+    .includes-list { grid-template-columns: 1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<section class="guide-hero">
+  <div class="guide-hero-inner">
+    <div class="guide-hero-text">
+      <div class="guide-chip-badge">{{ device.chip }} Bionic</div>
+      <h1>Blackmagic Camera Settings<br>for <em>{{ device.name }}</em></h1>
+      <p class="guide-hero-desc">
+        Device-specific settings calibrated for the {{ device.chip }} chip. Covers ISO range, codec (ProRes/BRAW), resolution, frame rate, white balance, shutter angle — plus free cinematic LUTs.
+      </p>
+      <a href="{{ lang_link('/select') }}" class="btn btn-primary">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Get Full Guide — $4.99
+      </a>
+    </div>
+    <div class="guide-hero-phone">
+      <img src="{{ device.image }}" alt="{{ device.name }}" width="120" height="200" loading="lazy" />
+    </div>
+  </div>
+</section>
+
+<section class="guide-preview">
+  <div class="container">
+    <div class="guide-section-label">Settings Preview</div>
+    <h2>What's inside the {{ device.name }} guide</h2>
+
+    <div class="settings-preview-grid">
+      <div class="settings-preview-card">
+        <div class="sp-label">Resolution</div>
+        <div class="sp-val">4K UHD</div>
+      </div>
+      <div class="settings-preview-card">
+        <div class="sp-label">Frame Rate</div>
+        <div class="sp-val locked">24 / 30fps</div>
+      </div>
+      <div class="settings-preview-card">
+        <div class="sp-label">ISO Range</div>
+        <div class="sp-val locked">400–6400</div>
+      </div>
+      <div class="settings-preview-card">
+        <div class="sp-label">Codec</div>
+        <div class="sp-val locked">
+          {% if device.group in ['f','g','h'] %}ProRes / BRAW{% else %}H.265{% endif %}
+        </div>
+      </div>
+      <div class="settings-preview-card">
+        <div class="sp-label">Shutter Angle</div>
+        <div class="sp-val locked">180°</div>
+      </div>
+      <div class="settings-preview-card">
+        <div class="sp-label">White Balance</div>
+        <div class="sp-val locked">Manual</div>
+      </div>
+    </div>
+
+    <div class="guide-cta-box">
+      <h3>Get the full {{ device.name }} guide</h3>
+      <p>Step-by-step screenshots inside the Blackmagic Camera app + free cinematic LUT pack from Telegram.</p>
+      <a href="{{ lang_link('/select') }}" class="btn btn-primary">Get Settings — $4.99</a>
+      <p class="guide-cta-price">One-time payment · Permanent access link sent to email</p>
+    </div>
+  </div>
+</section>
+
+<section class="guide-includes">
+  <div class="container">
+    <h2>Everything included for {{ device.name }}</h2>
+    <ul class="includes-list">
+      <li><span class="ic">✓</span> <span><strong>Optimal ISO range</strong> for the {{ device.chip }} sensor</span></li>
+      <li><span class="ic">✓</span> <span><strong>Codec selection</strong> — {% if device.group in ['f','g','h'] %}ProRes, BRAW, H.265{% else %}H.265, BRAW{% endif %} explained</span></li>
+      <li><span class="ic">✓</span> <span><strong>Resolution &amp; frame rate</strong> combinations that work</span></li>
+      <li><span class="ic">✓</span> <span><strong>Shutter angle</strong> for cinematic motion blur</span></li>
+      <li><span class="ic">✓</span> <span><strong>White balance &amp; tint</strong> — manual lock values</span></li>
+      <li><span class="ic">✓</span> <span><strong>App screenshots</strong> showing every setting location</span></li>
+      <li><span class="ic">✓</span> <span><strong>Free LUT pack</strong> — get it from Telegram, apply in-app</span></li>
+      <li><span class="ic">✓</span> <span><strong>Permanent access</strong> — link never expires</span></li>
+    </ul>
+  </div>
+</section>
+
+<section class="guide-faq">
+  <div class="container">
+    <h2>Frequently asked questions</h2>
+
+    <div class="faq-item">
+      <div class="faq-q">What is the Blackmagic Camera app?</div>
+      <div class="faq-a">Blackmagic Camera is a free professional camera app for iPhone made by Blackmagic Design — the same company behind DaVinci Resolve. It gives you manual control over ISO, shutter, white balance, codec, and supports ProRes and BRAW recording on supported models.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Why does the {{ device.name }} need specific settings?</div>
+      <div class="faq-a">The {{ device.name }} uses the {{ device.chip }} chip which has a unique camera system, sensor size, and ISP. Settings optimized for a different iPhone model will underperform on yours — things like ISO range, noise floor, and codec availability differ between chips.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Does this guide work with ProRes?</div>
+      <div class="faq-a">{% if device.group in ['f','g','h'] %}Yes — the {{ device.name }} supports ProRes recording. The guide includes specific codec and bitrate settings for ProRes, BRAW, and H.265.{% else %}The {{ device.name }} ({{ device.chip }}) supports H.265 and BRAW in Blackmagic Camera. The guide covers optimal settings for these formats.{% endif %}</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">What are cinematic LUTs?</div>
+      <div class="faq-a">LUTs (Look-Up Tables) are color grading presets that transform flat or log footage into a finished cinematic look. The guide includes access to a free LUT pack from our Telegram channel and shows how to apply them directly inside Blackmagic Camera as a monitor LUT while shooting.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-q">Is this a one-time purchase?</div>
+      <div class="faq-a">Yes. You pay $4.99 once and receive a permanent access link by email. No subscription, no account required. The link works on any device, any browser, forever.</div>
+    </div>
+  </div>
+</section>
+
+{% endblock %}

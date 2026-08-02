@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 210">
+  <defs>
+    <linearGradient id="ga-frame" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#5a5a5c"/>
+      <stop offset="50%" stop-color="#3a3a3c"/>
+      <stop offset="100%" stop-color="#1c1c1e"/>
+    </linearGradient>
+    <linearGradient id="ga-screen" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#0d1520"/>
+      <stop offset="100%" stop-color="#060a0f"/>
+    </linearGradient>
+    <linearGradient id="ga-highlight" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="rgba(255,255,255,0.18)"/>
+      <stop offset="20%" stop-color="rgba(255,255,255,0.06)"/>
+      <stop offset="80%" stop-color="rgba(255,255,255,0.04)"/>
+      <stop offset="100%" stop-color="rgba(255,255,255,0.16)"/>
+    </linearGradient>
+    <filter id="ga-shadow">
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="rgba(0,0,0,0.6)"/>
+    </filter>
+  </defs>
+  <!-- Shadow -->
+  <rect x="5" y="8" width="90" height="200" rx="22" fill="rgba(0,0,0,0.35)" filter="url(#ga-shadow)"/>
+  <!-- Body -->
+  <rect x="1" y="1" width="98" height="208" rx="22" fill="url(#ga-frame)"/>
+  <!-- Highlight edge -->
+  <rect x="1" y="1" width="98" height="208" rx="22" fill="url(#ga-highlight)"/>
+  <!-- Screen recess -->
+  <rect x="5" y="14" width="90" height="180" rx="16" fill="#040608"/>
+  <!-- Screen -->
+  <rect x="6" y="15" width="88" height="178" rx="15" fill="url(#ga-screen)"/>
+  <!-- Cinematic grid -->
+  <line x1="6" y1="74" x2="94" y2="74" stroke="rgba(255,255,255,0.04)" stroke-width="0.6"/>
+  <line x1="6" y1="134" x2="94" y2="134" stroke="rgba(255,255,255,0.04)" stroke-width="0.6"/>
+  <line x1="35" y1="15" x2="35" y2="193" stroke="rgba(255,255,255,0.04)" stroke-width="0.6"/>
+  <line x1="65" y1="15" x2="65" y2="193" stroke="rgba(255,255,255,0.04)" stroke-width="0.6"/>
+  <!-- Focus ring -->
+  <circle cx="50" cy="104" r="15" fill="none" stroke="rgba(245,197,24,0.55)" stroke-width="1.2"/>
+  <line x1="35" y1="104" x2="38.5" y2="104" stroke="rgba(245,197,24,0.8)" stroke-width="1.2"/>
+  <line x1="61.5" y1="104" x2="65" y2="104" stroke="rgba(245,197,24,0.8)" stroke-width="1.2"/>
+  <line x1="50" y1="89" x2="50" y2="92.5" stroke="rgba(245,197,24,0.8)" stroke-width="1.2"/>
+  <line x1="50" y1="115.5" x2="50" y2="119" stroke="rgba(245,197,24,0.8)" stroke-width="1.2"/>
+  <!-- REC indicator -->
+  <circle cx="82" cy="28" r="3.5" fill="#e05252"/>
+  <circle cx="82" cy="28" r="5.5" fill="none" stroke="rgba(224,82,82,0.3)" stroke-width="0.8"/>
+  <!-- ISO label -->
+  <text x="12" y="28" font-family="monospace" font-size="5.5" fill="rgba(245,197,24,0.65)" letter-spacing="0.3">ISO</text>
+  <text x="12" y="36" font-family="monospace" font-size="6.5" fill="rgba(255,255,255,0.55)" letter-spacing="0.5">100</text>
+  <!-- Bottom indicators -->
+  <text x="12" y="186" font-family="monospace" font-size="5" fill="rgba(255,255,255,0.3)">180°</text>
+  <text x="62" y="186" font-family="monospace" font-size="5" fill="rgba(255,255,255,0.3)">24fps</text>
+  <!-- Notch -->
+  <rect x="28" y="14" width="44" height="14" rx="7" fill="#1c1c1e"/>
+  <!-- Volume buttons left -->
+  <rect x="-1" y="48" width="2.5" height="10" rx="1.2" fill="#4a4a4c"/>
+  <rect x="-1" y="64" width="2.5" height="22" rx="1.2" fill="#4a4a4c"/>
+  <rect x="-1" y="90" width="2.5" height="22" rx="1.2" fill="#4a4a4c"/>
+  <!-- Power button right -->
+  <rect x="98.5" y="72" width="2.5" height="26" rx="1.2" fill="#4a4a4c"/>
+  <!-- Speaker bottom -->
+  <rect x="36" y="200" width="28" height="3" rx="1.5" fill="rgba(255,255,255,0.08)"/>
+  <!-- Brand label on screen -->
+  <text x="50" y="182" font-family="monospace" font-size="4.5" fill="rgba(255,255,255,0.18)" text-anchor="middle">iPhone XS</text>
+</svg>
