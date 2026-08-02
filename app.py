@@ -405,6 +405,13 @@ def checkout_card():
     if not device or not _is_valid_email(email):
         abort(400, "Invalid device or email")
 
+    if not PAYHIP_PRODUCT_URL:
+        # The handoff template does <meta http-equiv="refresh" url="{{ payhip_url }}">.
+        # An empty value there silently produces a dead checkout, so fail loudly
+        # instead: the customer sees an error and the log says why.
+        app.logger.error("PAYHIP_PRODUCT_URL is not set — card checkout unavailable")
+        abort(503, "Card checkout is temporarily unavailable")
+
     _kv_set(f"pay:card:{email}", device["slug"], ttl_seconds=86400)
     # Interstitial: Telegram WebView users see a warning + manual continue button.
     # Other browsers auto-redirect to Payhip so the existing flow is unchanged.
