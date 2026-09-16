@@ -43,9 +43,16 @@ PAYHIP_PRODUCT_URL      = os.environ.get("PAYHIP_PRODUCT_URL", "")
 PAYHIP_API_KEY          = os.environ.get("PAYHIP_API_KEY", "").strip()
 GMAIL_USER              = os.environ.get("GMAIL_USER", "")
 GMAIL_APP_PASSWORD      = os.environ.get("GMAIL_APP_PASSWORD", "")
-# A trailing newline in the Vercel env value silently corrupted every sitemap URL
-# ("https://host\n/ru/"), so normalize defensively rather than trusting the env.
-BASE_URL                = os.environ.get("BASE_URL", "http://localhost:5001").strip().rstrip("/")
+# BASE_URL feeds every canonical, sitemap entry and emailed access link, and the
+# Vercel value has been wrong in two different ways: once with a trailing newline
+# ("https://host\n/ru/" in all 96 sitemap URLs) and once empty. Normalize it, and
+# when it is unusable fall back to the real host on Vercel rather than to
+# localhost, which would put dead links in customers' inboxes.
+PRODUCTION_HOST         = "https://blackmagiccam.vercel.app"
+_BASE_URL_ENV           = os.environ.get("BASE_URL", "").strip().rstrip("/")
+BASE_URL                = _BASE_URL_ENV or (
+    PRODUCTION_HOST if os.environ.get("VERCEL") == "1" else "http://localhost:5001"
+)
 ADMIN_EMAIL             = os.environ.get("ADMIN_EMAIL", GMAIL_USER)
 # Search Console verification: *.vercel.app can only be verified as a URL-prefix
 # property (the subdomain is on the Public Suffix List), and the meta tag is the
