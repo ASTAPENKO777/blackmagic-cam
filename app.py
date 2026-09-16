@@ -781,7 +781,7 @@ _GROUP_CAPABILITIES = {
     "c": "iPhone 12 series with A14 Bionic. BMC supports 4K60 and Dolby Vision HDR (10-bit HEVC). No ProRes and no Apple Log. Sensor-Shift OIS on 12 Pro Max only.",
     "d": "iPhone 13 series with A15 Bionic. BMC supports 4K60 + Dolby Vision HDR. No ProRes and no Apple Log on this generation in BMC. Sensor-Shift OIS on Pro / Pro Max.",
     "e": "iPhone 14 series. 14 / 14 Plus = A15. 14 Pro / Pro Max = A16. ProRes is available on 14 Pro / Pro Max only (4K30 ProRes requires external storage; internal capped at 1080p30 ProRes). No Apple Log yet. 48MP main on Pro models.",
-    "f": "iPhone 15 series. 15 / 15 Plus = A16 (no ProRes, no Log). 15 Pro / Pro Max = A17 Pro and DO support ProRes Log (Apple Log) at 4K30, but ONLY when recording to external SSD via USB-C. Use BRAW + LUT in Resolve for grading.",
+    "f": "iPhone 15 series. 15 / 15 Plus = A16 (no ProRes, no Log). 15 Pro / Pro Max = A17 Pro and DO support ProRes Log (Apple Log) at 4K30, but ONLY when recording to external SSD via USB-C. Grade those ProRes Log files with a Log LUT in Resolve — iPhone cannot record BRAW, which is Blackmagic hardware only.",
     "g": "iPhone 16 series. 16 / 16 Plus = A18 (no ProRes/Log). 16 Pro / Pro Max = A18 Pro: ProRes Log up to 4K120 with external SSD, Camera Control button for hardware-style adjustments, 4-mic array for spatial audio.",
     "h": "iPhone 17 series with A19 / A19 Pro. 17 Pro / Pro Max support ProRes Log, Apple Log v2, and the latest BMC features including 4K120 internally on the Pro models. Camera Control hardware button present on Pro models.",
 }
