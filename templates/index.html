@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}Blackmagic Camera Settings for iPhone — Device-Specific Guide{% endblock %}
-{% block description %}Get perfect Blackmagic Camera app settings for your specific iPhone model. Device-optimized guide with screenshots + free LUTs from Telegram. One-time $4.99.{% endblock %}
-{% block og_title %}Blackmagic Camera Settings for iPhone — Device-Specific Guide{% endblock %}
+{% block title %}{{ t.meta_title_home }}{% endblock %}
+{% block description %}{{ t.meta_desc_home }}{% endblock %}
+{% block og_title %}{{ t.meta_title_home }}{% endblock %}
+{% block og_description %}{{ t.meta_desc_home }}{% endblock %}
 
 {% block head %}
 <script type="application/ld+json">
@@ -18,11 +19,6 @@
     "priceCurrency": "USD",
     "availability": "https://schema.org/InStock",
     "url": "{{ request.host_url }}select"
-  },
-  "aggregateRating": {
-    "@type": "AggregateRating",
-    "ratingValue": "4.9",
-    "reviewCount": "1200"
   }
 }
 </script>
@@ -60,7 +56,7 @@
       "name": "Which iPhones are supported?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "All iPhones from iPhone XS (A12) through iPhone 17 Pro Max (A19 Pro) are supported — 32 models total across 8 chip groups."
+        "text": "All iPhones from iPhone XS (A12) through iPhone 17 Pro Max (A19 Pro) are supported — 30 models total across 8 chip groups."
       }
     },
     {
@@ -101,7 +97,7 @@
 
 <section class="hero">
   <div class="hero-video-bg">
-    <video autoplay muted loop playsinline preload="none"
+    <video autoplay muted loop playsinline preload="metadata"
            poster="{{ url_for('static', filename='img/hero-poster.jpg') }}">
       <source src="https://pub-8fb494845cea47208e5a569a242eab94.r2.dev/hero.mp4" type="video/mp4">
     </video>
@@ -208,7 +204,8 @@
               </div>
             </div>
             <div class="bmc-vf">
-              <video autoplay muted loop playsinline class="bmc-vf-photo">
+              <video autoplay muted loop playsinline preload="metadata" class="bmc-vf-photo"
+                     poster="{{ url_for('static', filename='img/bmc-shot-poster.jpg') }}">
                 <source src="https://pub-8fb494845cea47208e5a569a242eab94.r2.dev/bmc-shot.mp4" type="video/mp4">
               </video>
               <div class="bmc-grid-line bmc-gl-v1"></div>
@@ -370,25 +367,7 @@
       </div>
     {% endmacro %}
 
-    {% set featured = testimonials | selectattr('featured', 'defined') | selectattr('featured') | list | first %}
-    {% if featured %}
-      <div class="testimonial-featured" role="group" aria-label="Featured testimonial" data-reveal>
-        <span class="testimonial-featured-mark" aria-hidden="true">&ldquo;</span>
-        <div class="testimonial-featured-quote">{{ featured.quotes[lang] or featured.quotes['en'] }}</div>
-        <div class="testimonial-featured-author">
-          <span class="testimonial-avatar" style="background:{{ featured.color }};">{{ featured.name[0] }}</span>
-          <span class="testimonial-meta">
-            <strong>{{ featured.name }}</strong>
-            <small>{{ featured.device }}</small>
-          </span>
-          <span class="testimonial-stars" aria-label="{{ featured.rating }}/5">
-            {% for _ in range(featured.rating) %}<span aria-hidden="true">★</span>{% endfor %}
-          </span>
-        </div>
-      </div>
-    {% endif %}
-
-    {% set rest = testimonials | rejectattr('featured', 'defined') | list %}
+    {% set rest = testimonials | list %}
     {% set half = (rest | length // 2) %}
     {% set row1 = rest[:half] %}
     {% set row2 = rest[half:] %}
@@ -451,10 +430,19 @@
       <h2>{{ t.devices_title }}</h2>
       <p>{{ t.devices_subtitle }}</p>
     </div>
-    <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; max-width:700px; margin:0 auto;">
-      {% set names = ["XS","XS Max","XR","11","11 Pro","11 Pro Max","12 mini","12","12 Pro","12 Pro Max","13 mini","13","13 Pro","13 Pro Max","14","14 Plus","14 Pro","14 Pro Max","15","15 Plus","15 Pro","15 Pro Max","16","16 Plus","16 Pro","16 Pro Max","17","17 Air","17 Pro","17 Pro Max"] %}
-      {% for n in names %}
-        <span style="background:var(--bg2); border:1px solid var(--border); padding:5px 12px; border-radius:20px; font-size:0.82rem; color:var(--muted);">iPhone {{ n }}</span>
+    <div class="device-map" data-reveal>
+      {% for gkey in ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] %}
+        {% set gdevs = devices | selectattr('group', 'equalto', gkey) | list %}
+        {% if gdevs %}
+          <div class="device-gen">
+            <div class="device-gen-label">{{ gdevs | map(attribute='chip') | unique | join(' / ') }}</div>
+            <div class="device-gen-chips">
+              {% for d in gdevs %}
+                <a class="device-link" href="{{ lang_link('/guide/' ~ d.slug) }}" title="{{ d.name }} — {{ d.chip }}"><span class="dl-pre">iPhone</span><span class="dl-model">{{ d.name | replace('iPhone ', '') }}</span></a>
+              {% endfor %}
+            </div>
+          </div>
+        {% endif %}
       {% endfor %}
     </div>
   </div>
@@ -537,7 +525,7 @@
           </span>
         </summary>
         <div class="faq-body"><div><p class="faq-a">
-          {% if lang == 'ru' %}Все iPhone от XS (A12) до 17 Pro Max (A19 Pro) — 32 модели в 8 чип-группах. Если у вас iPhone XS и новее — гайд для вас есть.{% elif lang == 'ar' %}جميع أجهزة iPhone من XS (A12) إلى 17 Pro Max (A19 Pro) — 32 موديلاً في 8 مجموعات شرائح. إذا كان لديك iPhone XS أو أحدث — هناك دليل لك.{% else %}All iPhones from XS (A12) through 17 Pro Max (A19 Pro) — 32 models across 8 chip groups. If you have an iPhone XS or newer, there's a guide for your exact model.{% endif %}
+          {% if lang == 'ru' %}Все iPhone от XS (A12) до 17 Pro Max (A19 Pro) — 30 моделей в 8 чип-группах. Если у вас iPhone XS и новее — гайд для вас есть.{% elif lang == 'ar' %}جميع أجهزة iPhone من XS (A12) إلى 17 Pro Max (A19 Pro) — 30 موديلاً في 8 مجموعات شرائح. إذا كان لديك iPhone XS أو أحدث — هناك دليل لك.{% else %}All iPhones from XS (A12) through 17 Pro Max (A19 Pro) — 30 models across 8 chip groups. If you have an iPhone XS or newer, there's a guide for your exact model.{% endif %}
         </p></div></div>
       </details>
 
@@ -658,6 +646,39 @@
     document.body.style.overflow = '';
   }, 2200);
   setTimeout(function () { intro.remove(); }, 2800);
+})();
+</script>
+<script>
+// Autoplay is not guaranteed: iOS Low Power Mode, data saver and some in-app
+// browsers reject play(). Retry on the first user gesture and when the tab
+// becomes visible again; the poster covers the gap until then.
+(function () {
+  var videos = [].slice.call(document.querySelectorAll('video[autoplay]'));
+  if (!videos.length) return;
+
+  function tryPlay(v) {
+    if (!v.paused || getComputedStyle(v).display === 'none') return;
+    v.muted = true;
+    var p = v.play();
+    if (p && p.catch) p.catch(function () {});
+  }
+  function playAll() { videos.forEach(tryPlay); }
+
+  videos.forEach(function (v) {
+    v.muted = true;
+    v.addEventListener('canplay', function () { tryPlay(v); }, { once: true });
+  });
+
+  ['touchstart', 'pointerdown', 'scroll', 'keydown'].forEach(function (evt) {
+    window.addEventListener(evt, function once() {
+      playAll();
+      window.removeEventListener(evt, once);
+    }, { passive: true });
+  });
+  document.addEventListener('visibilitychange', function () {
+    if (!document.hidden) playAll();
+  });
+  playAll();
 })();
 </script>
 {% endblock %}

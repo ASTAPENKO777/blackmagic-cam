@@ -14,7 +14,6 @@
   </script>
   <link rel="preconnect" href="https://pub-8fb494845cea47208e5a569a242eab94.r2.dev" crossorigin />
   <link rel="dns-prefetch" href="https://pub-8fb494845cea47208e5a569a242eab94.r2.dev" />
-  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
   <title>{% block title %}Blackmagic Camera Settings{% endblock %}</title>
   <meta name="description" content="{% block description %}Perfect Blackmagic Camera app settings for your iPhone — device-specific guide with screenshots and free LUTs.{% endblock %}" />
   <meta name="theme-color" content="#0a0a0a" />
@@ -29,11 +28,20 @@
   <meta property="og:title" content="{% block og_title %}Blackmagic Camera Settings{% endblock %}" />
   <meta property="og:description" content="{% block og_description %}Perfect camera settings for your iPhone. One-time $4.99.{% endblock %}" />
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="{{ request.url }}" />
+  {# og:url follows the canonical, not request.url — the latter carries query strings #}
+  <meta property="og:url" content="{{ request.host_url.rstrip('/') }}{{ lang_alternates[lang] if is_seo_localized else request.path }}" />
+  <meta property="og:site_name" content="BlackmagicCam" />
+  {% set og_locales = {'en': 'en_US', 'ru': 'ru_RU', 'ar': 'ar_AR'} %}
+  <meta property="og:locale" content="{{ og_locales[lang] }}" />
+  {% for alt_lang in og_locales if alt_lang != lang %}
+  <meta property="og:locale:alternate" content="{{ og_locales[alt_lang] }}" />
+  {% endfor %}
   <meta property="og:image" content="{{ request.host_url }}static/img/og-image.jpg" />
   <meta property="og:image:width" content="1200" />
   <meta property="og:image:height" content="630" />
   <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="{% block twitter_title %}{{ self.og_title() }}{% endblock %}" />
+  <meta name="twitter:description" content="{% block twitter_description %}{{ self.og_description() }}{% endblock %}" />
   <meta name="twitter:image" content="{{ request.host_url }}static/img/og-image.jpg" />
   {% set host = request.host_url.rstrip('/') %}
   {% if is_seo_localized %}
@@ -42,8 +50,41 @@
   <link rel="alternate" hreflang="{{ alt_lang }}" href="{{ host }}{{ alt_path }}" />
   {% endfor %}
   <link rel="alternate" hreflang="x-default" href="{{ host }}{{ lang_alternates['en'] }}" />
+  {% elif seo_noindex_follow %}
+  <meta name="robots" content="noindex, follow" />
   {% else %}
   <meta name="robots" content="noindex, nofollow" />
+  {% endif %}
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "{{ host }}/#organization",
+        "name": "BlackmagicCam",
+        "url": "{{ host }}/",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "{{ host }}/static/icon-512.png",
+          "width": 512,
+          "height": 512
+        },
+        "sameAs": ["https://t.me/blackmagicamera"]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "{{ host }}/#website",
+        "name": "BlackmagicCam",
+        "url": "{{ host }}/",
+        "publisher": { "@id": "{{ host }}/#organization" },
+        "inLanguage": "{{ lang }}"
+      }
+    ]
+  }
+  </script>
+  {% if google_site_verification %}
+  <meta name="google-site-verification" content="{{ google_site_verification }}" />
   {% endif %}
   <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
   {% if lang == 'ar' %}

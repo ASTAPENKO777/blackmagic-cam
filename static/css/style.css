@@ -215,6 +215,7 @@ nav .nav-inner {
 .section-title {
   text-align: center; margin-bottom: 40px;
 }
+.section-title h1,
 .section-title h2 { font-size: 1.9rem; font-weight: 700; margin-bottom: 8px; }
 .section-title p { color: var(--muted); }
 
@@ -1122,6 +1123,7 @@ nav .nav-inner {
   .tg-banner { padding: 16px; gap: 12px; }
 
   /* Section titles */
+  .section-title h1,
   .section-title h2 { font-size: 1.55rem; }
 }
 
@@ -2255,12 +2257,6 @@ html[data-tg="1"] .tg-only-hint { display: block; }
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
 }
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 22px;
-  margin-top: 36px;
-}
 .testimonial-card {
   background: var(--bg3);
   border: 1px solid var(--border);
@@ -2332,46 +2328,7 @@ html[data-tg="1"] .tg-only-hint { display: block; }
   font-weight: 600;
 }
 
-/* ── Featured hero quote ─────────────────────────────────────────────────── */
 .testimonials { overflow-x: clip; }
-.testimonial-featured {
-  position: relative;
-  max-width: 760px;
-  margin: 40px auto 56px;
-  padding: 40px 36px 32px;
-  background: linear-gradient(180deg, var(--bg3) 0%, var(--bg2) 100%);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  text-align: center;
-}
-.testimonial-featured-mark {
-  position: absolute;
-  top: -22px;
-  left: 28px;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 110px;
-  line-height: 1;
-  color: var(--accent);
-  opacity: 0.55;
-  pointer-events: none;
-}
-.testimonial-featured-quote {
-  font-size: 1.4rem;
-  line-height: 1.5;
-  font-weight: 500;
-  color: var(--text);
-  margin: 0 0 24px;
-}
-.testimonial-featured-author {
-  display: inline-flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-.testimonial-featured .testimonial-stars {
-  font-size: 1rem;
-}
 
 /* ── Marquee rows ────────────────────────────────────────────────────────── */
 .testimonials-marquee {
@@ -2431,25 +2388,255 @@ html[dir="rtl"] .marquee-row--rtl .marquee-track { animation-direction: normal; 
   }
 }
 
+/* Mobile: compact enough that the whole section fits one phone screen.
+   Both rows stay visible — hiding the second one buried half the quotes.
+   animation-duration stays longhand so the reduced-motion block above still wins. */
 @media (max-width: 720px) {
-  .testimonial-featured {
-    padding: 32px 22px 24px;
-    margin: 28px auto 36px;
-    border-radius: 18px;
-  }
-  .testimonial-featured-mark {
-    font-size: 80px;
-    top: -16px;
-    left: 18px;
-  }
-  .testimonial-featured blockquote {
-    font-size: 1.1rem;
-  }
-  .marquee-row--rtl { display: none; }
-  .marquee-track {
-    animation-duration: 50s;
-  }
+  .testimonials { padding: 44px 0; }
+  .testimonials .section-title { margin-bottom: 20px; }
+  .testimonials .section-title p { font-size: 0.85rem; }
+
+  .testimonials-marquee { gap: 10px; margin-top: 0; }
+  .marquee-track { gap: 10px; animation-duration: 45s; }
+
   .marquee-track .testimonial-card {
-    width: 280px;
+    width: 232px;
+    padding: 12px 13px;
+    gap: 8px;
+    border-radius: 12px;
   }
+  .marquee-track .testimonial-stars { font-size: 0.8rem; letter-spacing: 1.5px; }
+  .marquee-track .testimonial-quote {
+    font-size: 0.8rem;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 4;
+            line-clamp: 4;
+    overflow: hidden;
+  }
+  .marquee-track .testimonial-author { gap: 9px; padding-top: 2px; }
+  .marquee-track .testimonial-avatar { width: 30px; height: 30px; font-size: 0.85rem; }
+  .marquee-track .testimonial-meta strong { font-size: 0.82rem; }
+  .marquee-track .testimonial-meta small  { font-size: 0.7rem; }
+
+  .testimonials-source { margin-top: 16px; font-size: 0.78rem; }
+}
+
+@media (max-width: 400px) {
+  .marquee-track .testimonial-card  { width: 214px; }
+  .marquee-track .testimonial-quote { font-size: 0.78rem; }
+}
+
+/* ── Breadcrumbs ──────────────────────────────────────────────────────────── */
+/* Guide pages carried BreadcrumbList markup with no visible trail to back it. */
+.breadcrumbs {
+  padding: 18px 0 0;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+.breadcrumbs ol {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+}
+.breadcrumbs li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+.breadcrumbs li + li::before {
+  content: "/";
+  color: var(--border);
+}
+.breadcrumbs a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.breadcrumbs a:hover { color: var(--accent); }
+.breadcrumbs [aria-current="page"] {
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+@media (max-width: 480px) {
+  .breadcrumbs { padding-top: 12px; font-size: 0.74rem; }
+}
+
+/* ── Supported devices map ────────────────────────────────────────────────── */
+/* Each chip links to that model's guide — those 30 pages had no inbound link
+   anywhere on the site, so search engines could only reach them via the sitemap. */
+.device-map {
+  max-width: 760px;
+  margin: 0 auto;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.device-gen {
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr);
+  gap: 10px;
+  align-items: center;
+}
+.device-gen-label {
+  font-size: 0.68rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  white-space: nowrap;
+  direction: ltr;
+  unicode-bidi: isolate;
+}
+/* fixed 4 columns keeps every generation row flush instead of ragged-centered */
+.device-gen-chips {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+}
+.device-link {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  min-height: 40px;
+  padding: 8px 10px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  color: var(--muted);
+  font-size: 0.76rem;
+  line-height: 1.2;
+  text-align: center;
+  white-space: nowrap;
+  direction: ltr;
+  unicode-bidi: isolate;
+  -webkit-tap-highlight-color: transparent;
+  transition: color var(--transition), background var(--transition),
+              border-color var(--transition), transform var(--transition);
+}
+.dl-pre   { color: rgba(153,153,153,0.55); }
+.dl-model { font-weight: 600; }
+@media (hover: hover) {
+  .device-link:hover {
+    color: var(--accent);
+    background: rgba(245,197,24,0.10);
+    border-color: rgba(245,197,24,0.25);
+  }
+  .device-link:hover .dl-pre { color: rgba(245,197,24,0.60); }
+}
+.device-link:active { transform: scale(0.97); }
+
+/* Mobile: dissolve the generation wrappers into one flush 3-column map */
+@media (max-width: 600px) {
+  .devices-section { padding: 40px 0 56px; }
+  .device-map {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+    padding: 10px;
+  }
+  .device-gen,
+  .device-gen-chips { display: contents; }
+  .device-gen-label { display: none; }
+  .dl-pre           { display: none; }
+  .device-link {
+    min-height: 42px;
+    padding: 6px 4px;
+    font-size: 0.72rem;
+    border-radius: 9px;
+  }
+}
+
+@media (max-width: 360px) {
+  .device-link { font-size: 0.68rem; min-height: 40px; }
+}
+
+/* ── Mobile: benefit cards as a 2×2 spec panel ────────────────────────────── */
+/* These four cards had no mobile query at all, so they stacked as four tall
+   boxes at full desktop padding. Same framing as the guide's cheat sheet:
+   the grid is the bg2 panel, each card a bg3 tile inside it. */
+@media (max-width: 640px) {
+  .features { padding: 40px 0 44px; }
+
+  .features-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+    background: var(--bg2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 10px;
+  }
+
+  /* The icon is taken out of flow and only the title's FIRST line is indented
+     past it. A grid column (16px) or a float both stole width from every line —
+     the float is 18px tall against a 14px line box, so it shortened line two as
+     well, leaving ~116px and splitting "кинематографические" anyway. */
+  .feature-card {
+    position: relative;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-top: 1px solid var(--border);   /* cancels the 2px transparent top */
+    border-radius: 10px;
+    padding: 11px 12px 12px;
+    display: block;
+  }
+  .feature-card:hover { transform: none; border-top-color: var(--border); }
+
+  .feature-icon {
+    position: absolute;
+    top: 13px;
+    inset-inline-start: 12px;
+    width: 16px;
+    height: 16px;
+    background: none;
+    border: 0;
+    border-radius: 0;
+    margin: 0;
+  }
+  .feature-icon svg { width: 16px; height: 16px; }
+  .feature-card:hover .feature-icon svg { transform: none; }
+
+  /* Type is sized so the longest word in any language fits whole. The binding
+     constraint is Russian "кинематографические": 145px at 0.76rem against 154px
+     of tile width here (see the 400px block for the narrower case). No clamping
+     (it truncated every Russian description) and no hyphens:auto (it split that
+     word twice — "ки-нематографиче-ские" — and hyphenated "до-ступ" needlessly).
+     overflow-wrap stays purely as a safety net for unexpected long strings. */
+  .feature-card h3 {
+    font-size: 0.76rem;
+    line-height: 1.25;
+    margin: 0 0 4px;
+    min-height: 18px;        /* keeps a one-line title clear of the 16px icon */
+    text-indent: 22px;       /* first line only — icon width + gap */
+    overflow-wrap: break-word;
+  }
+  .feature-card p {
+    font-size: 0.72rem;
+    line-height: 1.45;
+    margin: 0;
+    overflow-wrap: break-word;
+  }
+}
+
+/* At 375px the tile is only ~155px wide, so trim the side padding and the title
+   a step further: that buys 137.5px of text width against the 134.9px the word
+   "кинематографические" needs at 0.7rem. Bold weight carries the heading. */
+@media (max-width: 400px) {
+  .features-grid { gap: 6px; padding: 8px; }
+  .feature-card  { padding: 11px 8px 12px; }
+  .feature-icon  { inset-inline-start: 8px; }
+  .feature-card h3 { font-size: 0.7rem; }
+  .feature-card p  { font-size: 0.7rem; }
 }

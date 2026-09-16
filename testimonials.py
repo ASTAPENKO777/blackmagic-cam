@@ -53,7 +53,6 @@ TESTIMONIALS = [
         "device": "iPhone 16 Pro",
         "rating": 5,
         "color": "#f5c518",
-        "featured": True,
         "quotes": {
             "en": "LUT pack from the channel + import instructions = instant film look. My Reels engagement doubled in a week.",
             "ru": "LUT-пак из канала + инструкции по импорту = моментальный киношный лук. Вовлечённость моих Reels удвоилась за неделю.",

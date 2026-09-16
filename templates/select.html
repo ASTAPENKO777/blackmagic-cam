@@ -1,13 +1,16 @@
 {% extends "base.html" %}
 
-{% block title %}Choose Your iPhone Model — Blackmagic Camera Settings Guide{% endblock %}
+{% block title %}{{ t.meta_title_select }}{% endblock %}
+{% block description %}{{ t.meta_desc_select }}{% endblock %}
+{% block og_title %}{{ t.meta_title_select }}{% endblock %}
+{% block og_description %}{{ t.meta_desc_select }}{% endblock %}
 
 {% block content %}
 
 <section class="select-page">
   <div class="container">
     <div class="section-title">
-      <h2>{{ t.select_title }}</h2>
+      <h1>{{ t.select_title }}</h1>
       <p>{{ t.select_subtitle }}</p>
     </div>
 

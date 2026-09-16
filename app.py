@@ -38,8 +38,14 @@ PAYHIP_PRODUCT_URL      = os.environ.get("PAYHIP_PRODUCT_URL", "")
 PAYHIP_API_KEY          = os.environ.get("PAYHIP_API_KEY", "").strip()
 GMAIL_USER              = os.environ.get("GMAIL_USER", "")
 GMAIL_APP_PASSWORD      = os.environ.get("GMAIL_APP_PASSWORD", "")
-BASE_URL                = os.environ.get("BASE_URL", "http://localhost:5001")
+# A trailing newline in the Vercel env value silently corrupted every sitemap URL
+# ("https://host\n/ru/"), so normalize defensively rather than trusting the env.
+BASE_URL                = os.environ.get("BASE_URL", "http://localhost:5001").strip().rstrip("/")
 ADMIN_EMAIL             = os.environ.get("ADMIN_EMAIL", GMAIL_USER)
+# Search Console verification: *.vercel.app can only be verified as a URL-prefix
+# property (the subdomain is on the Public Suffix List), and the meta tag is the
+# one method that works without DNS control.
+GOOGLE_SITE_VERIFICATION = os.environ.get("GOOGLE_SITE_VERIFICATION", "").strip()
 PRICE_USD               = 4.99
 
 GROQ_API_KEY            = os.environ.get("GROQ_API_KEY", "")
@@ -213,13 +219,21 @@ def _localize_path(lang: str, base: str) -> str:
 
 
 def _is_publicly_localized(path: str) -> bool:
-    """True if the path has registered lang URL variants (/, /select, /guide/<slug>)."""
+    """True if the path has registered lang URL variants (/, /select, /guide/<slug>).
+
+    The slug is validated against DEVICES: accepting any /guide/* string made every
+    404 under /guide/ advertise itself as canonical and indexable.
+    """
     base = _strip_lang_prefix(path)
     if base in ("/", "/select"):
         return True
-    if base.startswith("/guide/") and len(base) > len("/guide/"):
+    if base.startswith("/guide/") and get_device(base[len("/guide/"):]):
         return True
     return False
+
+
+def _is_guide_path(path: str) -> bool:
+    return _strip_lang_prefix(path).startswith("/guide/")
 
 
 def _safe_next_path(value):
@@ -246,6 +260,12 @@ def inject_i18n():
     lang = detect_language()
     is_public = _is_publicly_localized(request.path)
 
+    # Guide bodies are English-only. Their /ru/ and /ar/ URLs stay reachable for the
+    # language switcher, but must not be indexed as Russian/Arabic pages — that is a
+    # wrong-language signal on 60 URLs. They get noindex,follow and no hreflang.
+    guide_in_other_lang = is_public and _is_guide_path(request.path) and lang != "en"
+    seo_index = is_public and not guide_in_other_lang
+
     if is_public:
         base_path = _strip_lang_prefix(request.path)
         alternates = {code: _localize_path(code, base_path) for code in SUPPORTED_LANGS}
@@ -268,7 +288,9 @@ def inject_i18n():
         "t": TRANSLATIONS[lang],
         "lang_alternates": alternates,
         "lang_link": lang_link,
-        "is_seo_localized": is_public,
+        "is_seo_localized": seo_index,
+        "seo_noindex_follow": guide_in_other_lang,
+        "google_site_verification": GOOGLE_SITE_VERIFICATION,
     }
 
 
@@ -336,7 +358,7 @@ def index(lang="en"):
         best = request.accept_languages.best_match(URL_LANGS)
         if best in URL_LANGS:
             return redirect(_localize_path(best, "/"), code=302)
-    return render_template("index.html", testimonials=TESTIMONIALS)
+    return render_template("index.html", testimonials=TESTIMONIALS, devices=DEVICES)
 
 
 @app.route("/select")
@@ -361,23 +383,43 @@ def guide(slug, lang="en"):
     return render_template("guide.html", device=device)
 
 
+_APP_DIR = os.path.dirname(os.path.abspath(__file__))
+
+
+def _lastmod(*relpaths) -> str:
+    """Newest mtime of the files backing a page, as YYYY-MM-DD.
+
+    Honest enough to be useful: on Vercel this is the deploy time of the files that
+    actually render the page, not a moving datetime.now() that crawlers learn to ignore.
+    """
+    newest = 0.0
+    for rel in relpaths:
+        try:
+            newest = max(newest, os.path.getmtime(os.path.join(_APP_DIR, rel)))
+        except OSError:
+            continue
+    if not newest:
+        return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    return datetime.fromtimestamp(newest, timezone.utc).strftime("%Y-%m-%d")
+
+
 @app.route("/sitemap.xml")
 def sitemap():
-    base_paths = ["/", "/select"] + [f"/guide/{d['slug']}" for d in DEVICES]
-    priorities = {"/": "1.0", "/select": "0.9"}
-
     lines = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" '
         'xmlns:xhtml="http://www.w3.org/1999/xhtml">',
     ]
-    for base in base_paths:
-        priority = priorities.get(base, "0.8")
-        changefreq = "weekly" if base in priorities else "monthly"
+
+    # Localized pages: real translations exist, so all three languages are indexable.
+    localized = [
+        ("/", "1.0", "weekly", _lastmod("templates/index.html", "translations.py")),
+        ("/select", "0.9", "weekly", _lastmod("templates/select.html", "devices.py")),
+    ]
+    for base, priority, changefreq, lastmod in localized:
         for lang in SUPPORTED_LANGS:
-            loc = BASE_URL + _localize_path(lang, base)
             lines.append("  <url>")
-            lines.append(f"    <loc>{loc}</loc>")
+            lines.append(f"    <loc>{BASE_URL + _localize_path(lang, base)}</loc>")
             for alt_lang in SUPPORTED_LANGS:
                 href = BASE_URL + _localize_path(alt_lang, base)
                 lines.append(
@@ -387,11 +429,47 @@ def sitemap():
                 f'    <xhtml:link rel="alternate" hreflang="x-default" '
                 f'href="{BASE_URL + base}" />'
             )
+            lines.append(f"    <lastmod>{lastmod}</lastmod>")
             lines.append(f"    <changefreq>{changefreq}</changefreq>")
             lines.append(f"    <priority>{priority}</priority>")
             lines.append("  </url>")
+
+    # Guides are English-only content; the /ru/ and /ar/ variants are noindex and
+    # deliberately absent here (see inject_i18n).
+    guide_lastmod = _lastmod("templates/guide.html", "devices.py")
+    for device in DEVICES:
+        lines.append("  <url>")
+        lines.append(f"    <loc>{BASE_URL}/guide/{device['slug']}</loc>")
+        lines.append(f"    <lastmod>{guide_lastmod}</lastmod>")
+        lines.append("    <changefreq>monthly</changefreq>")
+        lines.append("    <priority>0.8</priority>")
+        lines.append("  </url>")
+
     lines.append("</urlset>")
     return Response("\n".join(lines), mimetype="application/xml")
+
+
+@app.route("/robots.txt")
+def robots_txt():
+    """Served as a route, not a static file: vercel.json only maps /static/(.*), so
+    static/robots.txt was reachable only at /static/robots.txt and /robots.txt 404'd.
+    """
+    disallow = [
+        "/access/", "/pick/", "/crypto/", "/checkout", "/kofi/",
+        "/payhip/", "/api/", "/set-lang/", "/debug/",
+    ]
+    lines = ["User-agent: *", "Allow: /"]
+    lines += [f"Disallow: {path}" for path in disallow]
+    lines.append("")
+
+    # Assistants are a real discovery path for a niche product; let them read the
+    # public pages. The Disallow list above still applies to every crawler.
+    for bot in ("GPTBot", "OAI-SearchBot", "ChatGPT-User", "ClaudeBot",
+                "Claude-SearchBot", "PerplexityBot", "Google-Extended"):
+        lines += [f"User-agent: {bot}", "Allow: /", ""]
+
+    lines.append(f"Sitemap: {BASE_URL}/sitemap.xml")
+    return Response("\n".join(lines) + "\n", mimetype="text/plain")
 
 
 
@@ -971,6 +1049,14 @@ def set_security_headers(resp):
         resp.headers.setdefault("Strict-Transport-Security", "max-age=31536000; includeSubDomains")
 
     path = request.path or ""
+    # "/" branches on Accept-Language (and the lang cookie) to 302 RU/AR visitors,
+    # so any shared cache must key on those headers.
+    if path == "/":
+        existing = [v.strip() for v in resp.headers.get("Vary", "").split(",") if v.strip()]
+        for header in ("Accept-Language", "Cookie"):
+            if header.lower() not in [v.lower() for v in existing]:
+                existing.append(header)
+        resp.headers["Vary"] = ", ".join(existing)
     if "Cache-Control" not in resp.headers:
         if path.startswith("/static/"):
             resp.headers["Cache-Control"] = "public, max-age=31536000, immutable"

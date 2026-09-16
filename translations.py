@@ -2,6 +2,11 @@ TRANSLATIONS = {
     'en': {
         # Nav
         'nav_cta': 'Get Settings — $4.99',
+        # SEO meta — per language, so /ru/ and /ar/ stop serving English titles
+        'meta_title_home': 'Blackmagic Camera Settings for iPhone — Device-Specific Guide',
+        'meta_desc_home': 'Get perfect Blackmagic Camera app settings for your specific iPhone model. Device-optimized guide with screenshots + free LUTs from Telegram. One-time $4.99.',
+        'meta_title_select': 'Choose Your iPhone Model — Blackmagic Camera Settings',
+        'meta_desc_select': 'Pick your iPhone — XS through 17 Pro Max — and get camera settings tuned to its exact chip. Step-by-step screenshots and free cinematic LUTs. One-time $4.99.',
         # Footer
         'footer_telegram': 'Telegram Channel',
         'footer_get_settings': 'Get Settings',
@@ -162,6 +167,11 @@ TRANSLATIONS = {
     'ru': {
         # Nav
         'nav_cta': 'Настройки — $4.99',
+        # SEO meta
+        'meta_title_home': 'Настройки Blackmagic Camera для iPhone — гайд под вашу модель',
+        'meta_desc_home': 'Точные настройки приложения Blackmagic Camera для вашей модели iPhone: ISO, кодек, частота кадров, баланс белого. Скриншоты и бесплатные LUT. Разово $4.99.',
+        'meta_title_select': 'Выберите модель iPhone — настройки Blackmagic Camera',
+        'meta_desc_select': 'Выберите свой iPhone — от XS до 17 Pro Max — и получите настройки камеры под его чип. Пошаговые скриншоты и бесплатные кинематографические LUT. Разово $4.99.',
         # Footer
         'footer_telegram': 'Telegram-канал',
         'footer_get_settings': 'Получить настройки',
@@ -322,6 +332,11 @@ TRANSLATIONS = {
     'ar': {
         # Nav
         'nav_cta': 'الإعدادات — $4.99',
+        # SEO meta
+        'meta_title_home': 'إعدادات Blackmagic Camera لـ iPhone — دليل مخصص لطرازك',
+        'meta_desc_home': 'إعدادات دقيقة لتطبيق Blackmagic Camera حسب طراز iPhone لديك: ISO والكوديك ومعدل الإطارات وتوازن اللون الأبيض. لقطات شاشة وحزمة LUT مجانية. دفعة واحدة $4.99.',
+        'meta_title_select': 'اختر طراز iPhone — إعدادات Blackmagic Camera',
+        'meta_desc_select': 'اختر جهاز iPhone — من XS إلى 17 Pro Max — واحصل على إعدادات الكاميرا المناسبة لشريحته. خطوة بخطوة مع لقطات الشاشة وحزمة LUT سينمائية مجانية. دفعة واحدة $4.99.',
         # Footer
         'footer_telegram': 'قناة تيليجرام',
         'footer_get_settings': 'الحصول على الإعدادات',

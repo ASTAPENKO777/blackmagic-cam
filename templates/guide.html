@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block title %}Blackmagic Camera Settings for {{ device.name }} ({{ device.chip }}) — Full Guide{% endblock %}
-{% block description %}Optimal Blackmagic Camera app settings for {{ device.name }} with {{ device.chip }} chip. Step-by-step guide covering ISO, codec, ProRes, frame rate, white balance, and free cinematic LUTs. One-time $4.99.{% endblock %}
+{% block description %}Blackmagic Camera settings for {{ device.name }} ({{ device.chip }}): ISO, codec, frame rate, white balance and shutter angle — plus free cinematic LUTs. $4.99.{% endblock %}
 {% block og_title %}Blackmagic Camera Settings for {{ device.name }} — Device-Specific Guide{% endblock %}
 
 {% block head %}
@@ -11,12 +11,14 @@
   "@type": "Product",
   "name": "Blackmagic Camera Settings Guide for {{ device.name }}",
   "description": "Device-specific Blackmagic Camera app settings for {{ device.name }} ({{ device.chip }}). Includes ISO range, codec selection, ProRes configuration, frame rate, white balance, shutter angle, and free cinematic LUTs.",
+  "brand": { "@type": "Brand", "name": "BlackmagicCam" },
+  "image": "{{ request.host_url }}static/img/og-image.jpg",
   "offers": {
     "@type": "Offer",
     "price": "4.99",
     "priceCurrency": "USD",
     "availability": "https://schema.org/InStock",
-    "url": "{{ request.url }}"
+    "url": "{{ request.host_url.rstrip('/') }}/guide/{{ device.slug }}"
   }
 }
 </script>
@@ -28,20 +30,19 @@
     {
       "@type": "ListItem",
       "position": 1,
-      "name": "Home",
-      "item": "{{ request.host_url }}"
+      "name": "{% if lang == 'ru' %}Главная{% elif lang == 'ar' %}الرئيسية{% else %}Home{% endif %}",
+      "item": "{{ request.host_url.rstrip('/') }}{{ lang_link('/') }}"
     },
     {
       "@type": "ListItem",
       "position": 2,
-      "name": "Choose your iPhone",
-      "item": "{{ request.host_url }}select"
+      "name": "{{ t.select_title }}",
+      "item": "{{ request.host_url.rstrip('/') }}{{ lang_link('/select') }}"
     },
     {
       "@type": "ListItem",
       "position": 3,
-      "name": "{{ device.name }} Guide",
-      "item": "{{ request.url }}"
+      "name": "{{ device.name }}"
     }
   ]
 }
@@ -243,6 +244,16 @@
 {% endblock %}
 
 {% block content %}
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <div class="container">
+    <ol>
+      <li><a href="{{ lang_link('/') }}">{% if lang == 'ru' %}Главная{% elif lang == 'ar' %}الرئيسية{% else %}Home{% endif %}</a></li>
+      <li><a href="{{ lang_link('/select') }}">{{ t.select_title }}</a></li>
+      <li aria-current="page">{{ device.name }}</li>
+    </ol>
+  </div>
+</nav>
 
 <section class="guide-hero">
   <div class="guide-hero-inner">
