@@ -2428,6 +2428,186 @@ html[dir="rtl"] .marquee-row--rtl .marquee-track { animation-direction: normal; 
   .marquee-track .testimonial-quote { font-size: 0.78rem; }
 }
 
+/* ── Learn: free articles (/learn) ────────────────────────────────────────── */
+.learn-article { padding: 24px 0 72px; }
+.learn-article .container { max-width: 760px; }
+
+.learn-head { margin-bottom: 36px; }
+.learn-head h1 {
+  font-size: 2.1rem;
+  line-height: 1.2;
+  font-weight: 700;
+  margin: 0 0 16px;
+}
+.learn-lede {
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: var(--text);
+  margin: 0 0 12px;
+}
+.learn-meta {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--muted);
+  margin: 0;
+}
+
+.learn-section { margin-bottom: 34px; }
+.learn-section h2 {
+  font-size: 1.3rem;
+  font-weight: 700;
+  line-height: 1.3;
+  margin: 0 0 14px;
+}
+.learn-section p {
+  color: var(--muted);
+  line-height: 1.7;
+  margin: 0 0 14px;
+}
+.learn-steps,
+.learn-bullets {
+  margin: 0 0 16px;
+  padding-inline-start: 22px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+.learn-steps li,
+.learn-bullets li { margin-bottom: 8px; }
+.learn-steps li::marker { color: var(--accent); font-weight: 700; }
+.learn-bullets li::marker { color: var(--accent); }
+.learn-note {
+  background: linear-gradient(135deg, rgba(245,197,24,0.09), rgba(245,197,24,0.02));
+  border: 1px solid rgba(245,197,24,0.2);
+  border-inline-start: 3px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  color: var(--text) !important;
+  font-size: 0.92rem;
+}
+
+.learn-faq { margin: 44px 0 34px; }
+.learn-faq h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 18px; }
+.learn-faq-item {
+  border-top: 1px solid var(--border);
+  padding: 16px 0;
+}
+.learn-faq-item h3 {
+  font-size: 0.98rem;
+  font-weight: 600;
+  margin: 0 0 8px;
+}
+.learn-faq-item p {
+  color: var(--muted);
+  line-height: 1.65;
+  margin: 0;
+}
+
+.learn-related { margin: 44px 0 34px; }
+.learn-related h2 { font-size: 1.3rem; font-weight: 700; margin: 0 0 10px; }
+.learn-related > p { color: var(--muted); line-height: 1.7; margin: 0 0 18px; }
+.learn-related-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+}
+.learn-related-card {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 14px 16px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+  transition: border-color var(--transition), background var(--transition);
+}
+.learn-related-card:hover {
+  border-color: rgba(245,197,24,0.35);
+  background: var(--bg3);
+}
+.lr-name { color: var(--text); font-weight: 600; font-size: 0.92rem; }
+.lr-chip { color: var(--muted); font-size: 0.76rem; }
+
+.learn-cta {
+  margin: 48px 0 0;
+  padding: 28px 26px;
+  background: linear-gradient(135deg, rgba(245,197,24,0.08), rgba(245,197,24,0.03));
+  border: 1px solid rgba(245,197,24,0.2);
+  border-radius: var(--radius-lg);
+  text-align: center;
+}
+.learn-cta h2 { font-size: 1.25rem; font-weight: 700; margin: 0 0 10px; }
+.learn-cta p { color: var(--muted); line-height: 1.65; margin: 0 0 18px; }
+
+.learn-more { margin-top: 40px; }
+.learn-more h2 { font-size: 1.1rem; font-weight: 700; margin: 0 0 12px; }
+.learn-more-list { list-style: none; margin: 0; padding: 0; }
+.learn-more-list li { border-top: 1px solid var(--border); }
+.learn-more-list a {
+  display: block;
+  padding: 13px 0;
+  color: var(--muted);
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: color var(--transition);
+}
+.learn-more-list a:hover { color: var(--accent); }
+
+/* Hub */
+.learn-hub { padding: 24px 0 80px; }
+.learn-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 16px;
+}
+.learn-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-top: 2px solid transparent;
+  border-radius: var(--radius-lg);
+  text-decoration: none;
+  transition: border-color var(--transition), transform var(--transition);
+}
+.learn-card:hover {
+  border-top-color: var(--accent);
+  transform: translateY(-2px);
+}
+.learn-card h2 {
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  color: var(--text);
+  margin: 0;
+}
+.learn-card p {
+  color: var(--muted);
+  font-size: 0.88rem;
+  line-height: 1.6;
+  margin: 0;
+  flex: 1;
+}
+.learn-card-link { color: var(--accent); font-size: 0.85rem; font-weight: 600; }
+
+@media (max-width: 640px) {
+  .learn-article { padding: 16px 0 56px; }
+  .learn-head h1 { font-size: 1.6rem; }
+  .learn-lede { font-size: 0.98rem; }
+  .learn-section h2,
+  .learn-faq h2,
+  .learn-related h2 { font-size: 1.15rem; }
+  .learn-section p,
+  .learn-steps,
+  .learn-bullets { font-size: 0.92rem; }
+  .learn-cta { padding: 22px 18px; }
+  .learn-card { padding: 18px; }
+  .learn-hub { padding: 16px 0 56px; }
+}
+
 /* ── Breadcrumbs ──────────────────────────────────────────────────────────── */
 /* Guide pages carried BreadcrumbList markup with no visible trail to back it. */
 .breadcrumbs {
@@ -2468,6 +2648,10 @@ html[dir="rtl"] .marquee-row--rtl .marquee-track { animation-direction: normal; 
 }
 @media (max-width: 480px) {
   .breadcrumbs { padding-top: 12px; font-size: 0.74rem; }
+  /* Drop the current-page crumb on phones: a long title wrapped to its own line
+     and left the "/" separator orphaned above it. The <h1> immediately below
+     says where you are, and the BreadcrumbList markup is unaffected. */
+  .breadcrumbs li:last-child { display: none; }
 }
 
 /* ── Supported devices map ────────────────────────────────────────────────── */

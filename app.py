@@ -22,6 +22,11 @@ from dotenv import load_dotenv
 
 from db import (init_db, save_purchase, get_purchase_by_token, purchase_exists_for_session)
 from devices import DEVICES, get_device, group_template
+from learn import (
+    get_article as get_learn_article,
+    indexable_articles as indexable_learn_articles,
+    is_indexable as is_learn_indexable,
+)
 from translations import TRANSLATIONS
 from testimonials import TESTIMONIALS
 from bmc_knowledge import build_full_knowledge
@@ -236,6 +241,20 @@ def _is_guide_path(path: str) -> bool:
     return _strip_lang_prefix(path).startswith("/guide/")
 
 
+def _is_indexable_learn_path(path: str) -> bool:
+    """/learn is English-only: indexable with a canonical, but no hreflang.
+
+    An article that fails learn.review() (too thin, or no link into a guide) is
+    reachable but not indexed, so a draft can never quietly enter the index.
+    """
+    if path == "/learn":
+        return True
+    if path.startswith("/learn/"):
+        article = get_learn_article(path[len("/learn/"):])
+        return bool(article) and is_learn_indexable(article)
+    return False
+
+
 def _safe_next_path(value):
     """Allow only same-origin, well-formed relative paths to prevent open redirects."""
     if not isinstance(value, str) or not value or len(value) > 500:
@@ -283,6 +302,16 @@ def inject_i18n():
             return path
         return _localize_path(target_lang or lang, path)
 
+    # Canonical is tracked separately from the language alternates: /learn pages
+    # are indexable English-only pages, so they need a canonical but must not
+    # advertise /ru/ and /ar/ variants that do not exist.
+    if seo_index:
+        canonical_path = alternates[lang]
+    elif _is_indexable_learn_path(request.path):
+        canonical_path = request.path
+    else:
+        canonical_path = None
+
     return {
         "lang": lang,
         "t": TRANSLATIONS[lang],
@@ -290,6 +319,8 @@ def inject_i18n():
         "lang_link": lang_link,
         "is_seo_localized": seo_index,
         "seo_noindex_follow": guide_in_other_lang,
+        "canonical_path": canonical_path,
+        "emit_hreflang": seo_index,
         "google_site_verification": GOOGLE_SITE_VERIFICATION,
     }
 
@@ -403,6 +434,26 @@ def _lastmod(*relpaths) -> str:
     return datetime.fromtimestamp(newest, timezone.utc).strftime("%Y-%m-%d")
 
 
+@app.route("/learn")
+def learn_hub():
+    return render_template("learn_hub.html", articles=indexable_learn_articles())
+
+
+@app.route("/learn/<slug>")
+def learn_article(slug):
+    article = get_learn_article(slug)
+    if not article:
+        abort(404)
+    related = [d for d in (get_device(s) for s in article.get("related", [])) if d]
+    others = [a for a in indexable_learn_articles() if a["slug"] != slug][:3]
+    return render_template(
+        "learn_article.html",
+        article=article,
+        related_devices=related,
+        other_articles=others,
+    )
+
+
 @app.route("/sitemap.xml")
 def sitemap():
     lines = [
@@ -443,6 +494,22 @@ def sitemap():
         lines.append(f"    <lastmod>{guide_lastmod}</lastmod>")
         lines.append("    <changefreq>monthly</changefreq>")
         lines.append("    <priority>0.8</priority>")
+        lines.append("  </url>")
+
+    # Free articles: English-only, and only the ones that pass learn.review().
+    learn_lastmod = _lastmod("learn.py", "templates/learn_article.html")
+    lines.append("  <url>")
+    lines.append(f"    <loc>{BASE_URL}/learn</loc>")
+    lines.append(f"    <lastmod>{learn_lastmod}</lastmod>")
+    lines.append("    <changefreq>weekly</changefreq>")
+    lines.append("    <priority>0.7</priority>")
+    lines.append("  </url>")
+    for article in indexable_learn_articles():
+        lines.append("  <url>")
+        lines.append(f"    <loc>{BASE_URL}/learn/{article['slug']}</loc>")
+        lines.append(f"    <lastmod>{article.get('updated', learn_lastmod)}</lastmod>")
+        lines.append("    <changefreq>monthly</changefreq>")
+        lines.append("    <priority>0.7</priority>")
         lines.append("  </url>")
 
     lines.append("</urlset>")

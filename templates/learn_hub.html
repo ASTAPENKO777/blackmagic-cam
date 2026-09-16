@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% set host = request.host_url.rstrip('/') %}
+
+{% block title %}Blackmagic Camera guides for iPhone — free how-tos{% endblock %}
+{% block description %}Free, practical answers about shooting with Blackmagic Camera on iPhone: importing LUTs, Apple Log support by model, choosing a codec, and fixing indoor flicker.{% endblock %}
+{% block og_title %}Blackmagic Camera guides for iPhone — free how-tos{% endblock %}
+{% block og_description %}Free, practical answers about shooting with Blackmagic Camera on iPhone — LUTs, Apple Log, codecs and frame rate.{% endblock %}
+
+{% block head %}
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "CollectionPage",
+  "name": "Blackmagic Camera guides for iPhone",
+  "description": "Free how-tos for shooting with the Blackmagic Camera app on iPhone.",
+  "url": "{{ host }}/learn",
+  "isPartOf": { "@id": "{{ host }}/#website" },
+  "inLanguage": "en"
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    { "@type": "ListItem", "position": 1, "name": "Home", "item": "{{ host }}/" },
+    { "@type": "ListItem", "position": 2, "name": "Learn" }
+  ]
+}
+</script>
+{% endblock %}
+
+{% block content %}
+
+<nav class="breadcrumbs" aria-label="Breadcrumb">
+  <div class="container">
+    <ol>
+      <li><a href="/">Home</a></li>
+      <li aria-current="page">Learn</li>
+    </ol>
+  </div>
+</nav>
+
+<section class="learn-hub">
+  <div class="container">
+
+    <div class="section-title">
+      <h1>Blackmagic Camera, explained</h1>
+      <p>Free answers to the questions that come up most often when shooting on iPhone.</p>
+    </div>
+
+    <div class="learn-card-grid" data-stagger>
+      {% for article in articles %}
+        <a class="learn-card" href="/learn/{{ article.slug }}">
+          <h2>{{ article.title }}</h2>
+          <p>{{ article.description }}</p>
+          <span class="learn-card-link">Read it →</span>
+        </a>
+      {% endfor %}
+    </div>
+
+    <div class="learn-cta" data-reveal>
+      <h2>Want the settings, not the theory?</h2>
+      <p>The paid guide gives you every value to enter for your exact iPhone model, with a screenshot at each step and a free cinematic LUT pack.</p>
+      <a href="/select" class="btn btn-primary">Choose your iPhone — $4.99</a>
+    </div>
+
+  </div>
+</section>
+
+{% endblock %}

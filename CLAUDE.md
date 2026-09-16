@@ -29,9 +29,13 @@ No build step. No package manager. Pure Flask.
 | `translations.py` | All UI strings for EN / RU / AR |
 | `devices.py` | Device list + group mapping (A–H) |
 | `db.py` | SQLite helpers (init, save, lookup purchases) |
+| `learn.py` | Free `/learn` articles + the quality gate that decides which are indexable |
+| `scripts/seo_check.py` | Post-deploy SEO smoke test — run it against the live URL after every deploy |
 | `vercel.json` | Vercel deployment config |
 | `templates/base.html` | Nav, footer, RTL styles, lang switcher, `window.BMC_I18N` |
 | `templates/index.html` | Landing page |
+| `templates/learn_hub.html` | `/learn` index of free articles |
+| `templates/learn_article.html` | `/learn/<slug>` article + Article/FAQ/Breadcrumb JSON-LD |
 | `templates/select.html` | Device picker → Payhip (card) + crypto form |
 | `templates/crypto_pay.html` | Instructions page after crypto form submit (address + QR + amount) |
 | `templates/crypto_confirmed.html` | Owner-side confirmation view (after clicking magic link) |
@@ -74,6 +78,36 @@ This flow trades automation for simplicity: at $4.99 per sale, no crypto gateway
 - Optional: if `TELEGRAM_BOT_TOKEN` + `TELEGRAM_CHAT_ID` are set, every Q/A is forwarded to the owner via Telegram (fire-and-forget thread, doesn't block the stream).
 - Disabled gracefully: if `GROQ_API_KEY` is missing, the endpoint returns 503 and the widget shows the network error.
 
+### SEO
+
+The site runs on `blackmagiccam.vercel.app` — no custom domain by choice. Every URL is
+built from `BASE_URL`, so moving to a real domain later is a one-variable change.
+
+- **`/robots.txt` and `/sitemap.xml` are Flask routes, not static files.** `vercel.json`
+  only maps `/static/(.*)`, so a static `static/robots.txt` is served at
+  `/static/robots.txt` and `/robots.txt` 404s. Do not reintroduce the static file.
+- **Three indexing states**, decided in `inject_i18n` and rendered by `base.html`:
+  1. `canonical_path` + `emit_hreflang` — the localized pages (`/`, `/select`,
+     `/guide/<slug>` in English): canonical plus `hreflang` alternates.
+  2. `canonical_path` without `emit_hreflang` — `/learn` pages: English-only, so they
+     get a canonical but must never advertise `/ru/` or `/ar/` variants.
+  3. `seo_noindex_follow` — `/ru/guide/*` and `/ar/guide/*`. Guide bodies are English;
+     declaring them as Russian/Arabic across 60 URLs is a wrong-language signal. They
+     stay reachable for the language switcher but are `noindex, follow` and are absent
+     from the sitemap. **If guides are ever translated, flip this off in one place.**
+- **`_is_publicly_localized` validates the slug** against `DEVICES`. Accepting any
+  `/guide/*` string made every 404 under `/guide/` self-canonical and indexable.
+- **`/learn` quality gate** (`learn.review()`): an article needs `MIN_WORDS` and at
+  least one link into a device guide before it is listed or put in the sitemap. It
+  returns the *reason* it failed, so a thin draft is visible rather than silently
+  dropped. Facts in `learn.py` must match `bmc_knowledge.py` — that module is the
+  source of truth for the paid guide and the AI assistant.
+- **No `aggregateRating` anywhere.** It previously claimed 4.9 from 1200 reviews with
+  14 testimonials on the page, which risks a manual action across the whole domain.
+  Do not re-add it without real `Review` markup behind it.
+- Homepage device chips link to all 30 guides — those pages had no other inbound link.
+- After deploying: `python3 scripts/seo_check.py https://blackmagiccam.vercel.app`.
+
 ### i18n / Language
 - **URL-based routing for SEO.** Indexable pages have 3 variants:
   - `/`, `/select`, `/guide/<slug>` → English (x-default)
@@ -113,7 +147,8 @@ GMAIL_USER=...
 GMAIL_APP_PASSWORD=...
 
 # URLs
-BASE_URL=https://yourdomain.com   # used in confirm-link URLs and access-link emails
+BASE_URL=https://yourdomain.com   # used in confirm-link URLs, access-link emails, canonical URLs and the sitemap
+GOOGLE_SITE_VERIFICATION=...      # optional — meta-tag verification for Search Console
 DB_PATH=purchases.db              # optional, defaults to /tmp/purchases.db
 
 # AI assistant (paid-guide chat widget on /access/<token>)
@@ -150,6 +185,11 @@ Local: create `.env` file (loaded via `python-dotenv`).
 - `_send_admin_crypto_notification` uses the same Gmail SMTP path as customer emails — failures are logged but don't block the checkout page render (customer still sees the pay instructions).
 - `make_response` is imported from Flask for `/set-lang` cookie response — don't remove it.
 - Group templates use `{% if lang == 'ru' %} ... {% elif lang == 'ar' %} ... {% else %} ... {% endif %}` pattern inline — no separate template files per language.
+- `BASE_URL` is `.strip().rstrip("/")`-ed at import. A trailing newline in the Vercel env value once put a literal `\n` inside all 96 sitemap `<loc>` values, which made the whole sitemap unparseable. Set env vars with `printf`, never `echo`.
+- `static/img/` holds `og-image.jpg` and both video posters. It was untracked for months, so every share unfurled without an image and the hero showed black until the video painted. Keep it committed.
+- Hero video is ~45 MB on Cloudflare R2 with `moov` at the end of the file. `preload` must stay `metadata` — `auto` makes every first visit pull the whole file.
+- Mobile homepage rules live in `@media (max-width: 640px)` / `(max-width: 400px)` blocks at the end of `style.css`. Note that a 375 px phone matches **both**, so the 400 px block wins — check it first when a mobile value seems ignored.
+- In the 2×2 benefit cards the icon is absolutely positioned and only the title's first line is indented past it. A grid column or a float both shortened *every* line and split the Russian word "кинематографические"; it needs the full 138 px tile width.
 
 ## Deployment (Vercel)
 

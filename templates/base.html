@@ -29,7 +29,7 @@
   <meta property="og:description" content="{% block og_description %}Perfect camera settings for your iPhone. One-time $4.99.{% endblock %}" />
   <meta property="og:type" content="website" />
   {# og:url follows the canonical, not request.url — the latter carries query strings #}
-  <meta property="og:url" content="{{ request.host_url.rstrip('/') }}{{ lang_alternates[lang] if is_seo_localized else request.path }}" />
+  <meta property="og:url" content="{{ request.host_url.rstrip('/') }}{{ canonical_path or request.path }}" />
   <meta property="og:site_name" content="BlackmagicCam" />
   {% set og_locales = {'en': 'en_US', 'ru': 'ru_RU', 'ar': 'ar_AR'} %}
   <meta property="og:locale" content="{{ og_locales[lang] }}" />
@@ -44,12 +44,14 @@
   <meta name="twitter:description" content="{% block twitter_description %}{{ self.og_description() }}{% endblock %}" />
   <meta name="twitter:image" content="{{ request.host_url }}static/img/og-image.jpg" />
   {% set host = request.host_url.rstrip('/') %}
-  {% if is_seo_localized %}
-  <link rel="canonical" href="{{ host }}{{ lang_alternates[lang] }}" />
+  {% if canonical_path %}
+  <link rel="canonical" href="{{ host }}{{ canonical_path }}" />
+  {% if emit_hreflang %}
   {% for alt_lang, alt_path in lang_alternates.items() %}
   <link rel="alternate" hreflang="{{ alt_lang }}" href="{{ host }}{{ alt_path }}" />
   {% endfor %}
   <link rel="alternate" hreflang="x-default" href="{{ host }}{{ lang_alternates['en'] }}" />
+  {% endif %}
   {% elif seo_noindex_follow %}
   <meta name="robots" content="noindex, follow" />
   {% else %}
@@ -174,6 +176,7 @@
               <li><a href="{{ lang_link('/select') }}">{% if lang == 'ru' %}Выбрать iPhone{% elif lang == 'ar' %}اختر iPhone{% else %}Choose iPhone{% endif %}</a></li>
               <li><a href="{{ lang_link('/') }}#what-you-get">{% if lang == 'ru' %}Что внутри{% elif lang == 'ar' %}ما بالداخل{% else %}What's included{% endif %}</a></li>
               <li><a href="{{ lang_link('/') }}#pricing">{% if lang == 'ru' %}Цена{% elif lang == 'ar' %}السعر{% else %}Pricing{% endif %}</a></li>
+              <li><a href="/learn">{% if lang == 'ru' %}Гайды и статьи{% elif lang == 'ar' %}أدلة ومقالات{% else %}Guides &amp; articles{% endif %}</a></li>
             </ul>
           </div>
           <div class="footer-col">
