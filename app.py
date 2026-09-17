@@ -281,6 +281,27 @@ def detect_language():
     return request.accept_languages.best_match(SUPPORTED_LANGS, default="en")
 
 
+_STATIC_VERSIONS = {}
+
+
+def _static_version(filename: str) -> str:
+    """Short content hash of a static file, computed once per process.
+
+    Deliberately not mtime: Vercel normalizes file timestamps in the build output
+    (every deploy came out as 1540000000), so an mtime stamp is identical on every
+    deploy and never breaks the cache.
+    """
+    if filename in _STATIC_VERSIONS:
+        return _STATIC_VERSIONS[filename]
+    try:
+        with open(os.path.join(app.static_folder, filename), "rb") as handle:
+            version = hashlib.sha256(handle.read()).hexdigest()[:10]
+    except OSError:
+        version = ""
+    _STATIC_VERSIONS[filename] = version
+    return version
+
+
 @app.context_processor
 def inject_static_version():
     """Append a build version to static asset URLs.
@@ -291,11 +312,8 @@ def inject_static_version():
     """
     def static_v(filename: str) -> str:
         url = url_for("static", filename=filename)
-        try:
-            stamp = int(os.path.getmtime(os.path.join(app.static_folder, filename)))
-        except OSError:
-            return url
-        return f"{url}?v={stamp}"
+        version = _static_version(filename)
+        return f"{url}?v={version}" if version else url
 
     return {"static_v": static_v}
 
