@@ -208,7 +208,10 @@ nav .nav-inner {
   color: var(--accent);
 }
 .feature-card:not(:nth-child(1)) .feature-icon svg { width: 16px; height: 16px; }
-.feature-card:not(:nth-child(1)) h3 { text-indent: 22px; min-height: 18px; }
+/* Pad every line, not just the first. text-indent moved only line one, and the
+   16px icon is taller than a 15px title line on a phone, so a wrapped second
+   line ran straight under the icon. */
+.feature-card:not(:nth-child(1)) h3 { padding-inline-start: 22px; min-height: 18px; }
 
 .feature-card h3 {
   font-size: 0.95rem;
@@ -1743,6 +1746,12 @@ nav .nav-inner {
   padding: 48px 20px 56px;
   text-align: center;
   position: relative;
+}
+/* A one-line quote does not need 104px of vertical padding on a phone — it read
+   as a gap between sections rather than a divider. */
+@media (max-width: 640px) {
+  .cinematic-break { padding: 26px 20px 30px; }
+  .cinematic-break-inner { margin-bottom: 14px; }
 }
 .cinematic-break::before {
   content: '';

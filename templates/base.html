@@ -247,7 +247,11 @@
           io.unobserve(e.target);
         }
       });
-    }, { threshold: 0.1 });
+    // rootMargin, not a bare threshold: these blocks sit at opacity 0 until they
+    // intersect, so revealing them only once they touch the viewport meant you
+    // scrolled into an empty hole and watched it fill. Start 300px early and the
+    // content is already there when it arrives on screen.
+    }, { threshold: 0.01, rootMargin: '300px 0px' });
     document.querySelectorAll(sel).forEach(function (el) { io.observe(el); });
   })();
   </script>

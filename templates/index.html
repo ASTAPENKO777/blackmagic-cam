@@ -371,7 +371,9 @@
     {% set half = (rest | length // 2) %}
     {% set row1 = rest[:half] %}
     {% set row2 = rest[half:] %}
-    <div class="testimonials-marquee" data-reveal>
+    {# No data-reveal: a 330px block held at opacity 0 until the observer fires
+       reads as an empty hole under the heading while you scroll past it. #}
+    <div class="testimonials-marquee">
       <div class="marquee-row marquee-row--ltr">
         <div class="marquee-track">
           {% for tm in row1 %}{{ testimonial_card(tm) }}{% endfor %}
@@ -430,7 +432,7 @@
       <h2>{{ t.devices_title }}</h2>
       <p>{{ t.devices_subtitle }}</p>
     </div>
-    <div class="device-map" data-reveal>
+    <div class="device-map">
       {% for gkey in ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'] %}
         {% set gdevs = devices | selectattr('group', 'equalto', gkey) | list %}
         {% if gdevs %}
