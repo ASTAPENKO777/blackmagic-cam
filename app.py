@@ -282,6 +282,25 @@ def detect_language():
 
 
 @app.context_processor
+def inject_static_version():
+    """Append a build version to static asset URLs.
+
+    /static/* is served with `public, max-age=31536000, immutable`, and the links
+    carried no version, so a returning visitor kept the cached CSS after a deploy:
+    a redesign could ship and simply not appear until a hard refresh.
+    """
+    def static_v(filename: str) -> str:
+        url = url_for("static", filename=filename)
+        try:
+            stamp = int(os.path.getmtime(os.path.join(app.static_folder, filename)))
+        except OSError:
+            return url
+        return f"{url}?v={stamp}"
+
+    return {"static_v": static_v}
+
+
+@app.context_processor
 def inject_i18n():
     lang = detect_language()
     is_public = _is_publicly_localized(request.path)

@@ -88,11 +88,11 @@
   {% if google_site_verification %}
   <meta name="google-site-verification" content="{{ google_site_verification }}" />
   {% endif %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}" />
+  <link rel="stylesheet" href="{{ static_v('css/style.css') }}" />
   {% if lang == 'ar' %}
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/rtl.css') }}" />
+  <link rel="stylesheet" href="{{ static_v('css/rtl.css') }}" />
   {% endif %}
-  <script src="{{ url_for('static', filename='js/clipboard.js') }}" defer></script>
+  <script src="{{ static_v('js/clipboard.js') }}" defer></script>
   {% block head %}{% endblock %}
   <script>
     // Pre-cover the page if we just navigated from a language switch,
@@ -229,7 +229,7 @@
     </div>
   </footer>
 
-  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ static_v('js/main.js') }}"></script>
   {% block scripts %}{% endblock %}
   <script>
   (function () {
