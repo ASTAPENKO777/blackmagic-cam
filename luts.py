@@ -74,6 +74,25 @@ def _field(item: dict, lang: str, key: str, default: str = "") -> str:
     return value.replace(" — ", ", ").replace("—", ",")
 
 
+COLUMNS_FROM = 8      # як у боті: від 8 LUT список у дві колонки
+COLUMNS_WIDTH = 52    # символів у рядку двох колонок
+
+
+def numbered_block(names: list[str], lang: str) -> str:
+    """Пронумерований список «що всередині» тим самим форматом, що в боті (handlers/catalog.numbered_columns):
+    моноширинний блок, номери праворуч вирівняні, від 8 LUT дві колонки згори вниз (RTL-мови: одна колонка)."""
+    digits = len(str(len(names)))
+    cells = [f"{i:>{digits}}. {name}" for i, name in enumerate(names, 1)]
+    if len(names) >= COLUMNS_FROM and lang not in RTL:
+        rows = (len(cells) + 1) // 2
+        left, right = cells[:rows], cells[rows:]
+        right = [""] * (rows - len(right)) + right
+        width = max(len(c) for c in left)
+        if width + 2 + max((len(c) for c in right), default=0) <= COLUMNS_WIDTH:
+            return "\n".join((left[r].ljust(width) + "  " + right[r]).rstrip() for r in range(rows))
+    return "\n".join(cells)
+
+
 def view_items(catalog: dict, lang: str = "en") -> dict:
     """Паки й окремі LUT для шаблонів: з каталогу + наш текст про пак."""
     copy = content.for_lang(lang)["packs"]
@@ -100,6 +119,10 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
     by_slug = {s["slug"]: s for s in singles}
     for pack in packs:
         names = pack.get("look_names") or {}
+        pack["per"] = round(pack["price_stars"] / pack["count"]) if pack["count"] > 1 else None
+        alone_prices = [by_slug[slug]["price_stars"] for slug in pack["looks"] if slug in by_slug]
+        total = sum(alone_prices)
+        pack["save"] = round((1 - pack["price_stars"] / total) * 100) if len(alone_prices) == pack["count"] and total > pack["price_stars"] else None
 
         def look_title(slug: str) -> str:
             data = names.get(slug) or {}
@@ -109,6 +132,11 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
         for look in pack["inside"]:
             look.setdefault("alone", True)
         pack["has_alone"] = any(look["alone"] for look in pack["inside"])
+        pack["code"] = numbered_block([look["title"] for look in pack["inside"]], lang)
+        # колаж: до 3-4 відео збоку від великого фото, ще до двох знизу
+        reel = pack["media"] if pack.get("pair_meta") else pack["media"][1:]
+        k = len(reel) if len(reel) <= 4 else 3
+        pack["side"], pack["bottom"] = reel[:k], reel[k:k + 2]
     return {"work": work, "packs": packs, "singles": singles, "by_slug": {i["slug"]: i for i in packs + singles}, "alone": sold_alone}
 
 

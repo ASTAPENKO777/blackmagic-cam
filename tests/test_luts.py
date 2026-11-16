@@ -227,10 +227,27 @@ def test_name_stays_next_to_i_in_ukrainian_heading(client):
     assert "Одразу навчився знімати" in html and "Я одразу навчився" not in html
 
 
-def test_packs_are_big_alternating_rows_with_collage_and_full_info(client):
+def test_packs_are_big_alternating_rows_with_collage_and_telegram_style_message(client):
     html = client.get("/luts").data.decode()
     rows = re.findall(r'<article class="pack-row( flip)?">', html)
-    assert len(rows) == 3 and rows == ["", " flip", ""]  # перший: фото ліворуч, другий навпаки
-    assert html.count('class="collage-lead"') >= 3 and html.count('class="pack-card card"') == 3
-    for needle in ("What&#39;s inside", "Buy in Telegram", "View"):
-        assert html.count(needle) >= 3
+    assert rows == ["", " flip", ""]  # перший: колаж ліворуч, другий навпаки
+    assert html.count('class="collage-lead"') == 3 and html.count('class="msg"') == 3
+    # у стилі картки бота: «13 LUTs / Rec.709», пронумерований моноширинний список, ціна, «≈ N ⭐ per LUT»
+    assert re.search(r"<b>13 LUTs / Rec\.709</b>", html) and 'class="msg-code"' in html and "1. Era" in html
+    assert "per LUT" in html and html.count("Buy in Telegram") >= 3
+    assert 'href="/luts/cinematic_pro_15"' not in html  # пак не відкривається окремою сторінкою: усе на головній
+
+
+def test_inside_list_matches_the_bot_format():
+    import luts
+
+    eight = luts.numbered_block([f"Look {i}" for i in range(1, 9)], "en")
+    assert eight.splitlines()[0].startswith("1. Look 1") and "5. Look 5" in eight.splitlines()[0]   # дві колонки, як у боті
+    assert luts.numbered_block(["A", "B", "C"], "en") == "1. A\n2. B\n3. C"
+    assert "\n" in luts.numbered_block([f"Look {i}" for i in range(1, 9)], "ar") and "  " not in luts.numbered_block([f"L{i}" for i in range(1, 9)], "ar")  # RTL: одна колонка
+
+
+def test_single_looks_are_simple_cards_without_buy_buttons(client):
+    html = client.get("/luts").data.decode()
+    block = html[html.index('<div class="singles">'):html.index("</section>", html.index('<div class="singles">'))]
+    assert block.count('class="single"') >= 8 and "Buy" not in block and "single-price" in block

@@ -30,7 +30,7 @@
   "versions": "Versiones",
   "what_inside": "Qué incluye",
   "sold_alone": "También se vende suelto",
-  "pack_only": "Estos looks no se venden por separado.",
+  "pack_only": "No se venden por separado. Solo en pack.",
   "prod_title": "{title}: LUT para Blackmagic Camera ({versions})",
   "free_page_title": "Starter gratis: LUTs gratis para iPhone y Blackmagic Camera",
   "how_title": "Instálalo en 30 segundos",
@@ -95,11 +95,15 @@
   "prev": "Anterior",
   "next": "Siguiente",
   "kicker": "LUTs para iPhone · Blackmagic Camera",
-  "bio_1": "Casi dos años en Blackmagic Camera. Llevo un *canal* y grabo todo con iPhone.",
+  "bio_1": "Casi dos años en Blackmagic Camera. Llevo el *canal @blackmagicamera* y grabo todo con iPhone.",
   "bio_2": "Me salté el largo camino de aprender a graduar color en postproducción. Aprendí a grabar en máxima calidad desde el primer fotograma, con presets llamados LUTs. El color ya está en pantalla mientras grabo.",
   "bio_3": "Cada look de esta tienda es trabajo mío, hecho y probado con mis propias imágenes, en Rec.709 y Apple Log. Solo vendo lo que uso yo mismo.",
   "quote": "El plano está terminado antes de que pulses grabar.",
-  "bio_4": "Lo que he aprendido de rodaje y color lo comparto: en el canal, en el pack Starter gratis y en el bot. Las preguntas sobre cualquier archivo me llegan directamente."
+  "bio_4": "Lo que he aprendido de rodaje y color lo comparto: en el canal, en el pack Starter gratis y en el bot. Las preguntas sobre cualquier archivo me llegan directamente.",
+  "per_lut": "≈ {per} ⭐ por LUT",
+  "save": "Ahorra un {pct}% frente a comprar uno a uno",
+  "lut_count": "{count} LUTs",
+  "price": "Precio"
  },
  "packs": {
   "apple_log_film": {

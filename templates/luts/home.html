@@ -40,26 +40,26 @@
   {% for p in shop.packs %}
   <article class="pack-row{% if loop.index is even %} flip{% endif %}">
     <div class="collage">
-      {% if p.pair_meta %}<div class="collage-lead">{{ slider(p.pair_meta, alt=p.title) }}</div>{% endif %}
-      {% set reel = p.media if p.pair_meta else p.media[1:] %}
-      {% if not p.pair_meta and p.media %}<a class="collage-lead" href="{{ u('/' ~ p.slug) }}" aria-label="{{ p.title }}">{{ tile(p.media[0], p.title) }}</a>{% endif %}
-      {% if reel %}<div class="collage-grid">{% for m in reel[:4] %}<a class="collage-tile" href="{{ u('/' ~ p.slug) }}" aria-label="{{ p.title }}">{{ tile(m, p.title) }}</a>{% endfor %}</div>{% endif %}
-      {% if not p.media and not p.pair_meta %}{{ cover(p) }}{% endif %}
+      <div class="collage-lead">
+        {% if p.pair_meta %}{{ slider(p.pair_meta, alt=p.title) }}{% elif p.media %}{{ tile(p.media[0], p.title) }}{% else %}{{ cover(p) }}{% endif %}
+      </div>
+      {% if p.side %}<div class="collage-side">{% for m in p.side %}<div class="collage-tile">{{ tile(m, p.title) }}</div>{% endfor %}</div>{% endif %}
+      {% if p.bottom %}<div class="collage-bottom">{% for m in p.bottom %}<div class="collage-tile">{{ tile(m, p.title) }}</div>{% endfor %}</div>{% endif %}
     </div>
     <div class="pack-info">
-      <div class="pack-card card">
-        {% if loop.last and shop.packs|length > 1 %}<span class="badge-inline">{{ T.best_value }}</span>{% endif %}
-        <h3><a href="{{ u('/' ~ p.slug) }}">{{ p.title }}</a></h3>
-        <p class="pack-tag">{{ p.tagline or p.desc }}</p>
-        {% if p.text %}<p class="muted">{{ p.text }}</p>{% endif %}
-        <p class="meta mono">{{ T.looks_n.format(n=p.count) }} · {{ versions(p) }}</p>
-        <h4 class="inside-h">{{ T.what_inside }}</h4>
-        <ul class="inside">{% for look in p.inside %}<li>{% if look.alone %}<a href="{{ u('/' ~ look.slug) }}">{{ look.title }}</a>{% else %}{{ look.title }}{% endif %}</li>{% endfor %}</ul>
-        <p class="small muted">{{ T.sold_alone if p.has_alone else T.pack_only }}</p>
-        <div class="cta-row">
-          {{ tg(p.slug, T.buy_tg_stars.format(stars=p.price_stars)) }}
-          <a class="btn" href="{{ u('/' ~ p.slug) }}">{{ T.view }}</a>
+      <div class="msg-wrap">
+        <div class="msg">
+          <p class="msg-title"><b>{{ p.title }}</b></p>
+          <p>{{ p.tagline or p.desc }}</p>
+          {% if p.text %}<p>{{ p.text }}</p>{% endif %}
+          <p class="msg-count"><b>{{ T.lut_count.format(count=p.count) }} / {{ p.versions | join(" + ") }}</b></p>
+          <pre class="msg-code" dir="ltr">{{ p.code }}</pre>
+          <p class="msg-price"><b>{{ (p.price_stars ~ " ⭐") | star }}</b></p>
+          {% if p.per %}<p>{{ T.per_lut.format(per=p.per) | star }}</p>{% endif %}
+          {% if p.save %}<p><b>{{ T.save.format(pct=p.save) }}</b></p>{% endif %}
+          {% if not p.has_alone %}<p><b>{{ T.pack_only }}</b></p>{% endif %}
         </div>
+        <div class="msg-keys">{{ tg(p.slug, T.buy_tg_stars.format(stars=p.price_stars), "btn btn-primary btn-block") }}</div>
       </div>
     </div>
   </article>
@@ -69,16 +69,14 @@
 
 <section class="wrap sec">
   <div class="sec-head"><h2>{{ T.singles }}</h2><p class="muted sec-sub">{{ T.singles_sub }}</p></div>
-  <div class="grid singles">
+  <div class="singles">
     {% for s in shop.singles %}
-    <article class="card single">
-      <a href="{{ u('/' ~ s.slug) }}" class="cover-link" aria-label="{{ s.title }}">{{ cover(s) }}</a>
-      <div class="card-body">
-        <h3><a href="{{ u('/' ~ s.slug) }}">{{ s.title }}</a></h3>
-        <p class="meta mono">{{ versions(s) }}</p>
-        {{ tg(s.slug, T.buy_short.format(stars=s.price_stars), "btn btn-primary btn-sm") }}
-      </div>
-    </article>
+    <a class="single" href="{{ u('/' ~ s.slug) }}">
+      {{ cover(s) }}
+      <h3>{{ s.title }}</h3>
+      {% if s.desc %}<p class="single-desc">{{ s.desc.replace(" / ", " · ") }}</p>{% endif %}
+      <p class="single-price">{{ (s.price_stars ~ " ⭐") | star }}</p>
+    </a>
     {% endfor %}
   </div>
 </section>
