@@ -1,5 +1,5 @@
 {% extends "luts/base.html" %}
-{% from "luts/_m.html" import tg, cover, clip, versions with context %}
+{% from "luts/_m.html" import tg, cover, tile, slider, versions with context %}
 {% block bodyattr %} data-slug="home"{% endblock %}
 {% block head %}
 <link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="{{ static_v('luts/img/bust-480.avif') }} 480w, {{ static_v('luts/img/bust-768.avif') }} 768w, {{ static_v('luts/img/bust-1080.avif') }} 1080w" imagesizes="(min-width: 1000px) 470px, 86vw" media="(max-width: 999px)">
@@ -17,12 +17,12 @@
       </picture>
     </div>
     <div class="hero-copy">
-      <h1>{{ T.h1 }}</h1>
+      <h1>{{ T.h1 | nb }}</h1>
       <div class="hero-body">
-        <p class="bio-lead">{{ T.bio_1 }}</p>
-        <p>{{ T.bio_2 }}</p>
-        <p>{{ T.bio_3 }}</p>
-        <p>{{ T.bio_4 }}</p>
+        <p class="bio-lead">{{ T.bio_1 | bio }}</p>
+        <p>{{ T.bio_2 | nb }}</p>
+        <p>{{ T.bio_3 | nb }}</p>
+        <p>{{ T.bio_4 | nb }}</p>
         <div class="cta-row">
           <a class="btn btn-primary" id="hero-cta" href="#catalog">{{ T.cta_all }}</a>
           {% if starter %}<a class="btn" href="{{ u('/free') }}">{{ T.cta_free }}</a>{% endif %}
@@ -36,39 +36,36 @@
 </div>
 
 <section class="wrap sec" id="catalog">
-  <div class="sec-head"><h2>{{ T.packs }}</h2><p class="muted sec-sub">{{ T.packs_sub }}</p></div>
-  <div class="grid packs">
-    {% for p in shop.packs %}
-    <article class="card pack {{ p.tint }}{% if loop.last and shop.packs|length > 1 %} pack-top{% endif %}">
-      {% if loop.last and shop.packs|length > 1 %}<span class="badge">{{ T.best_value }}</span>{% endif %}
-      <a class="cover-link" href="{{ u('/' ~ p.slug) }}" aria-label="{{ p.title }}">{{ cover(p, autoplay=True) }}</a>
-      <div class="card-body">
+  <div class="sec-head"><h2>{{ T.packs }}</h2><p class="sec-quote">{{ T.quote }}</p><p class="muted sec-sub">{{ T.packs_sub }}</p></div>
+  {% for p in shop.packs %}
+  <article class="pack-row{% if loop.index is even %} flip{% endif %}">
+    <div class="collage">
+      {% if p.pair_meta %}<div class="collage-lead">{{ slider(p.pair_meta, alt=p.title) }}</div>{% endif %}
+      {% set reel = p.media if p.pair_meta else p.media[1:] %}
+      {% if not p.pair_meta and p.media %}<a class="collage-lead" href="{{ u('/' ~ p.slug) }}" aria-label="{{ p.title }}">{{ tile(p.media[0], p.title) }}</a>{% endif %}
+      {% if reel %}<div class="collage-grid">{% for m in reel[:4] %}<a class="collage-tile" href="{{ u('/' ~ p.slug) }}" aria-label="{{ p.title }}">{{ tile(m, p.title) }}</a>{% endfor %}</div>{% endif %}
+      {% if not p.media and not p.pair_meta %}{{ cover(p) }}{% endif %}
+    </div>
+    <div class="pack-info">
+      <div class="pack-card card">
+        {% if loop.last and shop.packs|length > 1 %}<span class="badge-inline">{{ T.best_value }}</span>{% endif %}
         <h3><a href="{{ u('/' ~ p.slug) }}">{{ p.title }}</a></h3>
-        <p class="muted">{{ p.tagline or p.desc }}</p>
+        <p class="pack-tag">{{ p.tagline or p.desc }}</p>
+        {% if p.text %}<p class="muted">{{ p.text }}</p>{% endif %}
         <p class="meta mono">{{ T.looks_n.format(n=p.count) }} · {{ versions(p) }}</p>
+        <h4 class="inside-h">{{ T.what_inside }}</h4>
+        <ul class="inside">{% for look in p.inside %}<li>{% if look.alone %}<a href="{{ u('/' ~ look.slug) }}">{{ look.title }}</a>{% else %}{{ look.title }}{% endif %}</li>{% endfor %}</ul>
+        <p class="small muted">{{ T.sold_alone if p.has_alone else T.pack_only }}</p>
         <div class="cta-row">
           {{ tg(p.slug, T.buy_tg_stars.format(stars=p.price_stars)) }}
           <a class="btn" href="{{ u('/' ~ p.slug) }}">{{ T.view }}</a>
         </div>
       </div>
-    </article>
-    {% endfor %}
-  </div>
+    </div>
+  </article>
+  {% endfor %}
   <p class="small muted pack-help"><a href="{{ u('/rec709-vs-log') }}">{{ T.cmp_more }}</a></p>
 </section>
-
-{% if shop.work %}
-<section class="wrap sec">
-  <div class="sec-head"><h2>{{ T.work_title }}</h2><p class="sec-quote">{{ T.quote }}</p></div>
-  <div class="rail-wrap">
-    <div class="rail" data-rail>
-      {% for m in shop.work %}<figure class="clip">{{ clip(m, T.work_alt) }}</figure>{% endfor %}
-    </div>
-    <button class="rail-btn prev" type="button" data-rail-btn="-1" aria-label="{{ T.prev }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>
-    <button class="rail-btn next" type="button" data-rail-btn="1" aria-label="{{ T.next }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>
-  </div>
-</section>
-{% endif %}
 
 <section class="wrap sec">
   <div class="sec-head"><h2>{{ T.singles }}</h2><p class="muted sec-sub">{{ T.singles_sub }}</p></div>

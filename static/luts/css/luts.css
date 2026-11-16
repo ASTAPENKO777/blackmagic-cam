@@ -174,3 +174,31 @@ a:hover { color: var(--amber-hover); }
 .sticky .btn { width: 100%; max-width: 420px; }
 @media (min-width: 760px) { .sticky { display: none; } }
 @media (max-width: 759px) { .foot .wrap { padding-bottom: calc(90px + env(safe-area-inset-bottom)); } }
+
+/* Паки: великі блоки. Колаж із відео пака (одне велике, під ним дрібніші) і закріплена картка з описом, складом і купівлею.
+   Блоки чергуються: фото зліва, текст справа, далі навпаки. */
+.pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; padding: 44px 0; border-top: 1px solid var(--line); }
+.pack-row:first-of-type { border-top: 0; padding-top: 8px; }
+.collage { display: grid; gap: 10px; align-content: start; }
+.collage-lead { display: block; background: #05060a; border-radius: var(--radius); overflow: hidden; }
+.collage-lead .ba { border-radius: var(--radius); }
+a.collage-lead { border: 1px solid var(--line); }
+a.collage-lead video, a.collage-lead img { display: block; width: 100%; height: auto; }
+.collage-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; }
+.collage-tile { display: block; background: #05060a; border: 1px solid var(--line); border-radius: var(--radius-sm); overflow: hidden; text-decoration: none; }
+.collage-tile video, .collage-tile img { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; object-fit: contain; }
+.pack-card { padding: 26px; }
+.pack-card h3 { font-size: clamp(1.625rem, 5vw, 2.125rem); letter-spacing: -.03em; }
+.pack-tag { margin: 10px 0 8px; font-size: 1.125rem; font-weight: 600; color: #fff; }
+.pack-card .meta { margin: 14px 0 0; }
+.badge-inline { display: inline-block; margin-bottom: 12px; background: var(--amber); color: var(--on-amber); font: 700 .75rem/1 var(--font); padding: 6px 9px; border-radius: 6px; }
+.inside-h { margin: 22px 0 4px; font-size: .9375rem; font-weight: 650; color: var(--muted); letter-spacing: 0; }
+.pack-card .inside { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
+@media (min-width: 900px) {
+  .pack-row { grid-template-columns: minmax(0, 1.15fr) minmax(0, .85fr); gap: 56px; padding: 64px 0; align-items: start; }
+  .pack-row.flip .collage { order: 2; }
+  .pack-info { align-self: stretch; }
+  .pack-card { position: sticky; top: 88px; }
+  .collage-grid { grid-template-columns: repeat(4, 1fr); }
+}
+@media (max-width: 899px) { .collage-lead .ba { max-width: 520px; } }

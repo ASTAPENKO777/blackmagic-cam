@@ -27,6 +27,14 @@
 </div>
 {%- endmacro %}
 
+{% macro tile(m, alt="") -%}
+{%- if m.video -%}
+<video muted loop playsinline preload="none" width="{{ m.w }}" height="{{ m.h }}"{% if m.poster %} poster="{{ m.poster }}"{% endif %} data-src="{{ m.url }}" aria-label="{{ alt }}"></video>
+{%- else -%}
+<img src="{{ m.url }}" width="{{ m.w }}" height="{{ m.h }}" alt="{{ alt }}" loading="lazy" decoding="async">
+{%- endif -%}
+{%- endmacro %}
+
 {% macro tg(slug, label, cls="btn btn-primary") -%}
 <a class="{{ cls }}" data-tg data-slug="{{ slug }}" href="https://t.me/{{ bot }}?start=web_site__{{ slug }}" rel="noopener">{{ label | star }}</a>
 {%- endmacro %}

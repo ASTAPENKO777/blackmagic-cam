@@ -59,13 +59,14 @@ def test_buttons_go_to_the_bot_with_a_start_payload(client):
     assert {"web_site__cinematic_pro_15", "web_site__starter"} <= {p for _, p in links}
 
 
-def test_home_has_no_slider_but_pack_pages_do(client):
-    """Головна — профіль автора без повзунка; повзунок LUT OFF / LUT ON живе на сторінках паків і LUT із власним фото."""
+def test_sliders_live_in_pack_blocks_not_in_the_hero(client):
+    """Герой — профіль автора без повзунка. Повзунок LUT OFF / LUT ON стоїть на 36% у кожному пак-блоці головної й на сторінках паків."""
     home = client.get("/luts").data.decode()
-    assert 'type="range"' not in home and "data-ba" not in home and "LUT OFF" not in home
+    hero = home[home.index('<section class="hero">'):home.index("</section>", home.index('<section class="hero">'))]
+    assert "data-ba" not in hero
+    assert home.count("data-ba") == 3 and home.count('value="36"') == 3 and "LUT OFF" in home
     page = client.get("/luts/rec709_collection").data.decode()
     assert 'type="range"' in page and 'aria-label="Compare before and after"' in page and 'value="36"' in page
-    assert "LUT OFF" in page and "LUT ON" in page
     assert re.search(r'<img[^>]+width="768" height="960"', page)  # місце під кадр зарезервоване: CLS 0
 
 
@@ -83,7 +84,9 @@ def test_single_look_with_its_own_photo_gets_a_slider(client):
 
 def test_hero_is_a_bio_without_dashes(client):
     html = client.get("/luts").data.decode()
-    assert "Hi, I&#39;m Mykhailo." in html and "Almost two years" in html and "The shot is finished before you hit record." in html
+    plain = html.replace("\u00a0", " ")
+    assert "Hi, I&#39;m\u00a0Mykhailo." in html and "Almost two years" in plain and "The shot is finished before you hit record." in plain
+    assert 'href="https://t.me/blackmagicamera"' in html  # слово «channel» у біографії веде в канал
     assert 'class="portrait"' in html
 
 
@@ -160,7 +163,7 @@ def test_translated_pages_render_in_their_language_without_dollars(client, lang)
     home = client.get(f"/{lang}/luts").data.decode()
     import html as htmllib
 
-    assert luts_text.load(lang)["ui"]["h1"] in htmllib.unescape(home)
+    assert luts_text.load(lang)["ui"]["h1"] in htmllib.unescape(home).replace("\u00a0", " ")
     assert luts_text.load(lang)["ui"]["cta_all"] in home
 
 
@@ -213,3 +216,21 @@ def test_video_keeps_the_bot_aspect_ratio(client):
     sizes = {(int(w), int(h)) for w, h in re.findall(r'<video[^>]*width="(\d+)" height="(\d+)"', html)}
     assert sizes and all(abs(w / h - r) < 0.02 for w, h in sizes for r in [w / h]), sizes
     assert any(h > w for w, h in sizes) and any(w > h for w, h in sizes)  # вертикальні й горизонтальні — як у боті
+
+
+def test_name_stays_next_to_i_in_ukrainian_heading(client):
+    """«я Михайло» не розривається переносом: між ними нерозривний пробіл."""
+    import html as htmllib
+
+    html = htmllib.unescape(client.get("/uk/luts").data.decode())
+    assert "Привіт, я\u00a0Михайло." in html
+    assert "Одразу навчився знімати" in html and "Я одразу навчився" not in html
+
+
+def test_packs_are_big_alternating_rows_with_collage_and_full_info(client):
+    html = client.get("/luts").data.decode()
+    rows = re.findall(r'<article class="pack-row( flip)?">', html)
+    assert len(rows) == 3 and rows == ["", " flip", ""]  # перший: фото ліворуч, другий навпаки
+    assert html.count('class="collage-lead"') >= 3 and html.count('class="pack-card card"') == 3
+    for needle in ("What&#39;s inside", "Buy in Telegram", "View"):
+        assert html.count(needle) >= 3

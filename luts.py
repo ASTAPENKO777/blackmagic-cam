@@ -83,6 +83,7 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
                "desc": _field(item, lang, "desc"), "media": site_media(item["media"])}
         if item["kind"] == "pack":
             row.update(copy.get(item["slug"], {}))
+            row["lead_tall"] = bool(row["media"]) and row["media"][0]["h"] > row["media"][0]["w"]
             row["pair_meta"] = row.get("pair")
             packs.append(row)
         else:
@@ -98,8 +99,13 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
     sold_alone = {slug for pack in packs for slug in pack["looks"]}
     by_slug = {s["slug"]: s for s in singles}
     for pack in packs:
-        pack["inside"] = [by_slug.get(slug) or {"slug": slug, "title": slug.replace("_", " ").title(), "alone": False}
-                          for slug in pack["looks"]]
+        names = pack.get("look_names") or {}
+
+        def look_title(slug: str) -> str:
+            data = names.get(slug) or {}
+            return (data.get(lang) or data.get("en") or {}).get("title") or slug.replace("_", " ").title()
+
+        pack["inside"] = [by_slug.get(slug) or {"slug": slug, "title": look_title(slug), "alone": False} for slug in pack["looks"]]
         for look in pack["inside"]:
             look.setdefault("alone", True)
         pack["has_alone"] = any(look["alone"] for look in pack["inside"])
@@ -244,7 +250,26 @@ def star(value) -> Markup:
     return Markup(str(escape(value)).replace("⭐", STAR_SVG))
 
 
+_SHORT = re.compile(r"(?<!\w)(\w{1,3}) +", re.UNICODE)
+
+
+def nb(value) -> Markup:
+    """Нерозривні пробіли: короткі слова («я», «в», «I'm») не лишаються на кінці рядка, а останнє слово не стоїть самотнім."""
+    text = str(escape(value))
+    text = _SHORT.sub(lambda m: m.group(1) + "\u00a0", text)
+    return Markup(re.sub(r" +(\S+)$", "\u00a0\\1", text))
+
+
+def bio(value) -> Markup:
+    """*слово* у біографії стає посиланням на канал."""
+    channel = "https://t.me/blackmagicamera"
+    text = str(nb(value))
+    return Markup(re.sub(r"\*(.+?)\*", f'<a href="{channel}" rel="noopener">\\1</a>', text))
+
+
 def register(app, base_url: str = "") -> None:
     app.jinja_env.filters["star"] = star
+    app.jinja_env.filters["nb"] = nb
+    app.jinja_env.filters["bio"] = bio
     app.config["LUTS_BASE_URL"] = base_url  # абсолютні canonical, hreflang і og:image
     app.register_blueprint(bp)
