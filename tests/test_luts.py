@@ -251,3 +251,20 @@ def test_single_looks_are_simple_cards_without_buy_buttons(client):
     html = client.get("/luts").data.decode()
     block = html[html.index('<div class="singles">'):html.index("</section>", html.index('<div class="singles">'))]
     assert block.count('class="single"') >= 8 and "Buy" not in block and "single-price" in block
+
+
+def test_only_the_top_bar_spans_the_whole_screen():
+    """На широких моніторах лінії й смуги не тягнуться до країв екрана: повна ширина лише в верхньому меню."""
+    css = open(os.path.join(ROOT, "static/luts/css/luts.css"), encoding="utf-8").read()
+    for selector in (".band", ".foot", ".hero", ".strip"):
+        for rule in re.findall(re.escape(selector) + r" \{([^}]*)\}", css):
+            if selector == ".strip":
+                assert "max-width" in rule or "border" not in rule
+            else:
+                assert "border" not in rule, f"{selector}: {rule}"
+
+
+def test_bio_names_the_account_without_the_word_channel(client):
+    html = client.get("/luts").data.decode().replace(" ", " ")
+    assert 'rel="noopener">@blackmagicamera</a> and shoot everything on iPhone' in html
+    assert "channel @blackmagicamera" not in html

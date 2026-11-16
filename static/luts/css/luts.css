@@ -66,7 +66,7 @@ a:hover { color: var(--amber-hover); }
 
 /* Факти одним рядком під героєм */
 .strip { list-style: none; display: flex; flex-wrap: wrap; gap: 6px 28px; padding: 18px var(--gap); margin: 0 auto; max-width: 1180px; border-top: 1px solid var(--line); color: var(--muted); font-size: .9375rem; }
-.band { border-bottom: 1px solid var(--line); }
+@media (min-width: 1500px) { .strip { max-width: 1360px; } }
 
 .sec { padding-top: 84px; }
 .sec-head { margin-bottom: 26px; }
@@ -164,8 +164,8 @@ a:hover { color: var(--amber-hover); }
 .guide-steps h2::before { content: counter(s) ". "; color: var(--amber); }
 .shot-sm { width: min(100%, 540px); height: auto; border-radius: var(--radius-sm); border: 1px solid var(--line-2); }
 
-.foot { margin-top: 90px; border-top: 1px solid var(--line); }
-.foot .wrap { padding-top: 30px; padding-bottom: calc(34px + env(safe-area-inset-bottom)); }
+.foot { margin-top: 90px; }
+.foot .wrap { border-top: 1px solid var(--line); padding-top: 30px; padding-bottom: calc(34px + env(safe-area-inset-bottom)); }
 .foot-nav { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-bottom: 14px; }
 .foot-nav a { color: var(--muted); text-decoration: none; min-height: 32px; display: inline-flex; align-items: center; }
 .foot-nav a:hover { color: var(--text); }
