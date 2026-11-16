@@ -39,6 +39,8 @@ EN = {
     "save": 'Save {pct}% vs. buying one by one',
     "pack_only": 'Not sold separately. Pack only.',
     "lut_count": '{count} LUTs',
+    "pay_note": 'By paying, you accept {terms}',
+    "terms_link": 'the terms',
     "price": "Price",
     "prev": "Previous",
     "next": "Next",

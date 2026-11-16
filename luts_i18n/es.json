@@ -103,7 +103,9 @@
   "per_lut": "≈ {per} ⭐ por LUT",
   "save": "Ahorra un {pct}% frente a comprar uno a uno",
   "lut_count": "{count} LUTs",
-  "price": "Precio"
+  "price": "Precio",
+  "pay_note": "Al pagar aceptas {terms}",
+  "terms_link": "los términos"
  },
  "packs": {
   "apple_log_film": {

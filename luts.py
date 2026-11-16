@@ -294,7 +294,35 @@ def bio(value) -> Markup:
     return Markup(re.sub(r"\*(.+?)\*", f'<a href="{channel}" rel="noopener">\\1</a>', text))
 
 
+STAR_PATH = "M12 2.6l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8z"
+STAR_FX = (f'<svg class="star-fx" viewBox="0 0 24 24" aria-hidden="true"><path d="{STAR_PATH}" fill="url(#star-grad)"/>'
+           '<g clip-path="url(#star-clip)"><rect class="shine" x="-12" y="-2" width="7" height="28" fill="#fff" fill-opacity=".6"/></g></svg>')
+
+
+def star_fx(value) -> Markup:
+    """⭐ у ціні пака: власна зірка з градієнтом і тихим блиском (замість емодзі)."""
+    return Markup(str(escape(value)).replace("⭐", STAR_FX))
+
+
+def h1_lines(value) -> Markup:
+    """«Привіт, я Михайло.» у два рядки: слово привітання окремо, ім'я окремо (ділимо за першою комою)."""
+    text = str(value)
+    match = re.search(r"[,،]\s+", text)
+    if not match:
+        return nb(text)
+    head, tail = text[: match.end()].rstrip(), text[match.end():]
+    return Markup(f'<span class="h1-l">{escape(head)}</span><span class="h1-l">{nb(tail)}</span>')
+
+
+def desc_lines(value: str) -> list[str]:
+    """Опис пака з бота: рядки й « / » розбиваємо на окремі рядки (як у картці бота)."""
+    return [part.strip() for line in value.split("\n") for part in line.split(" / ") if part.strip()]
+
+
 def register(app, base_url: str = "") -> None:
+    app.jinja_env.filters["star_fx"] = star_fx
+    app.jinja_env.filters["h1"] = h1_lines
+    app.jinja_env.filters["lines"] = desc_lines
     app.jinja_env.filters["star"] = star
     app.jinja_env.filters["nb"] = nb
     app.jinja_env.filters["bio"] = bio

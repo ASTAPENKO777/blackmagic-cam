@@ -85,7 +85,7 @@ def test_single_look_with_its_own_photo_gets_a_slider(client):
 def test_hero_is_a_bio_without_dashes(client):
     html = client.get("/luts").data.decode()
     plain = html.replace("\u00a0", " ")
-    assert "Hi, I&#39;m\u00a0Mykhailo." in html and "Almost two years" in plain and "The shot is finished before you hit record." in plain
+    assert '<span class="h1-l">Hi,</span><span class="h1-l">I&#39;m\u00a0Mykhailo.</span>' in html and "Almost two years" in plain
     assert 'href="https://t.me/blackmagicamera"' in html  # слово «channel» у біографії веде в канал
     assert 'class="portrait"' in html
 
@@ -163,7 +163,9 @@ def test_translated_pages_render_in_their_language_without_dollars(client, lang)
     home = client.get(f"/{lang}/luts").data.decode()
     import html as htmllib
 
-    assert luts_text.load(lang)["ui"]["h1"] in htmllib.unescape(home).replace("\u00a0", " ")
+    h1 = re.search(r"<h1>(.*?)</h1>", home, flags=re.S).group(1)
+    h1 = htmllib.unescape(re.sub(r"</span><span[^>]*>", " ", re.sub(r"^<span[^>]*>|</span>$", "", h1))).replace("\u00a0", " ")
+    assert h1 == luts_text.load(lang)["ui"]["h1"].replace(", ", ", ", 1)
     assert luts_text.load(lang)["ui"]["cta_all"] in home
 
 
@@ -223,7 +225,7 @@ def test_name_stays_next_to_i_in_ukrainian_heading(client):
     import html as htmllib
 
     html = htmllib.unescape(client.get("/uk/luts").data.decode())
-    assert "Привіт, я\u00a0Михайло." in html
+    assert '<span class="h1-l">Привіт,</span><span class="h1-l">я\u00a0Михайло.</span>' in html
     assert "Одразу навчився знімати" in html and "Я одразу навчився" not in html
 
 
@@ -268,3 +270,23 @@ def test_bio_names_the_account_without_the_word_channel(client):
     html = client.get("/luts").data.decode().replace(" ", " ")
     assert 'rel="noopener">@blackmagicamera</a> and shoot everything on iPhone' in html
     assert "channel @blackmagicamera" not in html
+
+
+def test_no_emoji_anywhere_on_the_home_page(client):
+    """Жодних смайликів: зірка ціни — власна SVG, решта — текст."""
+    import unicodedata
+
+    for lang in ("en", "uk", "ar"):
+        path = "/luts" if lang == "en" else f"/{lang}/luts"
+        text = re.sub(r"<script.*?</script>|<svg.*?</svg>", "", client.get(path).data.decode(), flags=re.S)
+        bad = [c for c in text if unicodedata.category(c) == "So" and ord(c) > 0x2100 and c not in "·"]
+        assert not bad, (lang, bad[:5])
+
+
+def test_pack_text_follows_the_bot_card(client):
+    """Текст пака як у картці бота: назва, опис рядками, «N LUTs / версія», блок зі списком, ціна, «за LUT», «Економія», умови."""
+    html = client.get("/uk/luts").data.decode()
+    assert "13 LUT / Rec.709" in html and "Економія" in html and "за LUT" in html and "Оплачуючи, ви приймаєте" in html
+    assert 'href="/uk/luts/legal/terms"' in html and "Окремо не продаються" in html
+    assert html.count('class="star-fx"') >= 6 and "Тільки пакетом" in html
+    assert "Кадр готовий" not in html and "Чим більше берете" not in html  # прибрано за вимогою власника

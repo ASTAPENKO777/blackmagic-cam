@@ -48,7 +48,8 @@ a:hover { color: var(--amber-hover); }
 .portrait { position: relative; z-index: 1; display: block; margin: 0;
   -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%); mask-image: linear-gradient(180deg, #000 78%, transparent 100%); }
 .portrait img { display: block; width: 100%; height: auto; }
-.hero h1 { font-size: clamp(2.25rem, 10.5vw, 4.5rem); font-weight: 780; letter-spacing: -.05em; line-height: 1; margin-top: 4px; }
+.hero h1 { font-size: clamp(2.5rem, 11.5vw, 5rem); font-weight: 780; letter-spacing: -.05em; line-height: 1; margin-top: 4px; }
+.hero h1 .h1-l { display: block; }
 .hero-body { padding-top: 18px; }
 .hero-body p { margin: 0 0 14px; max-width: 36em; font-size: 1.0625rem; line-height: 1.6; color: #d9d6d0; }
 .hero-body .bio-lead { font-size: 1.1875rem; font-weight: 650; letter-spacing: -.015em; color: #fff; }
@@ -56,12 +57,12 @@ a:hover { color: var(--amber-hover); }
 @media (min-width: 1000px) {
   .hero-in { grid-template-columns: minmax(0, 1fr) 470px; grid-template-areas: "copy stage"; align-items: end; column-gap: 56px; padding-top: 48px; }
   .hero-copy { align-self: center; padding-bottom: 96px; }
-  .hero h1 { font-size: clamp(2.6rem, calc((min(100vw, 1360px) - 700px) / 11), 4.2rem); }
+  .hero h1 { font-size: clamp(3.4rem, 5.6vw, 5.4rem); }
   .hero-body { padding-top: 26px; }
   .stage { justify-self: stretch; width: auto; margin: 0; }
   .portrait { -webkit-mask-image: linear-gradient(180deg, #000 90%, transparent 100%); mask-image: linear-gradient(180deg, #000 90%, transparent 100%); }
 }
-@media (min-width: 1500px) { .hero-in { grid-template-columns: minmax(0, 1fr) 520px; } .hero h1 { font-size: 4.2rem; } }
+@media (min-width: 1500px) { .hero-in { grid-template-columns: minmax(0, 1fr) 520px; } .hero h1 { font-size: 5.4rem; } }
 @media (max-width: 480px) { .hero .cta-row .btn { padding: 0 18px; } .hero .cta-row { gap: 8px; } }
 
 /* Факти одним рядком під героєм */
@@ -179,9 +180,11 @@ a:hover { color: var(--amber-hover); }
 
 /* Паки: спокійні ряди. Колаж (велике фото зі слайдером, два менші збоку, решта відео рядом знизу) і текст поруч.
    Ряди чергуються: колаж ліворуч, потім праворуч. Текст закріплений, поки гортаєш колаж. */
-.packs-wrap { max-width: 980px; margin-inline: auto; }
-.pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 44px 0; border-top: 1px solid var(--line); }
-.pack-row:first-of-type { border-top: 0; padding-top: 10px; }
+.packs-wrap { max-width: 1040px; margin-inline: auto; }
+.packs-panel { background: #17130e; border: 1px solid rgba(240, 179, 92, .12); border-radius: 24px; padding: 4px 18px; }
+@media (min-width: 820px) { .packs-panel { padding: 12px 56px; border-radius: 28px; } }
+.pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 36px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
+.pack-row:first-of-type { border-top: 0; }
 .collage { display: grid; grid-template-columns: 1.45fr 1fr; gap: 8px; align-items: stretch; align-content: start; }
 .collage-big { grid-column: 1; grid-row: 1; aspect-ratio: 4 / 5; min-width: 0; border-radius: var(--radius-sm); overflow: hidden; background: #05060a; position: relative; }
 .collage-big .ba { height: 100%; border-radius: 0; border: 0; }
@@ -194,17 +197,23 @@ a:hover { color: var(--amber-hover); }
 .collage-bottom .collage-tile { aspect-ratio: 16 / 10; }
 .collage-tile video, .collage-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.pack-text h3 { font-size: clamp(1.75rem, 4.4vw, 2.25rem); font-weight: 680; letter-spacing: -.03em; line-height: 1.1; }
-.pack-desc { margin: 14px 0 0; max-width: 30em; color: var(--muted); font-size: .9375rem; line-height: 1.6; }
-.pack-count { margin: 20px 0 6px; font-weight: 650; font-size: .9375rem; }
-.pack-code { margin: 0; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; color: #e8edf3; font: .8125rem/1.55 var(--mono); white-space: pre; overflow-x: auto; max-width: 100%; }
-.pack-price { margin: 18px 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
-.pack-price b { font-size: 1.375rem; letter-spacing: -.02em; }
-.pack-per { color: var(--muted); font-size: .875rem; }
-.pack-note { margin: 8px 0 0; color: var(--muted); font-size: .875rem; }
-.btn-compact { margin-top: 18px; min-height: 44px; padding: 0 20px; }
+.pack-text h3 { font-size: clamp(1.75rem, 4.4vw, 2.25rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.pack-desc { margin: 12px 0 0; max-width: 30em; color: #d9d6d0; font-size: 1rem; line-height: 1.5; }
+.pack-count { margin: 18px 0 8px; font-weight: 700; font-size: 1.0625rem; }
+.pack-code { position: relative; margin: 0 0 14px; padding: 12px 40px 12px 18px; background: rgba(255, 255, 255, .06); border-left: 3px solid #5a9bf0; border-radius: 4px 10px 10px 4px;
+  color: #eef2f7; font: .875rem/1.55 var(--mono); white-space: pre; overflow-x: auto; max-width: 100%; }
+.pack-code::after { content: "</>"; position: absolute; top: 7px; right: 12px; color: #5a9bf0; font: 700 .75rem/1 var(--mono); }
+.pack-price { margin: 0; font-size: 1.375rem; letter-spacing: -.02em; }
+.pack-line { margin: 4px 0 0; font-size: 1rem; line-height: 1.45; }
+.pack-line b { font-weight: 700; }
+.btn-compact { margin-top: 20px; min-height: 46px; padding: 0 22px; }
+.pack-terms { margin: 12px 0 0; color: var(--muted); font-size: .875rem; }
+.star-fx { width: 1.05em; height: 1.05em; display: inline-block; vertical-align: -.14em; margin-inline-start: .08em; }
+.star-fx .shine { animation: star-shine 3.4s ease-in-out infinite; transform: skewX(-18deg); }
+@keyframes star-shine { 0% { transform: translateX(-12px) skewX(-18deg); } 55%, 100% { transform: translateX(36px) skewX(-18deg); } }
+.defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 @media (min-width: 820px) {
-  .pack-row { grid-template-columns: minmax(0, 430px) minmax(0, 1fr); gap: 64px; padding: 56px 0; align-items: start; }
+  .pack-row { grid-template-columns: minmax(0, 430px) minmax(0, 1fr); gap: 56px; padding: 52px 0; align-items: start; }
   .pack-row.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 430px); }
   .pack-row.flip .collage { order: 2; }
   .pack-text { position: sticky; top: 92px; }
@@ -219,3 +228,4 @@ a:hover { color: var(--amber-hover); }
 .single:hover h3 { color: var(--amber); }
 .single-desc { margin: 4px 0 0; color: var(--muted); font-size: .9375rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .single-price { margin: 8px 0 0; font-weight: 700; color: var(--amber); }
+@media (max-width: 480px) { .pack-code { font-size: .6875rem; padding: 10px 30px 10px 14px; } .pack-code::after { right: 8px; } }

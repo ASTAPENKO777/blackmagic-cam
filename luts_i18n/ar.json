@@ -103,7 +103,9 @@
   "per_lut": "≈ {per} ⭐ للون الواحد",
   "save": "وفّر {pct}% مقارنةً بالشراء منفرداً",
   "lut_count": "{count} LUT",
-  "price": "السعر"
+  "price": "السعر",
+  "pay_note": "بالدفع، أنت توافق على {terms}",
+  "terms_link": "الشروط"
  },
  "packs": {
   "apple_log_film": {

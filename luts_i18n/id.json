@@ -103,7 +103,9 @@
   "per_lut": "≈ {per} ⭐ per LUT",
   "save": "Hemat {pct}% dibanding beli satuan",
   "lut_count": "{count} LUT",
-  "price": "Harga"
+  "price": "Harga",
+  "pay_note": "Dengan membayar, kamu menyetujui {terms}",
+  "terms_link": "ketentuan"
  },
  "packs": {
   "apple_log_film": {

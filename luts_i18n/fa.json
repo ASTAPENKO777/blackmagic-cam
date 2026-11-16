@@ -103,7 +103,9 @@
   "per_lut": "≈ {per} ⭐ برای هر لوک",
   "save": "{pct}٪ صرفه‌جویی نسبت به خرید تکی",
   "lut_count": "{count} LUT",
-  "price": "قیمت"
+  "price": "قیمت",
+  "pay_note": "با پرداخت، {terms} را می‌پذیرید",
+  "terms_link": "شرایط"
  },
  "packs": {
   "apple_log_film": {

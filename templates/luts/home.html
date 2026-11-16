@@ -17,7 +17,7 @@
       </picture>
     </div>
     <div class="hero-copy">
-      <h1>{{ T.h1 | nb }}</h1>
+      <h1>{{ T.h1 | h1 }}</h1>
       <div class="hero-body">
         <p class="bio-lead">{{ T.bio_1 | bio }}</p>
         <p>{{ T.bio_2 | nb }}</p>
@@ -37,7 +37,8 @@
 
 <section class="wrap sec" id="catalog">
  <div class="packs-wrap">
-  <div class="sec-head"><h2>{{ T.packs }}</h2><p class="sec-quote">{{ T.quote }}</p><p class="muted sec-sub">{{ T.packs_sub }}</p></div>
+  <div class="sec-head"><h2>{{ T.packs }}</h2></div>
+  <div class="packs-panel">
   {% for p in shop.packs %}
   <article class="pack-row{% if loop.index is even %} flip{% endif %}">
     <div class="collage">
@@ -49,15 +50,19 @@
     </div>
     <div class="pack-text">
       <h3>{{ p.title }}</h3>
-      <p class="pack-desc">{{ p.tagline or p.desc }}{% if p.text %} {{ p.text }}{% endif %}</p>
+      <p class="pack-desc">{% for line in p.desc | lines %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}</p>
       <p class="pack-count">{{ T.lut_count.format(count=p.count) }} / {{ p.versions | join(" + ") }}</p>
       <pre class="pack-code" dir="ltr">{{ p.code }}</pre>
-      <p class="pack-price"><b>{{ (p.price_stars ~ " ⭐") | star }}</b>{% if p.per %}<span class="pack-per">{{ T.per_lut.format(per=p.per) | star }}{% if p.save %} · {{ T.save.format(pct=p.save) }}{% endif %}</span>{% endif %}</p>
-      {% if not p.has_alone %}<p class="pack-note">{{ T.pack_only }}</p>{% endif %}
-      {{ tg(p.slug, T.buy_tg, "btn btn-primary btn-compact") }}
+      <p class="pack-price"><b>{{ (p.price_stars ~ " ⭐") | star_fx }}</b></p>
+      {% if p.per %}<p class="pack-line">{{ T.per_lut.format(per=p.per) | star_fx }}</p>{% endif %}
+      {% if p.save %}<p class="pack-line"><b>{{ T.save.format(pct=p.save) }}</b></p>{% endif %}
+      {% if not p.has_alone %}<p class="pack-line"><b>{{ T.pack_only }}</b></p>{% endif %}
+      {{ tg(p.slug, T.buy_tg_stars.format(stars=p.price_stars), "btn btn-primary btn-compact") }}
+      <p class="pack-terms">{{ T.pay_note.split("{terms}")[0] }}<a href="{{ u('/legal/terms') }}">{{ T.terms_link }}</a>{{ T.pay_note.split("{terms}")[1] }}</p>
     </div>
   </article>
   {% endfor %}
+  </div>
   <p class="small muted pack-help"><a href="{{ u('/rec709-vs-log') }}">{{ T.cmp_more }}</a></p>
  </div>
 </section>

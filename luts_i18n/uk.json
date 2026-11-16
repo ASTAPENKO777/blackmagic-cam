@@ -103,7 +103,9 @@
   "per_lut": "≈ {per} ⭐ за LUT",
   "save": "Економія {pct}% порівняно з окремими покупками",
   "lut_count": "{count} LUT",
-  "price": "Ціна"
+  "price": "Ціна",
+  "pay_note": "Оплачуючи, ви приймаєте {terms}",
+  "terms_link": "умови"
  },
  "packs": {
   "apple_log_film": {
