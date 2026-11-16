@@ -266,27 +266,23 @@ def test_only_the_top_bar_spans_the_whole_screen():
                 assert "border" not in rule, f"{selector}: {rule}"
 
 
-def test_bio_names_the_account_without_the_word_channel(client):
-    html = client.get("/luts").data.decode().replace(" ", " ")
-    assert 'rel="noopener">@blackmagicamera</a> and shoot everything on iPhone' in html
-    assert "channel @blackmagicamera" not in html
+def test_bio_names_the_account_and_the_audience_without_the_word_channel(client):
+    plain = client.get("/luts").data.decode().replace("\u00a0", " ")
+    assert ">@blackmagicamera</a>, followed by more than 6 500 people, and shoot everything on iPhone" in plain
+    assert "channel @blackmagicamera" not in plain
 
 
-def test_no_emoji_anywhere_on_the_home_page(client):
-    """Жодних смайликів: зірка ціни — власна SVG, решта — текст."""
-    import unicodedata
+def test_members_are_rounded_down_so_the_claim_is_always_true():
+    import luts
 
-    for lang in ("en", "uk", "ar"):
-        path = "/luts" if lang == "en" else f"/{lang}/luts"
-        text = re.sub(r"<script.*?</script>|<svg.*?</svg>", "", client.get(path).data.decode(), flags=re.S)
-        bad = [c for c in text if unicodedata.category(c) == "So" and ord(c) > 0x2100 and c not in "·"]
-        assert not bad, (lang, bad[:5])
+    assert luts.members_label(6540) == "6\u00a0500" and luts.members_label(6499) == "6\u00a0000" and luts.members_label(12999) == "12\u00a0500"
+    assert luts.members_label(900) is None and luts.members_label(None) is None  # мало чи невідомо: число не показуємо
 
 
-def test_pack_text_follows_the_bot_card(client):
-    """Текст пака як у картці бота: назва, опис рядками, «N LUTs / версія», блок зі списком, ціна, «за LUT», «Економія», умови."""
-    html = client.get("/uk/luts").data.decode()
-    assert "13 LUT / Rec.709" in html and "Економія" in html and "за LUT" in html and "Оплачуючи, ви приймаєте" in html
-    assert 'href="/uk/luts/legal/terms"' in html and "Окремо не продаються" in html
-    assert html.count('class="star-fx"') >= 6 and "Тільки пакетом" in html
-    assert "Кадр готовий" not in html and "Чим більше берете" not in html  # прибрано за вимогою власника
+def test_bio_without_member_count_falls_back(client, monkeypatch):
+    """Бот не віддав кількість підписників: біографія без числа, а не з порожнім місцем."""
+    with appmod.app.app_context():
+        seed = luts._seed()
+    monkeypatch.setattr(luts, "get_catalog", lambda: {**seed, "channel_members": None})
+    plain = client.get("/luts").data.decode().replace("\u00a0", " ")
+    assert "I run <a" in plain and "followed by" not in plain

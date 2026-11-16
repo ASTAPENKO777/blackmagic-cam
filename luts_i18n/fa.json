@@ -105,7 +105,8 @@
   "lut_count": "{count} LUT",
   "price": "قیمت",
   "pay_note": "با پرداخت، {terms} را می‌پذیرید",
-  "terms_link": "شرایط"
+  "terms_link": "شرایط",
+  "bio_1_n": "نزدیک دو سال در Blackmagic Camera. *@blackmagicamera* را اداره می‌کنم که بیش از {n} دنبال‌کننده دارد و همه‌چیز را با iPhone فیلم می‌گیرم."
  },
  "packs": {
   "apple_log_film": {

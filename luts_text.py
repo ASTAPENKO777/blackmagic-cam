@@ -22,6 +22,7 @@ EN = {
     "desc_home": "Cinematic LUTs I grade with every day. Made for Blackmagic Camera on iPhone, in Rec.709 and Apple Log. Free Starter pack included.",
     "h1": "Hi, I'm Mykhailo.",
     "bio_1": "Almost two years in Blackmagic Camera. I run *@blackmagicamera* and shoot everything on iPhone.",
+    "bio_1_n": 'Almost two years in Blackmagic Camera. I run *@blackmagicamera*, followed by more than {n} people, and shoot everything on iPhone.',
     "bio_2": "I skipped the long road of learning to color-grade in post. Learned to shoot in maximum quality from the first frame, with presets called LUTs. The color is on the screen while I film.",
     "bio_3": "Every look in this shop is my own work, built and checked on my own footage, in Rec.709 and Apple Log. I sell only what I shoot with myself.",
     "bio_4": "What I learned about shooting and color, I share: in the channel, in the free Starter pack, in the bot. Questions about any file reach me directly.",

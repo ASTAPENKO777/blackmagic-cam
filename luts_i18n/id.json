@@ -105,7 +105,8 @@
   "lut_count": "{count} LUT",
   "price": "Harga",
   "pay_note": "Dengan membayar, kamu menyetujui {terms}",
-  "terms_link": "ketentuan"
+  "terms_link": "ketentuan",
+  "bio_1_n": "Hampir dua tahun di Blackmagic Camera. Saya mengelola *@blackmagicamera* dengan lebih dari {n} pengikut, dan merekam semuanya dengan iPhone."
  },
  "packs": {
   "apple_log_film": {

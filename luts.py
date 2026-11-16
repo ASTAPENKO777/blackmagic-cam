@@ -157,7 +157,7 @@ def _base_ctx(lang: str, **extra) -> dict:
     done = translated()
     return {
         "lang": lang, "dir": "rtl" if lang in RTL else "ltr", "T": text(lang), "u": u, "bot": catalog["bot"],
-        "starter": catalog.get("starter"), "card_enabled": CARD_ENABLED, "event_url": EVENT_URL,
+        "starter": catalog.get("starter"), "members": members_label(catalog.get("channel_members")), "card_enabled": CARD_ENABLED, "event_url": EVENT_URL,
         "translated": lang in done, "alternates": done, "sub": sub,
         "switch": [(c, NAMES[c], u(sub, c)) for c in done],
         "base_url": base, "path": path, "pair_url": lambda name, kind, w, ext: f"/static/luts/img/pairs/{name}-{kind}-{w}.{ext}",
@@ -292,6 +292,13 @@ def bio(value) -> Markup:
     channel = "https://t.me/blackmagicamera"
     text = str(nb(value))
     return Markup(re.sub(r"\*(.+?)\*", f'<a href="{channel}" rel="noopener">\\1</a>', text))
+
+
+def members_label(count) -> str | None:
+    """Підписники каналу для біографії: округлюємо ВНИЗ до 500 («понад 6 500»), щоб число завжди було правдою."""
+    if not isinstance(count, int) or count < 1000:
+        return None
+    return f"{count // 500 * 500:,}".replace(",", "\u00a0")
 
 
 STAR_PATH = "M12 2.6l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8z"

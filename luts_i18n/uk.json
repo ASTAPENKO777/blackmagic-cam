@@ -105,7 +105,8 @@
   "lut_count": "{count} LUT",
   "price": "Ціна",
   "pay_note": "Оплачуючи, ви приймаєте {terms}",
-  "terms_link": "умови"
+  "terms_link": "умови",
+  "bio_1_n": "Майже два роки в Blackmagic Camera. Веду *@blackmagicamera*, де вже понад {n} підписників, і знімаю все на iPhone."
  },
  "packs": {
   "apple_log_film": {

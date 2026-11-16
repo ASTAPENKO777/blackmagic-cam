@@ -19,7 +19,7 @@
     <div class="hero-copy">
       <h1>{{ T.h1 | h1 }}</h1>
       <div class="hero-body">
-        <p class="bio-lead">{{ T.bio_1 | bio }}</p>
+        <p class="bio-lead">{{ (T.bio_1_n.format(n=members) if members else T.bio_1) | bio }}</p>
         <p>{{ T.bio_2 | nb }}</p>
         <p>{{ T.bio_3 | nb }}</p>
         <p>{{ T.bio_4 | nb }}</p>

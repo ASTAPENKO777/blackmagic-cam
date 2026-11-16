@@ -105,7 +105,8 @@
   "lut_count": "{count} LUTs",
   "price": "Prix",
   "pay_note": "En payant, vous acceptez {terms}",
-  "terms_link": "les conditions"
+  "terms_link": "les conditions",
+  "bio_1_n": "Presque deux ans dans Blackmagic Camera. Je tiens *@blackmagicamera*, suivi par plus de {n} abonnés, et je filme tout à l'iPhone."
  },
  "packs": {
   "apple_log_film": {
