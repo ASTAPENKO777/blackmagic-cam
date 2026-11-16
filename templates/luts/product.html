@@ -1,5 +1,5 @@
 {% extends "luts/base.html" %}
-{% from "luts/_m.html" import slider, tg, versions with context %}
+{% from "luts/_m.html" import slider, tg, versions, media_thumb with context %}
 {% block title %}{{ T.prod_title.format(title=item.title, versions=item.versions | join(', ')) }}{% endblock %}
 {% block desc %}{{ item.tagline or item.desc or item.title }} {{ T.looks_n.format(n=item.count) if item.kind == 'pack' else T.look_1 }} · {{ item.versions | join(', ') }} · {{ T.strip_3 }}.{% endblock %}
 {% block bodyattr %} data-slug="{{ item.slug }}"{% endblock %}
@@ -7,11 +7,11 @@
 <nav class="wrap crumbs" aria-label="Breadcrumb"><a href="{{ u() }}">{{ T.back_all }}</a></nav>
 <section class="wrap prod">
   <div class="prod-media">
-    {% if item.kind == 'pack' %}{{ slider(item.pair, eager=True, alt=item.title) }}{% endif %}
-    {% for m in item.media %}
+    {% if item.kind == 'pack' %}{{ slider(item.pair, eager=True, alt=item.title) }}
+    {% elif item.media %}{% set m = item.media[0] %}
       {% if m.video %}<video class="shot" src="{{ m.url }}" muted loop playsinline controls preload="none" width="720" height="900"></video>
-      {% else %}<img class="shot" src="{{ m.url }}" alt="{{ item.title }}" width="720" height="900" loading="{{ 'eager' if loop.first and item.kind != 'pack' else 'lazy' }}" decoding="async">{% endif %}
-    {% endfor %}
+      {% else %}<img class="shot" src="{{ m.url }}" alt="{{ item.title }}" width="720" height="900" decoding="async">{% endif %}
+    {% else %}{{ media_thumb(item) }}{% endif %}
   </div>
   <div class="prod-info">
     <h1 class="h1-sm">{{ item.title }}</h1>
@@ -33,6 +33,15 @@
     <p><a href="{{ u('/guide/blackmagic-camera') }}">{{ T.how_more }}</a> · <a href="{{ u('/rec709-vs-log') }}">{{ T.cmp_more }}</a></p>
   </div>
 </section>
+{% set rest = item.media if item.kind == 'pack' else item.media[1:] %}
+{% if rest %}
+<section class="wrap gallery">
+  {% for m in rest %}
+    {% if m.video %}<video class="shot" src="{{ m.url }}" muted loop playsinline controls preload="none" width="720" height="900"></video>
+    {% else %}<img class="shot" src="{{ m.url }}" alt="{{ item.title }}" width="720" height="900" loading="lazy" decoding="async">{% endif %}
+  {% endfor %}
+</section>
+{% endif %}
 {% endblock %}
 {% block sticky %}<div class="sticky" data-sticky data-watch="#buy" hidden>{{ tg(item.slug, T.buy_tg_stars.format(stars=item.price_stars)) }}</div>{% endblock %}
 {% block ld %}<script type="application/ld+json">{{ ld | tojson }}</script>{% endblock %}

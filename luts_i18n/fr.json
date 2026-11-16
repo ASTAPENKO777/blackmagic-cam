@@ -11,8 +11,6 @@
   "cta_all": "Voir tous les looks",
   "cta_free": "Starter gratuit",
   "drag": "Glissez",
-  "before": "Avant",
-  "after": "Après",
   "slider_label": "Comparer avant et après",
   "strip_1": "Apple Log · Rec.709",
   "strip_2": "Pour l'app Blackmagic Camera",
@@ -91,7 +89,11 @@
   "license": "Licence",
   "inapp": "Ouvrez cette page dans Safari ou Chrome pour un paiement plus simple.",
   "back_all": "Tous les looks",
-  "stars_note": "Le paiement se fait en Telegram Stars dans le bot."
+  "stars_note": "Le paiement se fait en Telegram Stars dans le bot.",
+  "work_title": "Tourné à l'iPhone",
+  "work_sub": "De vrais plans de mes propres tournages, étalonnés avec ces LUTs. Aucune image de banque.",
+  "work_tag": "Tourné à l'iPhone",
+  "work_alt": "Exemple de clip tourné à l'iPhone et étalonné avec des LUTs"
  },
  "packs": {
   "apple_log_film": {

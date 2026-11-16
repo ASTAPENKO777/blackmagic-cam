@@ -56,6 +56,23 @@
     });
   }
 
+  // Меню мови закривається кліком поза ним і клавішею Esc.
+  const lang = document.querySelector("details.lang");
+  if (lang) {
+    document.addEventListener("click", (e) => { if (!lang.contains(e.target)) lang.open = false; });
+    document.addEventListener("keydown", (e) => { if (e.key === "Escape") lang.open = false; });
+  }
+
+  // Портфоліо: відео вантажиться й грає лише коли в кадрі; без руху при prefers-reduced-motion.
+  const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if ("IntersectionObserver" in window && !still) {
+    const vids = new IntersectionObserver((es) => es.forEach((e) => {
+      const v = e.target;
+      if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().catch(() => {}); } else { v.pause(); }
+    }), { threshold: 0.35 });
+    document.querySelectorAll("video[data-src]").forEach((v) => vids.observe(v));
+  }
+
   // Вбудований браузер TikTok/Instagram/Facebook: Telegram там відкривається гірше.
   if (/musical_ly|TikTok|Bytedance|Instagram|FBAN|FBAV/i.test(navigator.userAgent)) {
     const bar = document.getElementById("inapp"); if (bar) bar.hidden = false;

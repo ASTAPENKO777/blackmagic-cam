@@ -11,8 +11,6 @@
   "cta_all": "Усі образи",
   "cta_free": "Безкоштовний Starter",
   "drag": "Потягніть",
-  "before": "До",
-  "after": "Після",
   "slider_label": "Порівняти до і після",
   "strip_1": "Apple Log · Rec.709",
   "strip_2": "Для застосунку Blackmagic Camera",
@@ -91,7 +89,11 @@
   "license": "Ліцензія",
   "inapp": "Відкрийте цю сторінку в Safari або Chrome, так оплата проходить зручніше.",
   "back_all": "Усі образи",
-  "stars_note": "Оплата в Telegram Stars усередині бота."
+  "stars_note": "Оплата в Telegram Stars усередині бота.",
+  "work_title": "Знято на iPhone",
+  "work_sub": "Справжні кадри з моїх зйомок, пофарбовані цими LUT. Жодних стокових відео.",
+  "work_tag": "Знято на iPhone",
+  "work_alt": "Приклад кліпу, знятого на iPhone й пофарбованого LUT"
  },
  "packs": {
   "apple_log_film": {

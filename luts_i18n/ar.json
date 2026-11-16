@@ -11,8 +11,6 @@
   "cta_all": "كل المظاهر",
   "cta_free": "احصل على Starter مجانًا",
   "drag": "اسحب",
-  "before": "قبل",
-  "after": "بعد",
   "slider_label": "قارن بين قبل وبعد",
   "strip_1": "Apple Log · Rec.709",
   "strip_2": "لتطبيق Blackmagic Camera",
@@ -91,7 +89,11 @@
   "license": "الترخيص",
   "inapp": "افتح هذه الصفحة في Safari أو Chrome ليكون الدفع أسهل.",
   "back_all": "كل المظاهر",
-  "stars_note": "الدفع بـ Telegram Stars داخل البوت."
+  "stars_note": "الدفع بـ Telegram Stars داخل البوت.",
+  "work_title": "صُوّر بـ iPhone",
+  "work_sub": "لقطات حقيقية من تصويري، مدرّجة بهذه الـ LUTs. بلا لقطات جاهزة من المكتبات.",
+  "work_tag": "صُوّر بـ iPhone",
+  "work_alt": "مقطع نموذجي صُوّر بـ iPhone ودُرّجت ألوانه بـ LUT"
  },
  "packs": {
   "apple_log_film": {

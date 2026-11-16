@@ -100,7 +100,7 @@ def test_translation_is_complete_and_keeps_placeholders(lang):
     tr = luts_text.load(lang)
     assert set(tr["ui"]) <= set(luts_text.EN), "ключ перекладу, якого немає в англійській"
     missing = set(luts_text.EN) - set(tr["ui"]) - {"not_found", "guide_h", "guides", "updated", "free_look", "only_in_pack",
-                                                   "versions", "buy_tg", "lang_label"}
+                                                   "versions", "buy_tg", "lang_label", "before", "after", "kicker"}
     assert not missing, f"{lang}: немає перекладу для {sorted(missing)}"
     for key, value in tr["ui"].items():
         base = luts_text.EN[key]

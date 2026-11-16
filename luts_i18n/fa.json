@@ -11,8 +11,6 @@
   "cta_all": "همه لوک‌ها",
   "cta_free": "دریافت Starter رایگان",
   "drag": "بکشید",
-  "before": "قبل",
-  "after": "بعد",
   "slider_label": "مقایسهٔ قبل و بعد",
   "strip_1": "Apple Log · Rec.709",
   "strip_2": "برای اپ Blackmagic Camera",
@@ -91,7 +89,11 @@
   "license": "لایسنس",
   "inapp": "این صفحه را در Safari یا Chrome باز کنید تا پرداخت راحت‌تر باشد.",
   "back_all": "همه لوک‌ها",
-  "stars_note": "پرداخت با Telegram Stars داخل ربات انجام می‌شود."
+  "stars_note": "پرداخت با Telegram Stars داخل ربات انجام می‌شود.",
+  "work_title": "فیلم‌برداری‌شده با iPhone",
+  "work_sub": "فیلم‌های واقعی از کارهای خودم که با همین LUTها رنگ‌بندی شده‌اند. بدون ویدیوی استوک.",
+  "work_tag": "فیلم‌برداری‌شده با iPhone",
+  "work_alt": "نمونه کلیپی که با iPhone گرفته و با LUT رنگ‌بندی شده"
  },
  "packs": {
   "apple_log_film": {

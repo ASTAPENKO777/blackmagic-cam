@@ -1,37 +1,47 @@
 {% extends "luts/base.html" %}
-{% from "luts/_m.html" import slider, tg, media_thumb, versions with context %}
+{% from "luts/_m.html" import slider, monitor, tg, media_thumb, versions with context %}
 {% block bodyattr %} data-slug="home"{% endblock %}
 {% block head %}
-<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="{{ pair_url(hero, 'after', 480, 'avif') }} 480w, {{ pair_url(hero, 'after', 768, 'avif') }} 768w, {{ pair_url(hero, 'after', 1080, 'avif') }} 1080w" imagesizes="(min-width: 760px) 460px, 92vw">
+<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="{{ pair_url(hero, 'after', 480, 'avif') }} 480w, {{ pair_url(hero, 'after', 768, 'avif') }} 768w, {{ pair_url(hero, 'after', 1080, 'avif') }} 1080w" imagesizes="(min-width: 880px) 340px, 64vw">
 {% endblock %}
 {% block main %}
-<section class="hero wrap">
-  <div class="hero-ba">{{ slider(hero, eager=True, alt=T.h1) }}</div>
-  <div class="hero-copy">
-    <h1>{{ T.h1 }}</h1>
-    <p class="lead">{{ T.sub }}</p>
-    <div class="cta-row">
-      <a class="btn btn-primary" id="hero-cta" href="#catalog">{{ T.cta_all }}</a>
-      {% if starter %}<a class="btn" href="{{ u('/free') }}">{{ T.cta_free }}</a>{% endif %}
+<section class="hero">
+  <div class="wrap hero-in">
+    <div class="hero-copy">
+      <p class="kicker mono"><i class="rec"></i>{{ T.kicker }}</p>
+      <h1>{{ T.h1 }}</h1>
+      <p class="lead">{{ T.sub }}</p>
+      <div class="cta-row">
+        <a class="btn btn-primary" id="hero-cta" href="#catalog">{{ T.cta_all }}</a>
+        {% if starter %}<a class="btn" href="{{ u('/free') }}">{{ T.cta_free }}</a>{% endif %}
+      </div>
     </div>
-    <ul class="strip mono">
-      <li>{{ T.strip_1 }}</li><li>{{ T.strip_2 }}</li><li>{{ T.strip_3 }}</li><li>{{ T.strip_4 }}</li>
-    </ul>
+    <div class="stage">
+      <picture class="portrait">
+        <source type="image/avif" srcset="/static/luts/img/portrait-480.avif 480w, /static/luts/img/portrait-768.avif 768w, /static/luts/img/portrait-1080.avif 1080w" sizes="(min-width: 1100px) 430px, (min-width: 880px) 400px, 58vw">
+        <source type="image/webp" srcset="/static/luts/img/portrait-480.webp 480w, /static/luts/img/portrait-768.webp 768w, /static/luts/img/portrait-1080.webp 1080w" sizes="(min-width: 1100px) 430px, (min-width: 880px) 400px, 58vw">
+        <img src="/static/luts/img/portrait-768.webp" width="768" height="1564" alt="" fetchpriority="high" decoding="async">
+      </picture>
+      <div class="monitor">{{ monitor(hero, eager=True, alt=T.h1) }}</div>
+    </div>
   </div>
 </section>
+<div class="band">
+  <div class="bars" aria-hidden="true"></div>
+  <ul class="strip mono"><li>{{ T.strip_1 }}</li><li>{{ T.strip_2 }}</li><li>{{ T.strip_3 }}</li><li>{{ T.strip_4 }}</li></ul>
+</div>
 
 <section class="wrap sec" id="catalog">
-  <h2>{{ T.packs }}</h2>
-  <p class="muted sec-sub">{{ T.packs_sub }}</p>
+  <div class="sec-head"><span class="eyebrow">01</span><h2>{{ T.packs }}</h2><p class="muted sec-sub">{{ T.packs_sub }}</p></div>
   <div class="grid packs">
     {% for p in shop.packs %}
-    <article class="card pack">
+    <article class="card pack {{ p.tint }}{% if loop.last and shop.packs|length > 1 %} pack-top{% endif %}">
+      {% if loop.last and shop.packs|length > 1 %}<span class="badge">{{ T.best_value }}</span>{% endif %}
       <div class="pack-ba">{{ slider(p.pair, alt=p.title) }}</div>
       <div class="card-body">
         <h3><a href="{{ u('/' ~ p.slug) }}">{{ p.title }}</a></h3>
         <p class="muted">{{ p.tagline or p.desc }}</p>
         <p class="meta mono">{{ T.looks_n.format(n=p.count) }} · {{ versions(p) }}</p>
-        {% if loop.last and shop.packs|length > 1 %}<span class="badge">{{ T.best_value }}</span>{% endif %}
         <div class="cta-row">
           {{ tg(p.slug, T.buy_tg_stars.format(stars=p.price_stars)) }}
           <a class="btn" href="{{ u('/' ~ p.slug) }}">{{ T.view }}</a>
@@ -40,9 +50,24 @@
     </article>
     {% endfor %}
   </div>
+</section>
 
-  <h2 class="gap-top">{{ T.singles }}</h2>
-  <p class="muted sec-sub">{{ T.singles_sub }}</p>
+{% if work %}
+<section class="wrap sec">
+  <div class="sec-head"><span class="eyebrow">02</span><h2>{{ T.work_title }}</h2><p class="muted sec-sub">{{ T.work_sub }}</p></div>
+  <div class="rail">
+    {% for n in work %}
+    <figure class="clip">
+      <video muted loop playsinline preload="none" poster="/static/luts/video/work-{{ n }}.webp" data-src="/static/luts/video/work-{{ n }}.mp4" aria-label="{{ T.work_alt }}"></video>
+      <figcaption class="mono">{{ T.work_tag }}</figcaption>
+    </figure>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+<section class="wrap sec">
+  <div class="sec-head"><span class="eyebrow">03</span><h2>{{ T.singles }}</h2><p class="muted sec-sub">{{ T.singles_sub }}</p></div>
   <div class="grid singles">
     {% for s in shop.singles %}
     <article class="card single">
@@ -57,33 +82,33 @@
   </div>
 </section>
 
-<section class="wrap sec who">
-  <img src="/static/luts/img/portrait-480.webp" srcset="/static/luts/img/portrait-480.webp 480w, /static/luts/img/portrait-768.webp 768w" sizes="(min-width: 760px) 320px, 70vw" width="480" height="744" alt="" loading="lazy" decoding="async">
-  <div>
+<section class="wrap sec">
+  <div class="who">
+    <span class="eyebrow">04</span>
     <h2>{{ T.who_title }}</h2>
     <p class="lead">{{ T.who_text }}</p>
-    <a class="btn" href="https://t.me/blackmagicamera" rel="noopener">{{ T.who_link }}</a>
+    <div class="cta-row"><a class="btn" href="https://t.me/blackmagicamera" rel="noopener">{{ T.who_link }}</a></div>
   </div>
 </section>
 
 <section class="wrap sec">
-  <h2>{{ T.cmp_title }}</h2>
+  <div class="sec-head"><span class="eyebrow">05</span><h2>{{ T.cmp_title }}</h2></div>
   <div class="grid two">
-    <div class="card pad"><h3>{{ T.cmp_709_h }}</h3><p class="muted">{{ T.cmp_709_p }}</p></div>
-    <div class="card pad"><h3>{{ T.cmp_log_h }}</h3><p class="muted">{{ T.cmp_log_p }}</p></div>
+    <div class="card pad tint-teal pack"><h3>{{ T.cmp_709_h }}</h3><p class="muted">{{ T.cmp_709_p }}</p></div>
+    <div class="card pad tint-amber pack"><h3>{{ T.cmp_log_h }}</h3><p class="muted">{{ T.cmp_log_p }}</p></div>
   </div>
   <p><a href="{{ u('/rec709-vs-log') }}">{{ T.cmp_more }}</a></p>
 </section>
 
 <section class="wrap sec">
-  <h2>{{ T.how_title }}</h2>
-  <ol class="steps">{% for s in T.how_steps %}<li>{{ s }}</li>{% endfor %}</ol>
+  <div class="sec-head"><span class="eyebrow">06</span><h2>{{ T.how_title }}</h2></div>
+  <ol class="steps row">{% for s in T.how_steps %}<li>{{ s }}</li>{% endfor %}</ol>
   <p><a href="{{ u('/guide/blackmagic-camera') }}">{{ T.how_more }}</a></p>
 </section>
 
 {% if starter %}
 <section class="wrap sec">
-  <div class="card pad free">
+  <div class="card free">
     <div><h2>{{ T.free_title }}</h2><p class="muted">{{ T.free_text.format(n=starter.count) }}</p></div>
     {{ tg("starter", T.free_cta) }}
   </div>
@@ -91,7 +116,7 @@
 {% endif %}
 
 <section class="wrap sec">
-  <h2>{{ T.faq_title }}</h2>
+  <div class="sec-head"><span class="eyebrow">07</span><h2>{{ T.faq_title }}</h2></div>
   {% for q, a in T.faq %}<details class="faq"><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}
 </section>
 {% endblock %}

@@ -11,8 +11,6 @@
   "cta_all": "Lihat semua look",
   "cta_free": "Starter gratis",
   "drag": "Geser",
-  "before": "Sebelum",
-  "after": "Sesudah",
   "slider_label": "Bandingkan sebelum dan sesudah",
   "strip_1": "Apple Log · Rec.709",
   "strip_2": "Untuk aplikasi Blackmagic Camera",
@@ -91,7 +89,11 @@
   "license": "Lisensi",
   "inapp": "Buka halaman ini di Safari atau Chrome supaya pembayaran lebih lancar.",
   "back_all": "Semua look",
-  "stars_note": "Pembayaran dengan Telegram Stars di dalam bot."
+  "stars_note": "Pembayaran dengan Telegram Stars di dalam bot.",
+  "work_title": "Direkam dengan iPhone",
+  "work_sub": "Klip asli dari syuting saya sendiri, di-grade dengan LUT ini. Bukan footage stok.",
+  "work_tag": "Direkam dengan iPhone",
+  "work_alt": "Contoh klip yang direkam dengan iPhone dan di-grade dengan LUT"
  },
  "packs": {
   "apple_log_film": {

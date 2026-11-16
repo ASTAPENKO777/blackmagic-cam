@@ -8,19 +8,23 @@ PACK_COPY = {
         "tagline": "Three film looks built straight on Apple Log.",
         "text": "Shoot Log in Blackmagic Camera, pick a look, done. No conversion LUT needed.",
         "pair": "warm-forest",
+        "tint": "tint-amber",
     },
     "rec709_collection": {
         "tagline": "Eight looks for normal iPhone video.",
         "text": "V1 to V8, from soft teal to amber shadows, for footage shot in the default Rec.709 mode. These eight are not sold anywhere else.",
         "pair": "misty-pine",
+        "tint": "tint-teal",
     },
     "cinematic_pro_15": {
         "tagline": "My main grading set.",
         "text": "Teal, film print, night city, warm skin. Thirteen looks, and every one of them is also sold on its own.",
         "pair": "teal-lift",
+        "tint": "tint-rose",
     },
 }
 HERO_PAIR = "hero"
+WORK_CLIPS = (1, 2, 3, 4, 5, 6)  # static/luts/video/work-N.mp4 + .webp (кадри власних зйомок із LUT)
 
 GUIDES = {
     "blackmagic-camera": {

@@ -33,14 +33,23 @@
 <div id="inapp" class="inapp" hidden>{{ T.inapp }}</div>
 <header class="top">
   <div class="wrap top-in">
-    <a class="brand" dir="ltr" href="{{ u() }}">{{ T.brand }}</a>
+    <a class="brand" dir="ltr" href="{{ u() }}"><svg class="mark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 9V5h4M16 5h4v4M20 15v4h-4M8 19H4v-4"/><circle cx="12" cy="12" r="2.6" fill="currentColor" stroke="none"/></svg><span>{{ T.brand }}</span></a>
     <nav class="top-nav" aria-label="Main">
       <a href="{{ u('/free') }}">{{ T.nav_free }}</a>
       <a href="{{ u('/guide/blackmagic-camera') }}">{{ T.nav_guides }}</a>
     </nav>
+    {%- if switch|length > 1 %}
+    <details class="lang">
+      <summary aria-label="{{ T.lang_label }}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.8 3 2.8 15 0 18M12 3c-2.8 3-2.8 15 0 18"/></svg>{{ lang }}</summary>
+      <ul class="lang-menu">
+        {%- for code, name, href in switch %}<li><a href="{{ href }}" hreflang="{{ code }}" lang="{{ code }}"{% if code == lang %} aria-current="true"{% endif %}>{{ name }}</a></li>{% endfor %}
+      </ul>
+    </details>
+    {%- endif %}
   </div>
 </header>
 <main>{% block main %}{% endblock %}</main>
+<div class="bars" aria-hidden="true"></div>
 <footer class="foot">
   <div class="wrap">
     <nav class="foot-nav" aria-label="Legal">

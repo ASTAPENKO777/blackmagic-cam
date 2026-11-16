@@ -7,6 +7,7 @@ import os
 import time
 
 import requests
+from markupsafe import Markup, escape
 from flask import Blueprint, Response, abort, current_app, g, render_template, request
 
 import luts_content as content
@@ -139,7 +140,7 @@ def _route(rule: str):
 @_route("")
 def home(lang):
     shop = view_items(get_catalog(), lang)
-    return _page("home.html", lang, shop=shop, hero=content.HERO_PAIR, graph=lambda c: [
+    return _page("home.html", lang, shop=shop, hero=content.HERO_PAIR, work=content.WORK_CLIPS, graph=lambda c: [
         {"@type": "WebSite", "name": c["T"]["brand"], "url": c["base_url"] + c["u"]()}, faq_ld(c["T"])])
 
 
@@ -205,6 +206,15 @@ def sitemap_entries(base_url: str) -> list[tuple[str, str, list[tuple[str, str]]
             for p in paths for code in done]
 
 
+STAR_SVG = ('<svg class="star" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M12 2.6l2.9 6.1 6.6.8-4.9 4.6 1.3 6.6L12 17.4l-5.9 3.3 1.3-6.6L2.5 9.5l6.6-.8z"/></svg>')
+
+
+def star(value) -> Markup:
+    """⭐ у тексті кнопки замінюємо на SVG-зірку: емодзі виглядають по-різному на різних пристроях."""
+    return Markup(str(escape(value)).replace("⭐", STAR_SVG))
+
+
 def register(app, base_url: str = "") -> None:
+    app.jinja_env.filters["star"] = star
     app.config["LUTS_BASE_URL"] = base_url  # абсолютні canonical, hreflang і og:image
     app.register_blueprint(bp)

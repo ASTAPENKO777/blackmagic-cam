@@ -11,8 +11,6 @@
   "cta_all": "Ver todos los looks",
   "cta_free": "Starter gratis",
   "drag": "Arrastra",
-  "before": "Antes",
-  "after": "Después",
   "slider_label": "Comparar antes y después",
   "strip_1": "Apple Log · Rec.709",
   "strip_2": "Para la app Blackmagic Camera",
@@ -91,7 +89,11 @@
   "license": "Licencia",
   "inapp": "Abre esta página en Safari o Chrome para que el pago sea más fácil.",
   "back_all": "Todos los looks",
-  "stars_note": "El pago se hace con Telegram Stars dentro del bot."
+  "stars_note": "El pago se hace con Telegram Stars dentro del bot.",
+  "work_title": "Grabado con iPhone",
+  "work_sub": "Clips reales de mis propios rodajes, graduados con estos LUTs. Sin material de stock.",
+  "work_tag": "Grabado con iPhone",
+  "work_alt": "Clip de ejemplo grabado con iPhone y graduado con LUTs"
  },
  "packs": {
   "apple_log_film": {
