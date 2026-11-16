@@ -24,9 +24,9 @@
 <meta property="og:image" content="{{ base_url }}/static/luts/img/pairs/hero-after-1080.webp">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
-<link rel="stylesheet" href="/static/luts/css/tokens.css">
-<link rel="stylesheet" href="/static/luts/css/slider.css">
-<link rel="stylesheet" href="/static/luts/css/luts.css">
+<link rel="stylesheet" href="{{ static_v('luts/css/tokens.css') }}">
+<link rel="stylesheet" href="{{ static_v('luts/css/slider.css') }}">
+<link rel="stylesheet" href="{{ static_v('luts/css/luts.css') }}">
 {% block head %}{% endblock %}
 </head>
 <body{% block bodyattr %}{% endblock %}>
@@ -67,7 +67,7 @@
   </div>
 </footer>
 {% block sticky %}{% endblock %}
-<script src="/static/luts/js/s.js" defer data-event="{{ event_url }}" data-bot="{{ bot }}"></script>
+<script src="{{ static_v('luts/js/s.js') }}" defer data-event="{{ event_url }}" data-bot="{{ bot }}"></script>
 {% block ld %}{% endblock %}
 </body>
 </html>

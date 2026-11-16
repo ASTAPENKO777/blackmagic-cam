@@ -147,3 +147,11 @@ def test_catalog_uses_bot_data_and_falls_back(monkeypatch):
         monkeypatch.setattr(luts.requests, "get", lambda *a, **k: (_ for _ in ()).throw(requests.Timeout()))
         luts._cache["at"] = 0.0  # кеш прострочений, бот лежить → лишається останній вдалий каталог
         assert luts.get_catalog()["bot"] == "x_bot"
+
+
+def test_static_assets_are_versioned(client):
+    """/static отдається з immutable на рік: без ?v=<хеш> браузер навічно тримає стару копію після змін."""
+    html = client.get("/luts").data.decode()
+    for ref in re.findall(r'(?:href|src)="(/static/luts/(?:css|js)/[^"]+)"', html):
+        assert "?v=" in ref, ref
+    assert re.search(r'portrait-768\.webp\?v=', html)
