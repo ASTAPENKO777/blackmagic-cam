@@ -252,7 +252,7 @@ Deploy checklist:
 
 ## /luts — LUT shop (Telegram-first)
 
-Self-contained Flask blueprint: `luts.py` (routes, catalog fetch), `luts_text.py` (EN strings; other langs fall back to EN, `TRANSLATED` decides hreflang/sitemap/noindex), `luts_content.py` (pack copy, guides, legal), `templates/luts/*`, `static/luts/{css,js,img}`. It does NOT use `base.html`, `translations.py` or the `/ru` `/ar` machinery.
+Self-contained Flask blueprint (8 languages: `/luts`, `/<uk|ru|ar|fa|es|fr|id>/luts`; ar/fa are machine translations pending a native review): `luts.py` (routes, catalog fetch), `luts_text.py` (EN strings; other langs live in `luts_i18n/<lang>.json` — ui, packs, guides, compare, legal — and fall back to EN key by key; a language with a JSON file is automatically in hreflang/sitemap; `tests/test_luts.py` checks every file is complete and keeps placeholders), `luts_content.py` (pack copy, guides, legal), `templates/luts/*`, `static/luts/{css,js,img}`. It does NOT use `base.html`, `translations.py` or the `/ru` `/ar` machinery.
 
 - Catalog and prices come from the bot: `GET https://bmc-lut-bot.fly.dev/public/catalog.json` (env `LUTS_CATALOG_URL`), 60 s in-process cache, last good copy on failure, `static/luts/catalog_seed.json` on cold start with the bot down. Refresh the seed when the catalog changes a lot (`curl ... > static/luts/catalog_seed.json`).
 - No payments on the site yet: every button is `t.me/<bot>?start=web_<src>__<slug>` (built by `s.js`, first source kept in cookie `bmc_src` for 90 days). `LUTS_CARD_ENABLED` is off, so no `$` appears anywhere (`tests/test_luts.py` enforces it).

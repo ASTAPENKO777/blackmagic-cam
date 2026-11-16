@@ -1,7 +1,7 @@
 {% extends "luts/base.html" %}
 {% from "luts/_m.html" import slider, tg, versions with context %}
-{% block title %}{{ item.title }} LUT for Blackmagic Camera ({{ item.versions | join(', ') }}){% endblock %}
-{% block desc %}{{ item.tagline or item.desc or item.title }} {{ T.looks_n.format(n=item.count) if item.kind == 'pack' else T.look_1 }}, {{ item.versions | join(', ') }}. {{ T.strip_3 }}.{% endblock %}
+{% block title %}{{ T.prod_title.format(title=item.title, versions=item.versions | join(', ')) }}{% endblock %}
+{% block desc %}{{ item.tagline or item.desc or item.title }} {{ T.looks_n.format(n=item.count) if item.kind == 'pack' else T.look_1 }} · {{ item.versions | join(', ') }} · {{ T.strip_3 }}.{% endblock %}
 {% block bodyattr %} data-slug="{{ item.slug }}"{% endblock %}
 {% block main %}
 <nav class="wrap crumbs" aria-label="Breadcrumb"><a href="{{ u() }}">{{ T.back_all }}</a></nav>

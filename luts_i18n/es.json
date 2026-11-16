@@ -1,0 +1,316 @@
+{
+ "ui": {
+  "brand": "@blackmagicamera LUTs",
+  "nav_free": "Starter gratis",
+  "nav_guides": "Guías",
+  "lang_label": "Idioma",
+  "title_home": "LUTs para iPhone y Blackmagic Camera: Rec.709 y Apple Log",
+  "desc_home": "LUTs cinematográficos con los que gradúo el color cada día. Hechos para Blackmagic Camera en iPhone, en Rec.709 y Apple Log. Con un pack Starter gratis.",
+  "h1": "Color de cine para iPhone. Un toque en Blackmagic Camera.",
+  "sub": "LUTs con los que gradúo cada día. Rec.709 y Apple Log, hechos para Blackmagic Camera.",
+  "cta_all": "Ver todos los looks",
+  "cta_free": "Starter gratis",
+  "drag": "Arrastra",
+  "before": "Antes",
+  "after": "Después",
+  "slider_label": "Comparar antes y después",
+  "strip_1": "Apple Log · Rec.709",
+  "strip_2": "Para la app Blackmagic Camera",
+  "strip_3": "Los archivos .cube se abren en iPhone",
+  "strip_4": "Actualizaciones de packs gratis",
+  "packs": "Packs",
+  "packs_sub": "Cuantos más llevas, menos cuesta cada look.",
+  "singles": "Looks sueltos",
+  "singles_sub": "Un look, un archivo .cube.",
+  "looks_n": "{n} looks",
+  "look_1": "1 look",
+  "best_value": "Mejor precio",
+  "only_in_pack": "Solo en este pack",
+  "buy_tg": "Comprar en Telegram",
+  "buy_tg_stars": "Comprar en Telegram · {stars} ⭐",
+  "buy_short": "Comprar · {stars} ⭐",
+  "view": "Ver",
+  "versions": "Versiones",
+  "what_inside": "Qué incluye",
+  "sold_alone": "También se vende suelto",
+  "pack_only": "Estos looks no se venden por separado.",
+  "prod_title": "{title}: LUT para Blackmagic Camera ({versions})",
+  "free_page_title": "Starter gratis: LUTs gratis para iPhone y Blackmagic Camera",
+  "how_title": "Instálalo en 30 segundos",
+  "how_steps": [
+   "Guarda el zip en Archivos.",
+   "Blackmagic Camera → LUTs Manager → Import LUT.",
+   "Abre la carpeta de LUTs, selecciona todo y toca Abrir.",
+   "Toca el botón LUT y elige tu look."
+  ],
+  "how_more": "Guía completa con capturas",
+  "who_title": "Quién los hace",
+  "who_text": "Llevo @blackmagicamera. Grabo con iPhone en Blackmagic Camera y estos son los LUTs que uso en mis propios vídeos. Gradúo a ojo en la pantalla del teléfono, así que lo que ves mientras grabas es lo que te llevas.",
+  "who_link": "Seguir el canal",
+  "cmp_title": "¿Rec.709 o Apple Log?",
+  "cmp_709_h": "Rec.709",
+  "cmp_709_p": "Vídeo normal de iPhone. Elígelo si grabas en el modo por defecto. El look queda listo en cuanto lo aplicas.",
+  "cmp_log_h": "Apple Log",
+  "cmp_log_p": "Imagen plana con más margen para graduar. Elígelo con iPhone 15 Pro o posterior cuando grabas en Apple Log.",
+  "cmp_more": "¿Cuál debo usar?",
+  "free_title": "Pack Starter gratis",
+  "free_text": "{n} LUTs gratis para probar el flujo de trabajo. Consíguelos en el bot de Telegram, sin pagar.",
+  "free_cta": "Conseguir Starter",
+  "free_credit": "Los looks del Starter son obras CC0 de sus autores y llevan sus créditos en el pack.",
+  "faq_title": "Preguntas",
+  "faq": [
+   [
+    "¿En qué apps funcionan?",
+    "Los archivos .cube están hechos para Blackmagic Camera en iPhone y Android. También se cargan en CapCut, VN, LumaFusion y DaVinci Resolve."
+   ],
+   [
+    "¿Cómo recibo los archivos tras comprar?",
+    "Toca Comprar en Telegram, paga con Stars en el bot y los archivos .cube llegan al chat al instante. Puedes volver a pedirlos cuando quieras con /my."
+   ],
+   [
+    "¿Funciona en Android?",
+    "Sí. Blackmagic Camera tiene versión para Android y lee los mismos archivos .cube."
+   ],
+   [
+    "¿Puedo usar los LUTs en trabajos comerciales?",
+    "Sí, en tus propias fotos y vídeos, incluidos trabajos de clientes de pago. No puedes compartir ni revender los archivos."
+   ],
+   [
+    "¿Y si un archivo no funciona?",
+    "Escribe a /paysupport en el bot. Te enviamos otra versión o te devolvemos el dinero."
+   ],
+   [
+    "¿Las actualizaciones son gratis?",
+    "Sí. Si añado looks a un pack que ya tienes, te llegan gratis."
+   ]
+  ],
+  "footer_disclaimer": "No estamos afiliados a Blackmagic Design. Blackmagic Camera es una marca de su propietario; el nombre se usa solo para indicar para qué app están hechos los archivos.",
+  "terms": "Términos",
+  "privacy": "Privacidad",
+  "refund": "Reembolsos",
+  "license": "Licencia",
+  "inapp": "Abre esta página en Safari o Chrome para que el pago sea más fácil.",
+  "back_all": "Todos los looks",
+  "stars_note": "El pago se hace con Telegram Stars dentro del bot."
+ },
+ "packs": {
+  "apple_log_film": {
+   "tagline": "Tres looks de película creados directamente sobre Apple Log.",
+   "text": "Graba en Log con Blackmagic Camera, elige un look y listo. No hace falta un LUT de conversión."
+  },
+  "rec709_collection": {
+   "tagline": "Ocho looks para vídeo normal de iPhone.",
+   "text": "De V1 a V8, del turquesa suave a las sombras ámbar, para material grabado en el modo Rec.709 por defecto. Estos ocho no se venden en ningún otro sitio."
+  },
+  "cinematic_pro_15": {
+   "tagline": "Mi set principal de color.",
+   "text": "Turquesa, copia de película, ciudad de noche, piel cálida. Trece looks, y cada uno se vende también por separado."
+  }
+ },
+ "guides": {
+  "blackmagic-camera": {
+   "title": "Cómo instalar LUTs en Blackmagic Camera",
+   "desc": "Paso a paso: importa LUTs .cube en la app Blackmagic Camera del iPhone y aplica uno mientras grabas.",
+   "intro": "Blackmagic Camera lee archivos .cube. Impórtalos una vez y se quedan en la app.",
+   "steps": [
+    [
+     "Guarda el zip en Archivos",
+     "Abre el archivo en Telegram, toca Compartir y luego Guardar en Archivos. Descomprímelo si iOS no lo ha hecho."
+    ],
+    [
+     "Abre LUTs Manager",
+     "En Blackmagic Camera abre LUTs Manager."
+    ],
+    [
+     "Toca Import LUT",
+     "Elige Import LUT para abrir el selector de archivos."
+    ],
+    [
+     "Abre la carpeta de LUTs",
+     "Ve a la carpeta donde guardaste los archivos."
+    ],
+    [
+     "Seleccionar todo y Abrir",
+     "El pack entero se importa de una vez."
+    ],
+    [
+     "Elige tu look",
+     "Toca el botón LUT en la pantalla de la cámara y elige un look. Grabas con el color final ya en pantalla."
+    ]
+   ],
+   "tip": "¿Grabas en Apple Log? Usa la versión Apple Log del look. ¿Vídeo normal? Usa Rec.709."
+  },
+  "capcut": {
+   "title": "Cómo usar LUTs .cube en CapCut",
+   "desc": "Añade un LUT .cube a tu clip en CapCut para iPhone.",
+   "intro": "Los nombres de los menús cambian entre versiones de CapCut, pero la idea es la misma: importa el archivo y aplícalo como filtro.",
+   "steps": [
+    [
+     "Guarda el archivo en Archivos",
+     "Deja el archivo .cube donde puedas encontrarlo."
+    ],
+    [
+     "Abre tu proyecto",
+     "Selecciona el clip y abre Filtros o Ajustar."
+    ],
+    [
+     "Importa el LUT",
+     "Busca la opción de importar LUTs o filtros personalizados y elige el archivo .cube."
+    ],
+    [
+     "Ajusta la intensidad",
+     "Baja la intensidad si el look pesa demasiado para el plano."
+    ]
+   ],
+   "tip": "Un LUT hecho para Rec.709 espera material normal. No lo pongas sobre material en Log."
+  },
+  "vn": {
+   "title": "Cómo usar LUTs .cube en VN",
+   "desc": "Importa un LUT .cube en el editor de vídeo VN y aplícalo a un clip.",
+   "intro": "VN importa LUTs .cube como filtros. Los nombres de los menús pueden variar un poco entre versiones.",
+   "steps": [
+    [
+     "Guarda el archivo en Archivos",
+     "Deja el archivo .cube donde puedas encontrarlo."
+    ],
+    [
+     "Abre el clip",
+     "Toca el clip en tu proyecto y abre Filter."
+    ],
+    [
+     "Importa el LUT",
+     "Usa la opción de importar LUTs y elige el archivo .cube."
+    ],
+    [
+     "Ajusta la intensidad",
+     "Afina la intensidad para que el look encaje con el plano."
+    ]
+   ],
+   "tip": "Usa looks Rec.709 con material normal y looks Apple Log con material en Apple Log."
+  },
+  "lumafusion": {
+   "title": "Cómo usar LUTs .cube en LumaFusion",
+   "desc": "Carga un LUT .cube en LumaFusion y aplícalo a un clip.",
+   "intro": "LumaFusion admite LUTs .cube personalizados. Los nombres de los menús pueden variar un poco entre versiones.",
+   "steps": [
+    [
+     "Guarda el archivo en Archivos",
+     "Deja el archivo .cube donde puedas encontrarlo."
+    ],
+    [
+     "Abre los efectos del clip",
+     "Selecciona el clip y abre Effects."
+    ],
+    [
+     "Añade el LUT",
+     "Elige el efecto LUT y carga el archivo .cube desde Archivos."
+    ],
+    [
+     "Revisa el look",
+     "Recorre el clip y baja la intensidad si hace falta."
+    ]
+   ],
+   "tip": "Ajusta el look al material: Rec.709 para vídeo normal, Apple Log para Log."
+  }
+ },
+ "compare": {
+  "title": "Rec.709 o Apple Log: ¿qué LUT debo usar?",
+  "desc": "Una guía corta para elegir la versión correcta de un LUT para tu material de iPhone.",
+  "blocks": [
+   [
+    "Respuesta corta",
+    "Elige la versión que coincide con cómo grabaste. El vídeo normal de iPhone es Rec.709. El material grabado en Apple Log necesita un look Apple Log."
+   ],
+   [
+    "Rec.709",
+    "Es lo que graba el iPhone por defecto. El color ya viene incorporado, así que un look Rec.709 se pone encima y queda listo al instante. Funciona en cualquier iPhone y en cualquier editor."
+   ],
+   [
+    "Apple Log",
+    "Apple Log es una grabación plana con más margen en luces y sombras. Se ve apagada hasta que aplicas un LUT. Necesitas un iPhone 15 Pro o posterior. Ese margen extra es la razón por la que muchos gradúan en Log."
+   ],
+   [
+    "¿No estás seguro?",
+    "Mira el material. Si ya se ve normal, es Rec.709. Si se ve gris y plano, es Log. Nunca pongas un look Rec.709 sobre material Log, ni al revés."
+   ]
+  ]
+ },
+ "legal": {
+  "terms": {
+   "title": "Términos y licencia",
+   "body": [
+    [
+     "1",
+     "Recibes los archivos LUT (.cube) en el chat de Telegram justo después de pagar con Telegram Stars."
+    ],
+    [
+     "2",
+     "Úsalos en tus propias fotos y vídeos, incluso con fines comerciales. No compartas ni revendas los archivos."
+    ],
+    [
+     "3",
+     "Reembolsos: si un archivo no funciona en tu teléfono, escribe a /paysupport en el bot. Te enviamos otra versión o te devolvemos tus Stars. Además, un reembolso sin preguntas por cuenta en 7 días (LUTs sueltos y packs). El reembolso termina la licencia."
+    ],
+    [
+     "4",
+     "Los looks gratis del Starter son obras CC0 de sus autores."
+    ],
+    [
+     "5",
+     "En caso de discrepancia prevalece la versión en inglés."
+    ]
+   ]
+  },
+  "privacy": {
+   "title": "Privacidad",
+   "body": [
+    [
+     "Telegram",
+     "En el bot guardamos tu ID de Telegram, nombre, idioma, el enlace por el que llegaste, tus compras y los mensajes de soporte. Los usamos solo para enviarte archivos y ayudarte. No los compartimos. Los pagos los procesa Telegram. Para borrar tus datos envía /deletedata en el bot."
+    ],
+    [
+     "Este sitio",
+     "El sitio guarda dos cookies propias pequeñas: una recuerda de dónde vienes y la otra es un identificador aleatorio de visitante. Sirven para contar visitas y clics hacia el bot. No contienen nombre, correo ni otros datos personales, y conservamos los recuentos 90 días. No hay rastreadores publicitarios."
+    ]
+   ]
+  },
+  "refund": {
+   "title": "Reembolsos",
+   "body": [
+    [
+     "Si un archivo no funciona",
+     "Escribe a /paysupport en el bot. Recibes otra versión o tus Stars de vuelta."
+    ],
+    [
+     "Reembolso sin preguntas",
+     "Uno por cuenta, en los 7 días siguientes a la compra, para LUTs sueltos y packs. El reembolso termina la licencia de ese producto."
+    ],
+    [
+     "Cómo",
+     "Las compras se hacen en Telegram, así que los reembolsos también se hacen allí, en Telegram Stars."
+    ]
+   ]
+  },
+  "license": {
+   "title": "Licencia",
+   "body": [
+    [
+     "Puedes",
+     "Usar los LUTs en tus propias fotos y vídeos, incluidos trabajos de clientes de pago y canales monetizados."
+    ],
+    [
+     "No puedes",
+     "Compartir los archivos, revenderlos ni incluirlos en tu propio pack o colección de presets."
+    ],
+    [
+     "Créditos",
+     "Los looks gratis del Starter son obras CC0 de sus autores. Los LUTs de pago son obra mía."
+    ],
+    [
+     "Copia personal",
+     "Cada archivo que recibes lleva un código de licencia vinculado a tu compra."
+    ]
+   ]
+  }
+ }
+}

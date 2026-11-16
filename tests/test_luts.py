@@ -16,6 +16,8 @@ import requests  # noqa: E402
 
 import app as appmod  # noqa: E402
 import luts  # noqa: E402
+import luts_content  # noqa: E402
+import luts_text  # noqa: E402
 
 
 @pytest.fixture
@@ -68,17 +70,67 @@ def test_csp_allows_only_the_bot_origin(client):
     assert "connect-src 'self' https://bmc-lut-bot.fly.dev" in csp and "unsafe-inline" not in csp.split("style-src")[1].split(";")[0]
 
 
-def test_other_languages_are_noindex_until_translated(client):
-    assert 'rel="canonical"' in client.get("/luts").data.decode()
+def test_every_language_is_indexable_with_hreflang_and_rtl(client):
     html = client.get("/uk/luts").data.decode()
-    assert 'name="robots" content="noindex, follow"' in html and 'dir="ltr"' in html
-    assert 'dir="rtl"' in client.get("/ar/luts").data.decode()
+    assert 'rel="canonical" href="http://test.local/uk/luts"' in html and 'name="robots"' not in html
+    assert html.count('hreflang="') >= 9 and 'hreflang="x-default" href="http://test.local/luts"' in html
+    assert 'dir="ltr"' in html and 'lang="uk"' in html
+    for code in ("ar", "fa"):
+        assert 'dir="rtl"' in client.get(f"/{code}/luts").data.decode()
+    assert client.get("/de/luts").status_code == 404
 
 
-def test_sitemap_lists_luts_pages(client):
+def test_sitemap_lists_every_language_with_alternates(client):
     sitemap = client.get("/sitemap.xml").data.decode()
     assert "http://test.local/luts</loc>" in sitemap and "/luts/guide/blackmagic-camera" in sitemap
-    assert "/uk/luts" not in sitemap
+    for code in luts_text.LUT_LANGS[1:]:
+        assert f"http://test.local/{code}/luts</loc>" in sitemap
+        assert f'hreflang="{code}" href="http://test.local/{code}/luts"' in sitemap
+
+
+LANGS = luts_text.LUT_LANGS[1:]
+
+
+def _ph(text):
+    return sorted(re.findall(r"\{\w+\}", text))
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_translation_is_complete_and_keeps_placeholders(lang):
+    tr = luts_text.load(lang)
+    assert set(tr["ui"]) <= set(luts_text.EN), "ключ перекладу, якого немає в англійській"
+    missing = set(luts_text.EN) - set(tr["ui"]) - {"not_found", "guide_h", "guides", "updated", "free_look", "only_in_pack",
+                                                   "versions", "buy_tg", "lang_label"}
+    assert not missing, f"{lang}: немає перекладу для {sorted(missing)}"
+    for key, value in tr["ui"].items():
+        base = luts_text.EN[key]
+        if isinstance(base, str):
+            assert _ph(value) == _ph(base), f"{lang}.{key}: плейсхолдери"
+        else:
+            assert len(value) == len(base), f"{lang}.{key}: кількість елементів"
+    assert set(tr["packs"]) == set(luts_content.PACK_COPY)
+    for name, guide in luts_content.GUIDES.items():
+        assert len(tr["guides"][name]["steps"]) == len(guide["steps"]), f"{lang}: кроки {name}"
+    assert len(tr["compare"]["blocks"]) == len(luts_content.COMPARE["blocks"])
+    for name, page in luts_content.LEGAL.items():
+        assert len(tr["legal"][name]["body"]) == len(page["body"]), f"{lang}: legal {name}"
+
+
+@pytest.mark.parametrize("lang", LANGS)
+def test_translated_pages_render_in_their_language_without_dollars(client, lang):
+    for path in ("", "/free", "/rec709_collection", "/guide/capcut", "/rec709-vs-log", "/legal/terms"):
+        resp = client.get(f"/{lang}/luts{path}")
+        assert resp.status_code == 200, path
+        html = re.sub(r"<script.*?</script>", "", resp.data.decode(), flags=re.S)
+        assert "$" not in html and f'lang="{lang}"' in html
+    home = client.get(f"/{lang}/luts").data.decode()
+    assert luts_text.load(lang)["ui"]["h1"] in home
+    assert luts_text.load(lang)["ui"]["cta_all"] in home
+
+
+def test_language_switcher_keeps_the_page(client):
+    html = client.get("/ru/luts/guide/capcut").data.decode()
+    assert 'href="/uk/luts/guide/capcut"' in html and 'href="/luts/guide/capcut"' in html
 
 
 def test_catalog_uses_bot_data_and_falls_back(monkeypatch):

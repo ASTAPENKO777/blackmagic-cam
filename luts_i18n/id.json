@@ -1,0 +1,316 @@
+{
+ "ui": {
+  "brand": "@blackmagicamera LUTs",
+  "nav_free": "Starter gratis",
+  "nav_guides": "Panduan",
+  "lang_label": "Bahasa",
+  "title_home": "LUT untuk iPhone dan Blackmagic Camera: Rec.709 dan Apple Log",
+  "desc_home": "LUT sinematik yang saya pakai untuk color grading setiap hari. Dibuat untuk Blackmagic Camera di iPhone, dalam versi Rec.709 dan Apple Log. Ada paket Starter gratis.",
+  "h1": "Warna sinematik untuk iPhone. Satu ketukan di Blackmagic Camera.",
+  "sub": "LUT yang saya pakai setiap hari. Rec.709 dan Apple Log, dibuat untuk Blackmagic Camera.",
+  "cta_all": "Lihat semua look",
+  "cta_free": "Starter gratis",
+  "drag": "Geser",
+  "before": "Sebelum",
+  "after": "Sesudah",
+  "slider_label": "Bandingkan sebelum dan sesudah",
+  "strip_1": "Apple Log · Rec.709",
+  "strip_2": "Untuk aplikasi Blackmagic Camera",
+  "strip_3": "File .cube terbuka di iPhone",
+  "strip_4": "Update paket gratis",
+  "packs": "Paket",
+  "packs_sub": "Makin banyak yang kamu ambil, makin murah tiap look.",
+  "singles": "Look satuan",
+  "singles_sub": "Satu look, satu file .cube.",
+  "looks_n": "{n} look",
+  "look_1": "1 look",
+  "best_value": "Paling hemat",
+  "only_in_pack": "Hanya di paket ini",
+  "buy_tg": "Beli di Telegram",
+  "buy_tg_stars": "Beli di Telegram · {stars} ⭐",
+  "buy_short": "Beli · {stars} ⭐",
+  "view": "Lihat",
+  "versions": "Versi",
+  "what_inside": "Isi paket",
+  "sold_alone": "Juga dijual satuan",
+  "pack_only": "Look ini tidak dijual terpisah.",
+  "prod_title": "{title}: LUT untuk Blackmagic Camera ({versions})",
+  "free_page_title": "Starter gratis: LUT gratis untuk iPhone dan Blackmagic Camera",
+  "how_title": "Pasang dalam 30 detik",
+  "how_steps": [
+   "Simpan zip ke File.",
+   "Blackmagic Camera → LUTs Manager → Import LUT.",
+   "Buka folder LUTs, pilih semua, lalu ketuk Buka.",
+   "Ketuk tombol LUT dan pilih look kamu."
+  ],
+  "how_more": "Panduan lengkap dengan tangkapan layar",
+  "who_title": "Siapa yang membuat",
+  "who_text": "Saya mengelola @blackmagicamera. Saya merekam dengan iPhone di Blackmagic Camera, dan inilah LUT yang saya pakai di rekaman saya sendiri. Saya grading dengan mata di layar ponsel, jadi apa yang kamu lihat saat merekam adalah yang kamu dapat.",
+  "who_link": "Ikuti channel",
+  "cmp_title": "Rec.709 atau Apple Log?",
+  "cmp_709_h": "Rec.709",
+  "cmp_709_p": "Video iPhone biasa. Pilih ini kalau kamu merekam dalam mode bawaan. Look langsung siap begitu diterapkan.",
+  "cmp_log_h": "Apple Log",
+  "cmp_log_p": "Rekaman datar dengan ruang lebih luas untuk grading. Pilih ini di iPhone 15 Pro ke atas saat merekam dalam Apple Log.",
+  "cmp_more": "Pilih yang mana?",
+  "free_title": "Paket Starter gratis",
+  "free_text": "{n} LUT gratis untuk mencoba. Ambil di bot Telegram, tanpa bayar.",
+  "free_cta": "Ambil Starter",
+  "free_credit": "Look Starter adalah karya CC0 dari pembuatnya dan kreditnya ada di dalam paket.",
+  "faq_title": "Pertanyaan",
+  "faq": [
+   [
+    "Bisa dipakai di aplikasi apa saja?",
+    "File .cube dibuat untuk Blackmagic Camera di iPhone dan Android. File ini juga bisa dimuat di CapCut, VN, LumaFusion, dan DaVinci Resolve."
+   ],
+   [
+    "Bagaimana cara mendapatkan file setelah beli?",
+    "Ketuk Beli di Telegram, bayar dengan Stars di bot, dan file .cube langsung masuk ke chat. Kamu bisa minta kirim ulang kapan saja lewat /my."
+   ],
+   [
+    "Bisa di Android?",
+    "Bisa. Blackmagic Camera punya versi Android dan membaca file .cube yang sama."
+   ],
+   [
+    "Boleh dipakai untuk pekerjaan komersial?",
+    "Boleh, di foto dan video milik kamu sendiri, termasuk pekerjaan klien berbayar. File tidak boleh dibagikan atau dijual lagi."
+   ],
+   [
+    "Bagaimana kalau file tidak berfungsi?",
+    "Tulis ke /paysupport di bot. Kamu dapat versi lain atau uang kembali."
+   ],
+   [
+    "Apakah update gratis?",
+    "Ya. Kalau saya menambah look ke paket yang kamu punya, look itu datang gratis."
+   ]
+  ],
+  "footer_disclaimer": "Tidak berafiliasi dengan Blackmagic Design. Blackmagic Camera adalah merek milik pemiliknya; namanya hanya dipakai untuk menyebut aplikasi yang menjadi tujuan file ini.",
+  "terms": "Ketentuan",
+  "privacy": "Privasi",
+  "refund": "Pengembalian dana",
+  "license": "Lisensi",
+  "inapp": "Buka halaman ini di Safari atau Chrome supaya pembayaran lebih lancar.",
+  "back_all": "Semua look",
+  "stars_note": "Pembayaran dengan Telegram Stars di dalam bot."
+ },
+ "packs": {
+  "apple_log_film": {
+   "tagline": "Tiga look film yang dibuat langsung di atas Apple Log.",
+   "text": "Rekam dalam Log di Blackmagic Camera, pilih look, selesai. Tidak perlu LUT konversi."
+  },
+  "rec709_collection": {
+   "tagline": "Delapan look untuk video iPhone biasa.",
+   "text": "V1 sampai V8, dari teal lembut sampai bayangan amber, untuk rekaman dalam mode Rec.709 bawaan. Kedelapan look ini tidak dijual di tempat lain."
+  },
+  "cinematic_pro_15": {
+   "tagline": "Set grading utama saya.",
+   "text": "Teal, film print, kota malam, warna kulit hangat. Tiga belas look, dan masing-masing juga dijual satuan."
+  }
+ },
+ "guides": {
+  "blackmagic-camera": {
+   "title": "Cara memasang LUT di Blackmagic Camera",
+   "desc": "Langkah demi langkah: impor LUT .cube ke aplikasi Blackmagic Camera di iPhone dan terapkan satu saat merekam.",
+   "intro": "Blackmagic Camera membaca file .cube. Impor sekali, dan file tetap ada di aplikasi.",
+   "steps": [
+    [
+     "Simpan zip ke File",
+     "Buka file di Telegram, ketuk Bagikan, lalu Simpan ke File. Ekstrak kalau iOS belum melakukannya."
+    ],
+    [
+     "Buka LUTs Manager",
+     "Di Blackmagic Camera, buka LUTs Manager."
+    ],
+    [
+     "Ketuk Import LUT",
+     "Pilih Import LUT untuk membuka pemilih file."
+    ],
+    [
+     "Buka folder LUTs",
+     "Masuk ke folder tempat kamu menyimpan file."
+    ],
+    [
+     "Pilih Semua, lalu Buka",
+     "Seluruh paket diimpor sekaligus."
+    ],
+    [
+     "Pilih look kamu",
+     "Ketuk tombol LUT di layar kamera dan pilih look. Kamu merekam dengan warna akhir sudah tampil di layar."
+    ]
+   ],
+   "tip": "Merekam dalam Apple Log? Pakai versi Apple Log dari look itu. Video biasa? Pakai Rec.709."
+  },
+  "capcut": {
+   "title": "Cara memakai LUT .cube di CapCut",
+   "desc": "Tambahkan LUT .cube ke klip kamu di CapCut untuk iPhone.",
+   "intro": "Nama menu berubah antar versi CapCut, tapi ide dasarnya sama: impor file, lalu terapkan sebagai filter.",
+   "steps": [
+    [
+     "Simpan file ke File",
+     "Simpan file .cube di tempat yang mudah kamu temukan."
+    ],
+    [
+     "Buka proyek",
+     "Pilih klip, lalu buka Filter atau Sesuaikan."
+    ],
+    [
+     "Impor LUT",
+     "Cari opsi impor LUT atau filter kustom, lalu pilih file .cube."
+    ],
+    [
+     "Atur kekuatan",
+     "Kurangi kekuatan kalau look terasa terlalu berat untuk adegannya."
+    ]
+   ],
+   "tip": "LUT yang dibuat untuk Rec.709 dirancang untuk rekaman biasa. Jangan taruh di atas rekaman Log."
+  },
+  "vn": {
+   "title": "Cara memakai LUT .cube di VN",
+   "desc": "Impor LUT .cube ke editor video VN dan terapkan ke klip.",
+   "intro": "VN mengimpor LUT .cube sebagai filter. Nama menu bisa sedikit berbeda antar versi.",
+   "steps": [
+    [
+     "Simpan file ke File",
+     "Simpan file .cube di tempat yang mudah kamu temukan."
+    ],
+    [
+     "Buka klip",
+     "Ketuk klip di proyek, lalu buka Filter."
+    ],
+    [
+     "Impor LUT",
+     "Pakai opsi impor LUT dan pilih file .cube."
+    ],
+    [
+     "Atur intensitas",
+     "Sesuaikan intensitas agar look cocok dengan adegannya."
+    ]
+   ],
+   "tip": "Pakai look Rec.709 untuk rekaman biasa dan look Apple Log untuk rekaman Apple Log."
+  },
+  "lumafusion": {
+   "title": "Cara memakai LUT .cube di LumaFusion",
+   "desc": "Muat LUT .cube ke LumaFusion dan terapkan ke klip.",
+   "intro": "LumaFusion mendukung LUT .cube kustom. Nama menu bisa sedikit berbeda antar versi.",
+   "steps": [
+    [
+     "Simpan file ke File",
+     "Simpan file .cube di tempat yang mudah kamu temukan."
+    ],
+    [
+     "Buka efek klip",
+     "Pilih klip, lalu buka Effects."
+    ],
+    [
+     "Tambahkan LUT",
+     "Pilih efek LUT dan muat file .cube dari File."
+    ],
+    [
+     "Periksa look",
+     "Putar klipnya dan kurangi intensitas kalau perlu."
+    ]
+   ],
+   "tip": "Cocokkan look dengan rekaman: Rec.709 untuk video biasa, Apple Log untuk Log."
+  }
+ },
+ "compare": {
+  "title": "Rec.709 atau Apple Log: LUT mana yang harus dipakai?",
+  "desc": "Panduan singkat memilih versi LUT yang tepat untuk rekaman iPhone kamu.",
+  "blocks": [
+   [
+    "Jawaban singkat",
+    "Pilih versi yang sesuai dengan cara kamu merekam. Video iPhone biasa adalah Rec.709. Rekaman dalam Apple Log butuh look Apple Log."
+   ],
+   [
+    "Rec.709",
+    "Ini yang direkam iPhone secara default. Warnanya sudah tertanam, jadi look Rec.709 tinggal ditempel dan langsung siap. Bisa dipakai di semua iPhone dan semua editor."
+   ],
+   [
+    "Apple Log",
+    "Apple Log adalah rekaman datar dengan ruang lebih luas di highlight dan shadow. Tampilannya pucat sampai LUT diterapkan. Kamu butuh iPhone 15 Pro atau lebih baru. Ruang ekstra itulah alasan banyak orang grading di Log."
+   ],
+   [
+    "Tidak yakin?",
+    "Lihat rekamanmu. Kalau sudah tampak normal, itu Rec.709. Kalau tampak abu-abu dan datar, itu Log. Jangan pernah menaruh look Rec.709 di atas Log, atau sebaliknya."
+   ]
+  ]
+ },
+ "legal": {
+  "terms": {
+   "title": "Ketentuan dan lisensi",
+   "body": [
+    [
+     "1",
+     "Kamu menerima file LUT (.cube) di chat Telegram segera setelah pembayaran dengan Telegram Stars."
+    ],
+    [
+     "2",
+     "Gunakan untuk foto dan video kamu sendiri, termasuk karya komersial. Jangan bagikan atau jual ulang filenya."
+    ],
+    [
+     "3",
+     "Pengembalian dana: kalau file tidak berfungsi di ponsel kamu, tulis ke /paysupport di bot. Kami kirim versi lain atau kembalikan Stars kamu. Plus satu pengembalian tanpa pertanyaan per akun dalam 7 hari (LUT satuan dan paket). Pengembalian mengakhiri lisensi."
+    ],
+    [
+     "4",
+     "Look Starter gratis adalah karya CC0 dari pembuatnya."
+    ],
+    [
+     "5",
+     "Jika ada perbedaan, versi bahasa Inggris yang berlaku."
+    ]
+   ]
+  },
+  "privacy": {
+   "title": "Privasi",
+   "body": [
+    [
+     "Telegram",
+     "Di bot, kami menyimpan ID Telegram, nama, bahasa, tautan asal kamu, pembelian, dan pesan dukungan. Semua itu hanya dipakai untuk mengirim file dan membantu kamu. Kami tidak membagikannya. Pembayaran diproses oleh Telegram. Untuk menghapus data, kirim /deletedata di bot."
+    ],
+    [
+     "Situs ini",
+     "Situs ini memasang dua cookie kecil milik sendiri: satu mengingat dari mana kamu datang, satu lagi ID pengunjung acak. Keduanya dipakai untuk menghitung kunjungan dan klik ke bot. Tidak ada nama, email, atau data pribadi lain di dalamnya, dan hitungan kami simpan 90 hari. Tidak ada pelacak iklan."
+    ]
+   ]
+  },
+  "refund": {
+   "title": "Pengembalian dana",
+   "body": [
+    [
+     "Jika file tidak berfungsi",
+     "Tulis ke /paysupport di bot. Kamu dapat versi lain atau Stars kembali."
+    ],
+    [
+     "Pengembalian tanpa pertanyaan",
+     "Satu per akun, dalam 7 hari setelah pembelian, untuk LUT satuan dan paket. Pengembalian mengakhiri lisensi produk itu."
+    ],
+    [
+     "Caranya",
+     "Pembelian dilakukan di Telegram, jadi pengembalian juga dilakukan di sana, dalam Telegram Stars."
+    ]
+   ]
+  },
+  "license": {
+   "title": "Lisensi",
+   "body": [
+    [
+     "Boleh",
+     "Memakai LUT di foto dan video kamu sendiri, termasuk pekerjaan klien berbayar dan channel yang dimonetisasi."
+    ],
+    [
+     "Tidak boleh",
+     "Membagikan file, menjualnya kembali, atau memasukkannya ke paket atau bundel preset milikmu sendiri."
+    ],
+    [
+     "Kredit",
+     "Look Starter gratis adalah karya CC0 dari pembuatnya. LUT berbayar adalah karya saya sendiri."
+    ],
+    [
+     "Salinan pribadi",
+     "Setiap file yang kamu terima membawa kode lisensi yang terikat pada pembelianmu."
+    ]
+   ]
+  }
+ }
+}

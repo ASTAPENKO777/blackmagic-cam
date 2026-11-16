@@ -651,9 +651,10 @@ def sitemap():
         lines.append("    <priority>0.7</priority>")
         lines.append("  </url>")
 
-    # /luts shop: English only until the translations are ready (see luts_text.TRANSLATED).
-    for loc, priority in luts_sitemap_entries(BASE_URL):
-        lines.append(f"  <url>\n    <loc>{loc}</loc>\n    <changefreq>weekly</changefreq>\n"
+    # /luts shop: every language that has a luts_i18n/<lang>.json (see luts_text.translated).
+    for loc, priority, alternates in luts_sitemap_entries(BASE_URL):
+        alts = "".join(f'\n    <xhtml:link rel="alternate" hreflang="{code}" href="{href}" />' for code, href in alternates)
+        lines.append(f"  <url>\n    <loc>{loc}</loc>{alts}\n    <changefreq>weekly</changefreq>\n"
                      f"    <priority>{priority}</priority>\n  </url>")
 
     lines.append("</urlset>")
@@ -1399,7 +1400,7 @@ def _send_email(to_email: str, subject: str, html: str) -> bool:
 
 
 
-luts_shop.register(app)
+luts_shop.register(app, BASE_URL)
 
 
 @app.errorhandler(404)

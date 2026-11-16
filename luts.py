@@ -10,7 +10,7 @@ import requests
 from flask import Blueprint, Response, abort, current_app, g, render_template, request
 
 import luts_content as content
-from luts_text import LUT_LANGS, RTL, TRANSLATED, text
+from luts_text import LUT_LANGS, NAMES, RTL, text, translated
 
 bp = Blueprint("luts", __name__)
 
@@ -47,21 +47,19 @@ def get_catalog() -> dict:
     return _cache["data"]
 
 
-def _title(item: dict) -> str:
-    return (item["i18n"].get("en") or {}).get("title") or item["slug"].replace("_", " ").title()
+def _field(item: dict, lang: str, key: str, default: str = "") -> str:
+    return (item["i18n"].get(lang) or {}).get(key) or (item["i18n"].get("en") or {}).get(key) or default
 
 
-def _desc(item: dict) -> str:
-    return (item["i18n"].get("en") or {}).get("desc", "")
-
-
-def view_items(catalog: dict) -> dict:
+def view_items(catalog: dict, lang: str = "en") -> dict:
     """Паки й окремі LUT для шаблонів: з каталогу + наш текст про пак."""
+    copy = content.for_lang(lang)["packs"]
     packs, singles = [], []
     for item in catalog["items"]:
-        row = {**item, "title": _title(item), "desc": _desc(item)}
+        row = {**item, "title": _field(item, lang, "title", item["slug"].replace("_", " ").title()),
+               "desc": _field(item, lang, "desc")}
         if item["kind"] == "pack":
-            row.update(content.PACK_COPY.get(item["slug"], {}))
+            row.update(copy.get(item["slug"], {}))
             row.setdefault("pair", content.HERO_PAIR)
             packs.append(row)
         else:
@@ -92,10 +90,13 @@ def _base_ctx(lang: str, **extra) -> dict:
 
     base = current_app.config.get("LUTS_BASE_URL", "")
     path = request.path
+    sub = path.split("/luts", 1)[1] if "/luts" in path else ""  # шлях без префікса мови: однаковий у всіх мов
+    done = translated()
     return {
         "lang": lang, "dir": "rtl" if lang in RTL else "ltr", "T": text(lang), "u": u, "bot": catalog["bot"],
         "starter": catalog.get("starter"), "card_enabled": CARD_ENABLED, "event_url": EVENT_URL,
-        "translated": lang in TRANSLATED, "alternates": [c for c in LUT_LANGS if c in TRANSLATED],
+        "translated": lang in done, "alternates": done, "sub": sub,
+        "switch": [(c, NAMES[c], u(sub, c)) for c in done],
         "base_url": base, "path": path, "pair_url": lambda name, kind, w, ext: f"/static/luts/img/pairs/{name}-{kind}-{w}.{ext}",
         **extra,
     }
@@ -137,7 +138,7 @@ def _route(rule: str):
 
 @_route("")
 def home(lang):
-    shop = view_items(get_catalog())
+    shop = view_items(get_catalog(), lang)
     return _page("home.html", lang, shop=shop, hero=content.HERO_PAIR, graph=lambda c: [
         {"@type": "WebSite", "name": c["T"]["brand"], "url": c["base_url"] + c["u"]()}, faq_ld(c["T"])])
 
@@ -149,25 +150,26 @@ def free(lang):
 
 @_route("/rec709-vs-log")
 def compare(lang):
-    return _page("compare.html", lang, page=content.COMPARE, graph=lambda c: [
-        _crumbs(c, (content.COMPARE["title"], c["u"]("/rec709-vs-log")))])
+    page = content.for_lang(lang)["compare"]
+    return _page("compare.html", lang, page=page, graph=lambda c: [_crumbs(c, (page["title"], c["u"]("/rec709-vs-log")))])
 
 
 @_route("/guide/<name>")
 def guide(lang, name):
-    page = content.GUIDES.get(name)
+    guides = content.for_lang(lang)["guides"]
+    page = guides.get(name)
     if page is None:
         abort(404)
     def graph(c):
         how = {"@type": "HowTo", "name": page["title"], "step": [
             {"@type": "HowToStep", "name": n, "text": d} for n, d, _ in page["steps"]]}
         return [how, _crumbs(c, (page["title"], c["u"](f"/guide/{name}")))]
-    return _page("guide.html", lang, page=page, name=name, guides=content.GUIDES, sizes=content.SHOT_SIZE, graph=graph)
+    return _page("guide.html", lang, page=page, name=name, guides=guides, sizes=content.SHOT_SIZE, graph=graph)
 
 
 @_route("/legal/<name>")
 def legal(lang, name):
-    page = content.LEGAL.get(name)
+    page = content.for_lang(lang)["legal"].get(name)
     if page is None:
         abort(404)
     return _page("legal.html", lang, page=page, name=name, graph=lambda c: [
@@ -176,7 +178,7 @@ def legal(lang, name):
 
 @_route("/<slug>")
 def product(lang, slug):
-    shop = view_items(get_catalog())
+    shop = view_items(get_catalog(), lang)
     item = shop["by_slug"].get(slug)
     if item is None:
         abort(404)
@@ -190,14 +192,19 @@ def product(lang, slug):
     return _page("product.html", lang, item=item, shop=shop, parents=parents, graph=graph)
 
 
-def sitemap_entries(base_url: str) -> list[tuple[str, str]]:
-    """(url, приоритет) для /sitemap.xml: лише англійська, поки інші мови без перекладу."""
+def sitemap_entries(base_url: str) -> list[tuple[str, str, list[tuple[str, str]]]]:
+    """(url, пріоритет, [(hreflang, url)]) для /sitemap.xml: усі мови з готовим перекладом."""
     shop = view_items(get_catalog())
+    done = translated()
     paths = ["", "/free", "/rec709-vs-log"] + [f"/guide/{n}" for n in content.GUIDES]
     paths += [f"/{slug}" for slug in shop["by_slug"]] + [f"/legal/{n}" for n in content.LEGAL]
-    return [(f"{base_url}/luts{p}", "0.9" if p in ("", "/free") else "0.7") for p in paths]
+    def url(code: str, p: str) -> str:
+        return f"{base_url}{'/luts' if code == 'en' else f'/{code}/luts'}{p}"
+
+    return [(url(code, p), "0.9" if p in ("", "/free") else "0.7", [(c, url(c, p)) for c in done] + [("x-default", url("en", p))])
+            for p in paths for code in done]
 
 
-def register(app) -> None:
-    app.config["LUTS_BASE_URL"] = app.config.get("LUTS_BASE_URL", "")
+def register(app, base_url: str = "") -> None:
+    app.config["LUTS_BASE_URL"] = base_url  # абсолютні canonical, hreflang і og:image
     app.register_blueprint(bp)

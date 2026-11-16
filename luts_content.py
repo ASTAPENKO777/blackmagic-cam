@@ -127,3 +127,31 @@ SHOT_SIZE = {
     "01-guide-14-tg-download": (540, 197), "02-guide-15-lut-manager": (540, 158), "03-guide-16-import-lut-btn": (540, 216),
     "04-guide-17-select-folder": (540, 235), "05-guide-18-select-all": (540, 249), "06-guide-19-apply-lut": (540, 218),
 }
+
+
+def _merge_pairs(base: list, over: list | None) -> list:
+    """Список пар [заголовок, текст]: переклад береться, лише якщо збігається довжина (інакше — англійська)."""
+    return [tuple(x) for x in over] if over and len(over) == len(base) else base
+
+
+def for_lang(lang: str) -> dict:
+    """Описи паків, інструкції, порівняння й юридичні сторінки мовою lang (відсутнє — англійською)."""
+    from luts_text import load
+
+    tr = load(lang)
+    packs = {slug: {**copy, **(tr.get("packs", {}).get(slug) or {})} for slug, copy in PACK_COPY.items()}
+    guides = {}
+    for name, g in GUIDES.items():
+        t = tr.get("guides", {}).get(name) or {}
+        steps = g["steps"]
+        if len(t.get("steps", [])) == len(steps):
+            steps = [(ts[0], ts[1], g["steps"][i][2]) for i, ts in enumerate(t["steps"])]
+        guides[name] = {**g, **{k: t[k] for k in ("title", "desc", "intro", "tip") if k in t}, "steps": steps}
+    tc = tr.get("compare") or {}
+    compare = {**COMPARE, **{k: tc[k] for k in ("title", "desc") if k in tc},
+               "blocks": _merge_pairs(COMPARE["blocks"], tc.get("blocks"))}
+    legal = {}
+    for name, page in LEGAL.items():
+        t = tr.get("legal", {}).get(name) or {}
+        legal[name] = {"title": t.get("title", page["title"]), "body": _merge_pairs(page["body"], t.get("body"))}
+    return {"packs": packs, "guides": guides, "compare": compare, "legal": legal}

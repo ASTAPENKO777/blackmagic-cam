@@ -2,12 +2,22 @@
 
 Правило: тут немає цін у $ (поки немає оплати карткою — див. luts.CARD_ENABLED) і жодних обіцянок, яких не має каталог.
 """
+import json
+import os
+
 LUT_LANGS = ("en", "uk", "ru", "ar", "fa", "es", "fr", "id")
 RTL = {"ar", "fa"}
-TRANSLATED = {"en"}  # мови з готовими текстами: лише їх віддаємо в hreflang/sitemap
+NAMES = {"en": "English", "uk": "Українська", "ru": "Русский", "ar": "العربية", "fa": "فارسی", "es": "Español",
+         "fr": "Français", "id": "Bahasa Indonesia"}
+I18N_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "luts_i18n")
 
 EN = {
     "brand": "@blackmagicamera LUTs",
+    "nav_free": "Free Starter",
+    "nav_guides": "Guides",
+    "prod_title": "{title} LUT for Blackmagic Camera ({versions})",
+    "free_page_title": "Free Starter pack: free LUTs for iPhone and Blackmagic Camera",
+    "lang_label": "Language",
     "title_home": "LUTs for iPhone and Blackmagic Camera: Rec.709 and Apple Log",
     "desc_home": "Cinematic LUTs I grade with every day. Made for Blackmagic Camera on iPhone, in Rec.709 and Apple Log. Free Starter pack included.",
     "h1": "Cinematic color for iPhone. One tap in Blackmagic Camera.",
@@ -80,9 +90,25 @@ EN = {
     "updated": "Updated",
 }
 
-TEXT = {"en": EN}
+_cache: dict = {}
+
+
+def load(lang: str) -> dict:
+    """Переклад мови з luts_i18n/<lang>.json (порожньо, якщо файла немає)."""
+    if lang not in _cache:
+        try:
+            with open(os.path.join(I18N_DIR, f"{lang}.json"), encoding="utf-8") as handle:
+                _cache[lang] = json.load(handle)
+        except OSError:
+            _cache[lang] = {}
+    return _cache[lang]
 
 
 def text(lang: str) -> dict:
-    """Словник для мови: ключі, яких ще немає в перекладі, беруться з англійської."""
-    return {**EN, **TEXT.get(lang, {})}
+    """Словник інтерфейсу для мови: ключі, яких немає в перекладі, беруться з англійської."""
+    return {**EN, **load(lang).get("ui", {})}
+
+
+def translated() -> list[str]:
+    """Мови з готовим перекладом (англійська завжди): лише їх віддаємо в hreflang і sitemap."""
+    return [code for code in LUT_LANGS if code == "en" or load(code).get("ui")]

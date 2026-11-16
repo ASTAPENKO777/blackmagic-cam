@@ -16,7 +16,7 @@
     {% endfor %}
   </ol>
   <p class="card pad">{{ page.tip }}</p>
-  <nav class="muted small" aria-label="{{ T.guides }}">{% for k, g in guides.items() %}{% if k != name %}<a href="{{ u('/guide/' ~ k) }}">{{ g.title }}</a><br>{% endif %}{% endfor %}</nav>
+  <nav class="muted small" aria-label="{{ T.nav_guides }}">{% for k, g in guides.items() %}{% if k != name %}<a href="{{ u('/guide/' ~ k) }}">{{ g.title }}</a><br>{% endif %}{% endfor %}</nav>
 </article>
 {% endblock %}
 {% block ld %}<script type="application/ld+json">{{ ld | tojson }}</script>{% endblock %}

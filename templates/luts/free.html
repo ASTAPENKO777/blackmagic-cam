@@ -1,6 +1,6 @@
 {% extends "luts/base.html" %}
 {% from "luts/_m.html" import tg with context %}
-{% block title %}{{ T.free_title }}: free LUTs for iPhone and Blackmagic Camera{% endblock %}
+{% block title %}{{ T.free_page_title }}{% endblock %}
 {% block desc %}{{ T.free_text.format(n=starter.count if starter else 6) }}{% endblock %}
 {% block bodyattr %} data-slug="starter"{% endblock %}
 {% block main %}
