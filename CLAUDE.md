@@ -259,3 +259,6 @@ Self-contained Flask blueprint (8 languages: `/luts`, `/<uk|ru|ar|fa|es|fr|id>/l
 - `s.js` sends `view` / `slider` / `tg_click` to the bot's `/public/event` (sendBeacon). `/luts` pages get their own CSP allowing only the bot origin.
 - Before/after frames: `~/Dev/lut_bot/scripts/site_frames.py` (`--flatten` makes the «before» from a graded frame). Pairs live in `static/luts/img/pairs/`; `luts_content.PACK_COPY[slug]["pair"]` picks the pair per pack.
 - Deploy: `vercel --prod --yes` (git push does not deploy). Tests: `.venv-test/bin/python -m pytest tests -q`.
+- Look: dark "camera monitor" brand (graphite + amber + teal, REC/viewfinder brackets, colour-bar dividers, film grain); tokens in `static/luts/css/tokens.css`. Hero = cut-out portrait (`static/luts/img/portrait-*`, matted with pymatting from a Vision mask) + `LUT OFF / LUT ON` slider. Portfolio clips: `static/luts/video/work-N.mp4` (from the owner's graded demo footage; no client footage).
+- ALWAYS reference `/luts` CSS/JS/portrait through `static_v('luts/…')` (content-hash `?v=`): `/static/*` is served `immutable` for a year, so an unversioned URL keeps the old file in visitors' browsers forever. `tests/test_luts.py` enforces it.
+- CSP for `/luts` is set in `luts._page` (no inline styles/scripts; use classes, not `style=`).
