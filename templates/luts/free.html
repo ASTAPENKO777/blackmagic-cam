@@ -1,0 +1,17 @@
+{% extends "luts/base.html" %}
+{% from "luts/_m.html" import tg with context %}
+{% block title %}{{ T.free_title }}: free LUTs for iPhone and Blackmagic Camera{% endblock %}
+{% block desc %}{{ T.free_text.format(n=starter.count if starter else 6) }}{% endblock %}
+{% block bodyattr %} data-slug="starter"{% endblock %}
+{% block main %}
+<section class="wrap page">
+  <h1 class="h1-sm">{{ T.free_title }}</h1>
+  <p class="lead">{{ T.free_text.format(n=starter.count if starter else 6) }}</p>
+  <div class="cta-row">{{ tg("starter", T.free_cta) }}</div>
+  <p class="muted small">{{ T.free_credit }}</p>
+  <h2 class="h2-sm">{{ T.how_title }}</h2>
+  <ol class="steps">{% for s in T.how_steps %}<li>{{ s }}</li>{% endfor %}</ol>
+  <p><a href="{{ u('/guide/blackmagic-camera') }}">{{ T.how_more }}</a></p>
+</section>
+{% endblock %}
+{% block ld %}<script type="application/ld+json">{{ ld | tojson }}</script>{% endblock %}

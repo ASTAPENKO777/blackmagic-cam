@@ -1,0 +1,22 @@
+{% extends "luts/base.html" %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block desc %}{{ page.desc }}{% endblock %}
+{% block bodyattr %} data-slug="guide-{{ name }}"{% endblock %}
+{% block main %}
+<article class="wrap page">
+  <h1 class="h1-sm">{{ page.title }}</h1>
+  <p class="lead">{{ page.intro }}</p>
+  <ol class="guide-steps">
+    {% for title, body, shot in page.steps %}
+    <li>
+      <h2 class="h2-sm">{{ title }}</h2>
+      <p class="muted">{{ body }}</p>
+      {% if shot %}<img class="shot-sm" src="/static/luts/img/guide/{{ shot }}.webp" alt="{{ title }}" width="{{ sizes[shot][0] }}" height="{{ sizes[shot][1] }}" loading="lazy" decoding="async">{% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+  <p class="card pad">{{ page.tip }}</p>
+  <nav class="muted small" aria-label="{{ T.guides }}">{% for k, g in guides.items() %}{% if k != name %}<a href="{{ u('/guide/' ~ k) }}">{{ g.title }}</a><br>{% endif %}{% endfor %}</nav>
+</article>
+{% endblock %}
+{% block ld %}<script type="application/ld+json">{{ ld | tojson }}</script>{% endblock %}

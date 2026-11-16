@@ -1,0 +1,38 @@
+{% extends "luts/base.html" %}
+{% from "luts/_m.html" import slider, tg, versions with context %}
+{% block title %}{{ item.title }} LUT for Blackmagic Camera ({{ item.versions | join(', ') }}){% endblock %}
+{% block desc %}{{ item.tagline or item.desc or item.title }} {{ T.looks_n.format(n=item.count) if item.kind == 'pack' else T.look_1 }}, {{ item.versions | join(', ') }}. {{ T.strip_3 }}.{% endblock %}
+{% block bodyattr %} data-slug="{{ item.slug }}"{% endblock %}
+{% block main %}
+<nav class="wrap crumbs" aria-label="Breadcrumb"><a href="{{ u() }}">{{ T.back_all }}</a></nav>
+<section class="wrap prod">
+  <div class="prod-media">
+    {% if item.kind == 'pack' %}{{ slider(item.pair, eager=True, alt=item.title) }}{% endif %}
+    {% for m in item.media %}
+      {% if m.video %}<video class="shot" src="{{ m.url }}" muted loop playsinline controls preload="none" width="720" height="900"></video>
+      {% else %}<img class="shot" src="{{ m.url }}" alt="{{ item.title }}" width="720" height="900" loading="{{ 'eager' if loop.first and item.kind != 'pack' else 'lazy' }}" decoding="async">{% endif %}
+    {% endfor %}
+  </div>
+  <div class="prod-info">
+    <h1 class="h1-sm">{{ item.title }}</h1>
+    <p class="lead">{{ item.tagline or item.desc }}</p>
+    {% if item.text %}<p class="muted">{{ item.text }}</p>{% endif %}
+    <p class="meta mono">{{ (T.looks_n.format(n=item.count) if item.kind == 'pack' else T.look_1) }} · {{ versions(item) }} · .cube</p>
+    <div class="cta-row" id="buy">{{ tg(item.slug, T.buy_tg_stars.format(stars=item.price_stars)) }}</div>
+    <p class="muted small">{{ T.stars_note }}</p>
+    {% if item.kind == 'pack' %}
+      <h2 class="h2-sm">{{ T.what_inside }}</h2>
+      {% if not item.has_alone %}<p class="muted">{{ T.pack_only }}</p>{% endif %}
+      <ul class="inside">
+        {% for look in item.inside %}<li>{% if look.alone %}<a href="{{ u('/' ~ look.slug) }}">{{ look.title }}</a>{% else %}{{ look.title }}{% endif %}</li>{% endfor %}
+      </ul>
+      {% if item.has_alone %}<p class="muted small">{{ T.sold_alone }}.</p>{% endif %}
+    {% elif parents %}
+      <p class="muted small">{% for p in parents %}<a href="{{ u('/' ~ p.slug) }}">{{ p.title }}</a>{{ ", " if not loop.last }}{% endfor %}</p>
+    {% endif %}
+    <p><a href="{{ u('/guide/blackmagic-camera') }}">{{ T.how_more }}</a> · <a href="{{ u('/rec709-vs-log') }}">{{ T.cmp_more }}</a></p>
+  </div>
+</section>
+{% endblock %}
+{% block sticky %}<div class="sticky" data-sticky data-watch="#buy" hidden>{{ tg(item.slug, T.buy_tg_stars.format(stars=item.price_stars)) }}</div>{% endblock %}
+{% block ld %}<script type="application/ld+json">{{ ld | tojson }}</script>{% endblock %}

@@ -1,0 +1,12 @@
+{% extends "luts/base.html" %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block desc %}{{ page.desc }}{% endblock %}
+{% block bodyattr %} data-slug="rec709-vs-log"{% endblock %}
+{% block main %}
+<article class="wrap page">
+  <h1 class="h1-sm">{{ page.title }}</h1>
+  {% for h, p in page.blocks %}<h2 class="h2-sm">{{ h }}</h2><p class="lead-sm">{{ p }}</p>{% endfor %}
+  <p><a class="btn btn-primary" href="{{ u() }}#catalog">{{ T.cta_all }}</a></p>
+</article>
+{% endblock %}
+{% block ld %}<script type="application/ld+json">{{ ld | tojson }}</script>{% endblock %}

@@ -1,0 +1,56 @@
+{%- from "luts/_m.html" import slider, tg with context -%}
+<!doctype html>
+<html lang="{{ lang }}" dir="{{ dir }}">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>{% block title %}{{ T.title_home }}{% endblock %}</title>
+<meta name="description" content="{% block desc %}{{ T.desc_home }}{% endblock %}">
+<meta name="theme-color" content="#000000">
+{%- if translated %}
+<link rel="canonical" href="{{ base_url }}{{ path }}">
+{%- for code in alternates %}
+<link rel="alternate" hreflang="{{ code }}" href="{{ base_url }}{{ path if code == lang else '' }}">
+{%- endfor %}
+{%- else %}
+<meta name="robots" content="noindex, follow">
+{%- endif %}
+<meta property="og:type" content="website">
+<meta property="og:title" content="{{ self.title() }}">
+<meta property="og:description" content="{{ self.desc() }}">
+<meta property="og:image" content="{{ base_url }}/static/luts/img/pairs/hero-after-1080.webp">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="/static/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="/static/luts/css/tokens.css">
+<link rel="stylesheet" href="/static/luts/css/slider.css">
+<link rel="stylesheet" href="/static/luts/css/luts.css">
+{% block head %}{% endblock %}
+</head>
+<body{% block bodyattr %}{% endblock %}>
+<div id="inapp" class="inapp" hidden>{{ T.inapp }}</div>
+<header class="top">
+  <div class="wrap top-in">
+    <a class="brand" href="{{ u() }}">{{ T.brand }}</a>
+    <nav class="top-nav" aria-label="Main">
+      <a href="{{ u('/free') }}">{{ T.free_look }} Starter</a>
+      <a href="{{ u('/guide/blackmagic-camera') }}">{{ T.guides }}</a>
+    </nav>
+  </div>
+</header>
+<main>{% block main %}{% endblock %}</main>
+<footer class="foot">
+  <div class="wrap">
+    <nav class="foot-nav" aria-label="Legal">
+      <a href="{{ u('/legal/terms') }}">{{ T.terms }}</a>
+      <a href="{{ u('/legal/privacy') }}">{{ T.privacy }}</a>
+      <a href="{{ u('/legal/refund') }}">{{ T.refund }}</a>
+      <a href="{{ u('/legal/license') }}">{{ T.license }}</a>
+    </nav>
+    <p class="muted small">{{ T.footer_disclaimer }}</p>
+  </div>
+</footer>
+{% block sticky %}{% endblock %}
+<script src="/static/luts/js/s.js" defer data-event="{{ event_url }}" data-bot="{{ bot }}"></script>
+{% block ld %}{% endblock %}
+</body>
+</html>

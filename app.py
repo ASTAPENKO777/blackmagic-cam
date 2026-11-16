@@ -30,6 +30,8 @@ from learn import (
 )
 from translations import TRANSLATIONS
 from testimonials import TESTIMONIALS
+import luts as luts_shop
+from luts import sitemap_entries as luts_sitemap_entries
 from bmc_knowledge import build_full_knowledge
 
 load_dotenv()
@@ -648,6 +650,11 @@ def sitemap():
         lines.append("    <changefreq>monthly</changefreq>")
         lines.append("    <priority>0.7</priority>")
         lines.append("  </url>")
+
+    # /luts shop: English only until the translations are ready (see luts_text.TRANSLATED).
+    for loc, priority in luts_sitemap_entries(BASE_URL):
+        lines.append(f"  <url>\n    <loc>{loc}</loc>\n    <changefreq>weekly</changefreq>\n"
+                     f"    <priority>{priority}</priority>\n  </url>")
 
     lines.append("</urlset>")
     return Response("\n".join(lines), mimetype="application/xml")
@@ -1390,6 +1397,9 @@ def _send_email(to_email: str, subject: str, html: str) -> bool:
         app.logger.error(f"email send failed to={safe_to!r} after retries: 587={last_err} 465={e}")
         return False
 
+
+
+luts_shop.register(app)
 
 
 @app.errorhandler(404)

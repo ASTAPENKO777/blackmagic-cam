@@ -1,0 +1,99 @@
+{% extends "luts/base.html" %}
+{% from "luts/_m.html" import slider, tg, media_thumb, versions with context %}
+{% block bodyattr %} data-slug="home"{% endblock %}
+{% block head %}
+<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="{{ pair_url(hero, 'after', 480, 'avif') }} 480w, {{ pair_url(hero, 'after', 768, 'avif') }} 768w, {{ pair_url(hero, 'after', 1080, 'avif') }} 1080w" imagesizes="(min-width: 760px) 460px, 92vw">
+{% endblock %}
+{% block main %}
+<section class="hero wrap">
+  <div class="hero-ba">{{ slider(hero, eager=True, alt=T.h1) }}</div>
+  <div class="hero-copy">
+    <h1>{{ T.h1 }}</h1>
+    <p class="lead">{{ T.sub }}</p>
+    <div class="cta-row">
+      <a class="btn btn-primary" id="hero-cta" href="#catalog">{{ T.cta_all }}</a>
+      {% if starter %}<a class="btn" href="{{ u('/free') }}">{{ T.cta_free }}</a>{% endif %}
+    </div>
+    <ul class="strip mono">
+      <li>{{ T.strip_1 }}</li><li>{{ T.strip_2 }}</li><li>{{ T.strip_3 }}</li><li>{{ T.strip_4 }}</li>
+    </ul>
+  </div>
+</section>
+
+<section class="wrap sec" id="catalog">
+  <h2>{{ T.packs }}</h2>
+  <p class="muted sec-sub">{{ T.packs_sub }}</p>
+  <div class="grid packs">
+    {% for p in shop.packs %}
+    <article class="card pack">
+      <div class="pack-ba">{{ slider(p.pair, alt=p.title) }}</div>
+      <div class="card-body">
+        <h3><a href="{{ u('/' ~ p.slug) }}">{{ p.title }}</a></h3>
+        <p class="muted">{{ p.tagline or p.desc }}</p>
+        <p class="meta mono">{{ T.looks_n.format(n=p.count) }} · {{ versions(p) }}</p>
+        {% if loop.last and shop.packs|length > 1 %}<span class="badge">{{ T.best_value }}</span>{% endif %}
+        <div class="cta-row">
+          {{ tg(p.slug, T.buy_tg_stars.format(stars=p.price_stars)) }}
+          <a class="btn" href="{{ u('/' ~ p.slug) }}">{{ T.view }}</a>
+        </div>
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+
+  <h2 class="gap-top">{{ T.singles }}</h2>
+  <p class="muted sec-sub">{{ T.singles_sub }}</p>
+  <div class="grid singles">
+    {% for s in shop.singles %}
+    <article class="card single">
+      <a href="{{ u('/' ~ s.slug) }}" class="thumb-wrap" aria-label="{{ s.title }}">{{ media_thumb(s) }}</a>
+      <div class="card-body">
+        <h3><a href="{{ u('/' ~ s.slug) }}">{{ s.title }}</a></h3>
+        <p class="meta mono">{{ versions(s) }}</p>
+        {{ tg(s.slug, T.buy_short.format(stars=s.price_stars), "btn btn-primary btn-sm") }}
+      </div>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+
+<section class="wrap sec who">
+  <img src="/static/luts/img/portrait-480.webp" srcset="/static/luts/img/portrait-480.webp 480w, /static/luts/img/portrait-768.webp 768w" sizes="(min-width: 760px) 320px, 70vw" width="480" height="744" alt="" loading="lazy" decoding="async">
+  <div>
+    <h2>{{ T.who_title }}</h2>
+    <p class="lead">{{ T.who_text }}</p>
+    <a class="btn" href="https://t.me/blackmagicamera" rel="noopener">{{ T.who_link }}</a>
+  </div>
+</section>
+
+<section class="wrap sec">
+  <h2>{{ T.cmp_title }}</h2>
+  <div class="grid two">
+    <div class="card pad"><h3>{{ T.cmp_709_h }}</h3><p class="muted">{{ T.cmp_709_p }}</p></div>
+    <div class="card pad"><h3>{{ T.cmp_log_h }}</h3><p class="muted">{{ T.cmp_log_p }}</p></div>
+  </div>
+  <p><a href="{{ u('/rec709-vs-log') }}">{{ T.cmp_more }}</a></p>
+</section>
+
+<section class="wrap sec">
+  <h2>{{ T.how_title }}</h2>
+  <ol class="steps">{% for s in T.how_steps %}<li>{{ s }}</li>{% endfor %}</ol>
+  <p><a href="{{ u('/guide/blackmagic-camera') }}">{{ T.how_more }}</a></p>
+</section>
+
+{% if starter %}
+<section class="wrap sec">
+  <div class="card pad free">
+    <div><h2>{{ T.free_title }}</h2><p class="muted">{{ T.free_text.format(n=starter.count) }}</p></div>
+    {{ tg("starter", T.free_cta) }}
+  </div>
+</section>
+{% endif %}
+
+<section class="wrap sec">
+  <h2>{{ T.faq_title }}</h2>
+  {% for q, a in T.faq %}<details class="faq"><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}
+</section>
+{% endblock %}
+{% block sticky %}{% if starter %}<div class="sticky" data-sticky data-watch="#hero-cta" hidden>{{ tg("starter", T.cta_free) }}</div>{% endif %}{% endblock %}
+{% block ld %}<script type="application/ld+json">{{ ld | tojson }}</script>{% endblock %}

@@ -1,0 +1,29 @@
+{# Макроси: слайдер до/після, кнопка в Telegram, картка пака. #}
+{% macro slider(name, eager=False, alt="") -%}
+<div class="ba" data-ba>
+  {%- for kind in ("before", "after") %}
+  <picture class="ba-{{ kind }}">
+    <source type="image/avif" srcset="{{ pair_url(name, kind, 480, 'avif') }} 480w, {{ pair_url(name, kind, 768, 'avif') }} 768w, {{ pair_url(name, kind, 1080, 'avif') }} 1080w" sizes="(min-width: 760px) 460px, 92vw">
+    <source type="image/webp" srcset="{{ pair_url(name, kind, 480, 'webp') }} 480w, {{ pair_url(name, kind, 768, 'webp') }} 768w, {{ pair_url(name, kind, 1080, 'webp') }} 1080w" sizes="(min-width: 760px) 460px, 92vw">
+    <img src="{{ pair_url(name, kind, 768, 'webp') }}" width="768" height="960" alt="{{ alt if kind == 'after' else '' }}" {% if eager %}fetchpriority="high" decoding="async"{% else %}loading="lazy" decoding="async"{% endif %}>
+  </picture>
+  {%- endfor %}
+  <span class="ba-tag l" aria-hidden="true">{{ T.before }}</span><span class="ba-tag r" aria-hidden="true">{{ T.after }}</span>
+  <span class="ba-line" aria-hidden="true"></span>
+  <span class="ba-knob" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></span>
+  <span class="ba-hint" aria-hidden="true">{{ T.drag }}</span>
+  <input class="ba-range" type="range" min="0" max="100" value="50" aria-label="{{ T.slider_label }}">
+</div>
+{%- endmacro %}
+
+{% macro tg(slug, label, cls="btn btn-primary") -%}
+<a class="{{ cls }}" data-tg data-slug="{{ slug }}" href="https://t.me/{{ bot }}?start=web_site__{{ slug }}" rel="noopener">{{ label }}</a>
+{%- endmacro %}
+
+{% macro media_thumb(item) -%}
+{%- set photo = (item.media | rejectattr('video') | first) -%}
+{%- if photo %}<img class="thumb" src="{{ photo.url }}" alt="{{ item.title }}" loading="lazy" decoding="async" width="480" height="600">
+{%- else %}<div class="thumb thumb-empty" aria-hidden="true"><span>{{ item.title }}</span></div>{% endif %}
+{%- endmacro %}
+
+{% macro versions(item) %}{{ item.versions | join(" · ") }}{% endmacro %}

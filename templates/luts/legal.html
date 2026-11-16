@@ -1,0 +1,11 @@
+{% extends "luts/base.html" %}
+{% block title %}{{ page.title }}{% endblock %}
+{% block desc %}{{ page.title }}: {{ T.brand }}{% endblock %}
+{% block bodyattr %} data-slug="legal-{{ name }}"{% endblock %}
+{% block main %}
+<article class="wrap page">
+  <h1 class="h1-sm">{{ page.title }}</h1>
+  {% for h, p in page.body %}{% if h.isdigit() %}<p class="lead-sm"><strong>{{ h }}.</strong> {{ p }}</p>{% else %}<h2 class="h2-sm">{{ h }}</h2><p class="lead-sm">{{ p }}</p>{% endif %}{% endfor %}
+</article>
+{% endblock %}
+{% block ld %}<script type="application/ld+json">{{ ld | tojson }}</script>{% endblock %}
