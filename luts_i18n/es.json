@@ -6,8 +6,7 @@
   "lang_label": "Idioma",
   "title_home": "LUTs para iPhone y Blackmagic Camera: Rec.709 y Apple Log",
   "desc_home": "LUTs cinematográficos con los que gradúo el color cada día. Hechos para Blackmagic Camera en iPhone, en Rec.709 y Apple Log. Con un pack Starter gratis.",
-  "h1": "Color de cine para iPhone. Un toque en Blackmagic Camera.",
-  "sub": "LUTs con los que gradúo cada día. Rec.709 y Apple Log, hechos para Blackmagic Camera.",
+  "h1": "Hola, soy Mykhailo.",
   "cta_all": "Ver todos los looks",
   "cta_free": "Starter gratis",
   "drag": "Arrastra",
@@ -94,7 +93,12 @@
   "work_sub": "Los mismos vídeos que hay en el bot. Material real, sin stock.",
   "work_alt": "Vídeo de demostración de un LUT",
   "prev": "Anterior",
-  "next": "Siguiente"
+  "next": "Siguiente",
+  "kicker": "LUTs para iPhone · Blackmagic Camera",
+  "bio_1": "Casi dos años dentro de Blackmagic Camera.",
+  "bio_2": "En lugar de aprender a graduar vídeo, aprendí a grabarlo en máxima calidad desde el primer fotograma, con presets llamados LUTs.",
+  "bio_3": "Lo que he aprendido de rodaje y color lo comparto con gusto. Estos son los looks con los que grabo yo mismo.",
+  "quote": "El plano está terminado antes de que pulses grabar."
  },
  "packs": {
   "apple_log_film": {

@@ -6,8 +6,7 @@
   "lang_label": "اللغة",
   "title_home": "LUTs لـ iPhone وتطبيق Blackmagic Camera: Rec.709 وApple Log",
   "desc_home": "LUTs سينمائية أستخدمها في تدريج الألوان كل يوم. مصممة لتطبيق Blackmagic Camera على iPhone بنسختي Rec.709 وApple Log، مع حزمة Starter مجانية.",
-  "h1": "ألوان سينمائية لـ iPhone. لمسة واحدة في Blackmagic Camera.",
-  "sub": "LUTs التي أدرّج بها ألواني كل يوم. بنسختي Rec.709 وApple Log، مصنوعة لتطبيق Blackmagic Camera.",
+  "h1": "مرحبًا، أنا ميخايلو.",
   "cta_all": "كل المظاهر",
   "cta_free": "احصل على Starter مجانًا",
   "drag": "اسحب",
@@ -94,7 +93,12 @@
   "work_sub": "نفس الفيديوهات الموجودة في البوت. لقطات حقيقية بلا مواد جاهزة.",
   "work_alt": "مقطع توضيحي لـ LUT",
   "prev": "السابق",
-  "next": "التالي"
+  "next": "التالي",
+  "kicker": "LUTs لـ iPhone · Blackmagic Camera",
+  "bio_1": "قرابة عامين داخل Blackmagic Camera.",
+  "bio_2": "بدل أن أتعلّم تدريج ألوان الفيديو، تعلّمت التصوير بأعلى جودة منذ اللقطة الأولى، بإعدادات جاهزة تُسمّى LUTs.",
+  "bio_3": "كل ما عرفته عن التصوير واللون يسعدني أن أشاركه. هذه هي المظاهر التي أصوّر بها بنفسي.",
+  "quote": "اللقطة جاهزة قبل أن تضغط زر التسجيل."
  },
  "packs": {
   "apple_log_film": {

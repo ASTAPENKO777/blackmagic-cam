@@ -1,28 +1,35 @@
 {% extends "luts/base.html" %}
-{% from "luts/_m.html" import slider, monitor, tg, media_thumb, versions, clip with context %}
+{% from "luts/_m.html" import tg, cover, clip, versions with context %}
 {% block bodyattr %} data-slug="home"{% endblock %}
 {% block head %}
-<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="{{ pair_url(hero, 'after', 480, 'avif') }} 480w, {{ pair_url(hero, 'after', 768, 'avif') }} 768w, {{ pair_url(hero, 'after', 1080, 'avif') }} 1080w" imagesizes="(min-width: 880px) 340px, 64vw">
+<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="{{ static_v('luts/img/portrait-480.avif') }} 480w, {{ static_v('luts/img/portrait-768.avif') }} 768w, {{ static_v('luts/img/portrait-1080.avif') }} 1080w" imagesizes="(min-width: 1000px) 420px, 46vw">
 {% endblock %}
 {% block main %}
 <section class="hero">
   <div class="wrap hero-in">
     <div class="hero-copy">
-      <p class="kicker mono"><i class="rec"></i>{{ T.kicker }}</p>
-      <h1>{{ T.h1 }}</h1>
-      <p class="lead">{{ T.sub }}</p>
-      <div class="cta-row">
-        <a class="btn btn-primary" id="hero-cta" href="#catalog">{{ T.cta_all }}</a>
-        {% if starter %}<a class="btn" href="{{ u('/free') }}">{{ T.cta_free }}</a>{% endif %}
+      <div class="hero-id">
+        <span class="rule" aria-hidden="true"></span>
+        <p class="kicker mono">{{ T.kicker }}</p>
+        <h1>{{ T.h1 }}</h1>
+        <blockquote class="quote">{{ T.quote }}</blockquote>
+      </div>
+      <div class="hero-body">
+        <p class="bio-lead">{{ T.bio_1 }}</p>
+        <p>{{ T.bio_2 }}</p>
+        <p>{{ T.bio_3 }}</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" id="hero-cta" href="#catalog">{{ T.cta_all }}</a>
+          {% if starter %}<a class="btn" href="{{ u('/free') }}">{{ T.cta_free }}</a>{% endif %}
+        </div>
       </div>
     </div>
     <div class="stage">
       <picture class="portrait">
-        <source type="image/avif" srcset="{{ static_v('luts/img/portrait-480.avif') }} 480w, {{ static_v('luts/img/portrait-768.avif') }} 768w, {{ static_v('luts/img/portrait-1080.avif') }} 1080w" sizes="(min-width: 1100px) 430px, (min-width: 880px) 400px, 58vw">
-        <source type="image/webp" srcset="{{ static_v('luts/img/portrait-480.webp') }} 480w, {{ static_v('luts/img/portrait-768.webp') }} 768w, {{ static_v('luts/img/portrait-1080.webp') }} 1080w" sizes="(min-width: 1100px) 430px, (min-width: 880px) 400px, 58vw">
-        <img src="{{ static_v('luts/img/portrait-768.webp') }}" width="768" height="1564" alt="" fetchpriority="high" decoding="async">
+        <source type="image/avif" srcset="{{ static_v('luts/img/portrait-480.avif') }} 480w, {{ static_v('luts/img/portrait-768.avif') }} 768w, {{ static_v('luts/img/portrait-1080.avif') }} 1080w" sizes="(min-width: 1000px) 420px, 46vw">
+        <source type="image/webp" srcset="{{ static_v('luts/img/portrait-480.webp') }} 480w, {{ static_v('luts/img/portrait-768.webp') }} 768w, {{ static_v('luts/img/portrait-1080.webp') }} 1080w" sizes="(min-width: 1000px) 420px, 46vw">
+        <img src="{{ static_v('luts/img/portrait-768.webp') }}" width="768" height="1490" alt="" fetchpriority="high" decoding="async">
       </picture>
-      <div class="monitor">{{ monitor(hero, eager=True, alt=T.h1) }}</div>
     </div>
   </div>
 </section>
@@ -37,7 +44,7 @@
     {% for p in shop.packs %}
     <article class="card pack {{ p.tint }}{% if loop.last and shop.packs|length > 1 %} pack-top{% endif %}">
       {% if loop.last and shop.packs|length > 1 %}<span class="badge">{{ T.best_value }}</span>{% endif %}
-      <div class="pack-ba">{{ slider(p.pair, alt=p.title) }}</div>
+      <a class="cover-link" href="{{ u('/' ~ p.slug) }}" aria-label="{{ p.title }}">{{ cover(p, autoplay=True) }}</a>
       <div class="card-body">
         <h3><a href="{{ u('/' ~ p.slug) }}">{{ p.title }}</a></h3>
         <p class="muted">{{ p.tagline or p.desc }}</p>
@@ -50,6 +57,7 @@
     </article>
     {% endfor %}
   </div>
+  <p class="small muted pack-help"><a href="{{ u('/rec709-vs-log') }}">{{ T.cmp_more }}</a></p>
 </section>
 
 {% if shop.work %}
@@ -70,7 +78,7 @@
   <div class="grid singles">
     {% for s in shop.singles %}
     <article class="card single">
-      <a href="{{ u('/' ~ s.slug) }}" class="thumb-wrap" aria-label="{{ s.title }}">{{ media_thumb(s) }}</a>
+      <a href="{{ u('/' ~ s.slug) }}" class="cover-link" aria-label="{{ s.title }}">{{ cover(s) }}</a>
       <div class="card-body">
         <h3><a href="{{ u('/' ~ s.slug) }}">{{ s.title }}</a></h3>
         <p class="meta mono">{{ versions(s) }}</p>
@@ -79,30 +87,6 @@
     </article>
     {% endfor %}
   </div>
-</section>
-
-<section class="wrap sec">
-  <div class="who">
-    <span class="eyebrow">04</span>
-    <h2>{{ T.who_title }}</h2>
-    <p class="lead">{{ T.who_text }}</p>
-    <div class="cta-row"><a class="btn" href="https://t.me/blackmagicamera" rel="noopener">{{ T.who_link }}</a></div>
-  </div>
-</section>
-
-<section class="wrap sec">
-  <div class="sec-head"><span class="eyebrow">05</span><h2>{{ T.cmp_title }}</h2></div>
-  <div class="grid two">
-    <div class="card pad tint-teal pack"><h3>{{ T.cmp_709_h }}</h3><p class="muted">{{ T.cmp_709_p }}</p></div>
-    <div class="card pad tint-amber pack"><h3>{{ T.cmp_log_h }}</h3><p class="muted">{{ T.cmp_log_p }}</p></div>
-  </div>
-  <p><a href="{{ u('/rec709-vs-log') }}">{{ T.cmp_more }}</a></p>
-</section>
-
-<section class="wrap sec">
-  <div class="sec-head"><span class="eyebrow">06</span><h2>{{ T.how_title }}</h2></div>
-  <ol class="steps row">{% for s in T.how_steps %}<li>{{ s }}</li>{% endfor %}</ol>
-  <p><a href="{{ u('/guide/blackmagic-camera') }}">{{ T.how_more }}</a></p>
 </section>
 
 {% if starter %}
@@ -115,7 +99,13 @@
 {% endif %}
 
 <section class="wrap sec">
-  <div class="sec-head"><span class="eyebrow">07</span><h2>{{ T.faq_title }}</h2></div>
+  <div class="sec-head"><span class="eyebrow">04</span><h2>{{ T.how_title }}</h2></div>
+  <ol class="steps row">{% for s in T.how_steps %}<li>{{ s }}</li>{% endfor %}</ol>
+  <p><a href="{{ u('/guide/blackmagic-camera') }}">{{ T.how_more }}</a></p>
+</section>
+
+<section class="wrap sec">
+  <div class="sec-head"><span class="eyebrow">05</span><h2>{{ T.faq_title }}</h2></div>
   {% for q, a in T.faq %}<details class="faq"><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}
 </section>
 {% endblock %}

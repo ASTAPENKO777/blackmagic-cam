@@ -31,23 +31,39 @@
     a.addEventListener("click", () => send("tg_click", s));
   });
 
-  // Слайдер: ручка рухає --pos; перший дотик рахуємо подією, підказка зникає.
+  // Слайдер: ручка задає ціль, а --pos плавно доганяє її (без ривків); початок на 36%.
+  // Поки людина не торкнулась, він тихо «подихає» вправо раз на ~2 с. Після першого дотику подих вимикається.
+  const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
   let slid = false;
   document.querySelectorAll("[data-ba]").forEach((ba) => {
-    const range = ba.querySelector(".ba-range");
+    const range = ba.querySelector(".ba-range"), BASE = 36, NUDGE = 5;
+    let cur = BASE, target = BASE, ease = 0.2, raf = 0, touched = false, timer = 0, shown = false;
+    const paint = () => {
+      cur += (target - cur) * ease;
+      if (Math.abs(target - cur) < 0.04) cur = target;
+      ba.style.setProperty("--pos", cur.toFixed(2) + "%");
+      raf = cur === target ? 0 : requestAnimationFrame(paint);
+    };
+    const go = (v, e) => { target = v; ease = e; if (!raf) raf = requestAnimationFrame(paint); };
+    range.value = BASE;
     range.addEventListener("input", () => {
-      ba.style.setProperty("--pos", range.value + "%");
-      ba.classList.add("touched");
+      touched = true; clearTimeout(timer); ba.classList.add("touched");
+      go(parseFloat(range.value), 0.28);
       if (!slid) { slid = true; send("slider", slug); }
     });
+    const nudge = () => {
+      if (touched || !shown) return;
+      go(BASE + NUDGE, 0.045);
+      timer = setTimeout(() => { if (!touched) go(BASE, 0.05); timer = setTimeout(nudge, 700); }, 750);
+    };
+    if (!calm && "IntersectionObserver" in window) {
+      new IntersectionObserver(([e]) => {
+        shown = e.isIntersecting; clearTimeout(timer);
+        if (shown && !touched) timer = setTimeout(nudge, 1200);
+      }, { threshold: 0.5 }).observe(ba);
+    }
   });
   if ("IntersectionObserver" in window) {
-    const wink = new IntersectionObserver((es) => es.forEach((e) => {
-      if (e.isIntersecting) { e.target.classList.add("wink"); wink.unobserve(e.target); }
-    }), { threshold: 0.6 });
-    const first = document.querySelector("[data-ba]");
-    if (first) wink.observe(first);
-
     // Прилипла кнопка з'являється, коли основна кнопка поза екраном.
     document.querySelectorAll("[data-sticky]").forEach((bar) => {
       const target = document.querySelector(bar.dataset.watch);
@@ -64,7 +80,7 @@
   }
 
   // Портфоліо: відео вантажиться й грає лише коли в кадрі; без руху при prefers-reduced-motion.
-  const still = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const still = calm;
   if ("IntersectionObserver" in window && !still) {
     const vids = new IntersectionObserver((es) => es.forEach((e) => {
       const v = e.target;

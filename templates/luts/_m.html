@@ -1,25 +1,29 @@
 {# Макроси: слайдер до/після, кнопка в Telegram, картка пака. #}
-{% macro slider(name, eager=False, alt="") -%}
+{% macro slider(pair, eager=False, alt="") -%}
 <div class="ba" data-ba>
   {%- for kind in ("before", "after") %}
   <picture class="ba-{{ kind }}">
-    <source type="image/avif" srcset="{{ pair_url(name, kind, 480, 'avif') }} 480w, {{ pair_url(name, kind, 768, 'avif') }} 768w, {{ pair_url(name, kind, 1080, 'avif') }} 1080w" sizes="(min-width: 760px) 460px, 92vw">
-    <source type="image/webp" srcset="{{ pair_url(name, kind, 480, 'webp') }} 480w, {{ pair_url(name, kind, 768, 'webp') }} 768w, {{ pair_url(name, kind, 1080, 'webp') }} 1080w" sizes="(min-width: 760px) 460px, 92vw">
-    <img src="{{ pair_url(name, kind, 768, 'webp') }}" width="768" height="960" alt="{{ alt if kind == 'after' else '' }}" {% if eager %}fetchpriority="high" decoding="async"{% else %}loading="lazy" decoding="async"{% endif %}>
+    <source type="image/avif" srcset="{% for w in pair.widths %}{{ pair_url(pair.name, kind, w, 'avif') }} {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="(min-width: 760px) 480px, 92vw">
+    <source type="image/webp" srcset="{% for w in pair.widths %}{{ pair_url(pair.name, kind, w, 'webp') }} {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="(min-width: 760px) 480px, 92vw">
+    <img src="{{ pair_url(pair.name, kind, pair.widths[-1] if pair.widths[-1] <= 768 else 768, 'webp') }}" width="{{ pair.w }}" height="{{ pair.h }}" alt="{{ alt if kind == 'after' else '' }}" {% if eager %}fetchpriority="high" decoding="async"{% else %}loading="lazy" decoding="async"{% endif %}>
   </picture>
   {%- endfor %}
   <span class="ba-tag l" aria-hidden="true">{{ T.before }}</span><span class="ba-tag r" aria-hidden="true">{{ T.after }}</span>
   <span class="ba-line" aria-hidden="true"></span>
   <span class="ba-knob" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></span>
   <span class="ba-hint" aria-hidden="true">{{ T.drag }}</span>
-  <input class="ba-range" type="range" min="0" max="100" value="50" aria-label="{{ T.slider_label }}">
+  <input class="ba-range" type="range" min="0" max="100" step="0.1" value="36" aria-label="{{ T.slider_label }}">
 </div>
 {%- endmacro %}
 
-{% macro monitor(name, eager=False, alt="") -%}
-<div class="mon">
-  <div class="mon-hud" aria-hidden="true"><span><i class="rec"></i>REC</span><span>4K · 24P</span></div>
-  {{ slider(name, eager, alt) }}
+{% macro cover(item, autoplay=False) -%}
+{%- set video = (item.media | selectattr('video') | first) -%}
+{%- set photo = (item.media | rejectattr('video') | first) -%}
+<div class="cover">
+{%- if autoplay and video %}<video class="fit" muted loop playsinline preload="none" width="{{ video.w }}" height="{{ video.h }}"{% if video.poster %} poster="{{ video.poster }}"{% endif %} data-src="{{ video.url }}" aria-label="{{ item.title }}"></video>
+{%- elif photo %}<img src="{{ photo.url }}" width="{{ photo.w }}" height="{{ photo.h }}" alt="{{ item.title }}" loading="lazy" decoding="async">
+{%- elif video and video.poster %}<img src="{{ video.poster }}" width="{{ video.w }}" height="{{ video.h }}" alt="{{ item.title }}" loading="lazy" decoding="async">
+{%- else %}<span class="cover-empty">{{ item.title }}</span>{% endif %}
 </div>
 {%- endmacro %}
 

@@ -7,23 +7,22 @@ PACK_COPY = {
     "apple_log_film": {
         "tagline": "Three film looks built straight on Apple Log.",
         "text": "Shoot Log in Blackmagic Camera, pick a look, done. No conversion LUT needed.",
-        "pair": "s-beach",
+        "pair": {"name": "s-beach", "w": 768, "h": 960, "widths": [480, 768, 1080]},
         "tint": "tint-amber",
     },
     "rec709_collection": {
         "tagline": "Eight looks for normal iPhone video.",
         "text": "V1 to V8, from soft teal to amber shadows, for footage shot in the default Rec.709 mode. These eight are not sold anywhere else.",
-        "pair": "s-forest",
+        "pair": {"name": "s-forest", "w": 768, "h": 960, "widths": [480, 768, 1080]},
         "tint": "tint-teal",
     },
     "cinematic_pro_15": {
         "tagline": "My main grading set.",
         "text": "Teal, film print, night city, warm skin. Thirteen looks, and every one of them is also sold on its own.",
-        "pair": "s-sunset",
+        "pair": {"name": "s-sunset", "w": 768, "h": 960, "widths": [480, 768, 1080]},
         "tint": "tint-rose",
     },
 }
-HERO_PAIR = "s-lift"
 
 GUIDES = {
     "blackmagic-camera": {

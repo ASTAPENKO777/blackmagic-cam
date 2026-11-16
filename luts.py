@@ -12,7 +12,7 @@ from markupsafe import Markup, escape
 from flask import Blueprint, Response, abort, current_app, g, render_template, request
 
 import luts_content as content
-from luts_media import MEDIA
+from luts_media import MEDIA, PAIRS
 from luts_text import LUT_LANGS, NAMES, RTL, text, translated
 
 bp = Blueprint("luts", __name__)
@@ -70,7 +70,8 @@ def site_media(items: list[dict]) -> list[dict]:
 
 
 def _field(item: dict, lang: str, key: str, default: str = "") -> str:
-    return (item["i18n"].get(lang) or {}).get(key) or (item["i18n"].get("en") or {}).get(key) or default
+    value = (item["i18n"].get(lang) or {}).get(key) or (item["i18n"].get("en") or {}).get(key) or default
+    return value.replace(" — ", ", ").replace("—", ",")
 
 
 def view_items(catalog: dict, lang: str = "en") -> dict:
@@ -82,9 +83,10 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
                "desc": _field(item, lang, "desc"), "media": site_media(item["media"])}
         if item["kind"] == "pack":
             row.update(copy.get(item["slug"], {}))
-            row.setdefault("pair", content.HERO_PAIR)
+            row["pair_meta"] = row.get("pair")
             packs.append(row)
         else:
+            row["pair_meta"] = PAIRS.get(item["slug"])
             singles.append(row)
     packs.sort(key=lambda r: r["sort"])
     seen_clips, work = set(), []
@@ -167,7 +169,7 @@ def _route(rule: str):
 @_route("")
 def home(lang):
     shop = view_items(get_catalog(), lang)
-    return _page("home.html", lang, shop=shop, hero=content.HERO_PAIR, graph=lambda c: [
+    return _page("home.html", lang, shop=shop, graph=lambda c: [
         {"@type": "WebSite", "name": c["T"]["brand"], "url": c["base_url"] + c["u"]()}, faq_ld(c["T"])])
 
 

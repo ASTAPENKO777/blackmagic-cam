@@ -57,3 +57,15 @@ MEDIA = {
     229: {'key': '776f5d872e', 'w': 800, 'h': 450, 'video': True},
     230: {'key': '3e3d651383', 'w': 540, 'h': 960, 'video': True},
 }
+
+# slug LUT → пара «LUT OFF / LUT ON» зі власного фото цього LUT у боті
+PAIRS = {
+    'era': {'name': 'p-era', 'w': 780, 'h': 569, 'widths': [480, 780]},
+    'golden_years': {'name': 'p-golden-years', 'w': 778, 'h': 585, 'widths': [480, 778]},
+    'moody_teal_green': {'name': 'p-moody-teal-green', 'w': 638, 'h': 359, 'widths': [480, 638]},
+    'emerald_cine': {'name': 'p-emerald-cine', 'w': 780, 'h': 439, 'widths': [480, 780]},
+    'teal_punch': {'name': 'p-teal-punch', 'w': 780, 'h': 520, 'widths': [480, 780]},
+    'hong_kong_faded': {'name': 'p-hong-kong-faded', 'w': 641, 'h': 359, 'widths': [480, 641]},
+    'golden_warm': {'name': 'p-golden-warm', 'w': 778, 'h': 585, 'widths': [480, 778]},
+    'warm_skin': {'name': 'p-warm-skin', 'w': 780, 'h': 585, 'widths': [480, 780]},
+}

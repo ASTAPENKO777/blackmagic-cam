@@ -59,10 +59,44 @@ def test_buttons_go_to_the_bot_with_a_start_payload(client):
     assert {"web_site__cinematic_pro_15", "web_site__starter"} <= {p for _, p in links}
 
 
-def test_hero_slider_is_accessible_and_sized(client):
+def test_home_has_no_slider_but_pack_pages_do(client):
+    """Головна — профіль автора без повзунка; повзунок LUT OFF / LUT ON живе на сторінках паків і LUT із власним фото."""
+    home = client.get("/luts").data.decode()
+    assert 'type="range"' not in home and "data-ba" not in home and "LUT OFF" not in home
+    page = client.get("/luts/rec709_collection").data.decode()
+    assert 'type="range"' in page and 'aria-label="Compare before and after"' in page and 'value="36"' in page
+    assert "LUT OFF" in page and "LUT ON" in page
+    assert re.search(r'<img[^>]+width="768" height="960"', page)  # місце під кадр зарезервоване: CLS 0
+
+
+def test_single_look_with_its_own_photo_gets_a_slider(client):
+    import luts_media
+
+    assert luts_media.PAIRS, "пари для окремих LUT мають бути згенеровані"
+    slug = next(iter(luts_media.PAIRS))
+    page = client.get(f"/luts/{slug}").data.decode()
+    assert 'type="range"' in page
+    pair = luts_media.PAIRS[slug]
+    for width in pair["widths"]:
+        assert os.path.exists(os.path.join(ROOT, f"static/luts/img/pairs/{pair['name']}-after-{width}.webp"))
+
+
+def test_hero_is_a_bio_without_dashes(client):
     html = client.get("/luts").data.decode()
-    assert 'type="range"' in html and 'aria-label="Compare before and after"' in html
-    assert re.search(r'<img[^>]+width="768" height="960"', html)  # место під кадр зарезервоване: CLS 0
+    assert "Hi, I&#39;m Mykhailo." in html and "Almost two years" in html and "The shot is finished before you hit record." in html
+    assert 'class="portrait"' in html
+
+
+def test_no_long_dashes_in_visible_site_text():
+    """Довгі тире — ознака машинного тексту. У текстах сайту (усі мови) їх немає."""
+    import json
+    import luts_content
+
+    texts = [json.dumps(luts_text.EN, ensure_ascii=False), json.dumps(luts_content.GUIDES, ensure_ascii=False),
+             json.dumps(luts_content.LEGAL, ensure_ascii=False), json.dumps(luts_content.COMPARE, ensure_ascii=False)]
+    texts += [open(os.path.join(ROOT, "luts_i18n", f"{code}.json"), encoding="utf-8").read() for code in luts_text.LUT_LANGS[1:]]
+    for text in texts:
+        assert "—" not in text and "–" not in text
 
 
 def test_csp_allows_only_the_bot_origin(client):
@@ -124,7 +158,9 @@ def test_translated_pages_render_in_their_language_without_dollars(client, lang)
         html = re.sub(r"<script.*?</script>", "", resp.data.decode(), flags=re.S)
         assert "$" not in html and f'lang="{lang}"' in html
     home = client.get(f"/{lang}/luts").data.decode()
-    assert luts_text.load(lang)["ui"]["h1"] in home
+    import html as htmllib
+
+    assert luts_text.load(lang)["ui"]["h1"] in htmllib.unescape(home)
     assert luts_text.load(lang)["ui"]["cta_all"] in home
 
 
