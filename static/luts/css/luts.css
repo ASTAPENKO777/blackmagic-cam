@@ -180,9 +180,10 @@ a:hover { color: var(--amber-hover); }
 
 /* Паки: спокійні ряди. Колаж (велике фото зі слайдером, два менші збоку, решта відео рядом знизу) і текст поруч.
    Ряди чергуються: колаж ліворуч, потім праворуч. Текст закріплений, поки гортаєш колаж. */
-.packs-wrap { max-width: 1040px; margin-inline: auto; }
+.packs-wrap { max-width: none; }  /* рамка по ширині контенту, рівно з лінією під героєм */
 .packs-panel { background: #17130e; border: 1px solid rgba(240, 179, 92, .12); border-radius: 24px; padding: 4px 18px; }
-@media (min-width: 820px) { .packs-panel { padding: 12px 56px; border-radius: 28px; } }
+@media (min-width: 820px) { .packs-panel { padding: 16px clamp(48px, 9.5vw, 132px); border-radius: 28px; } }
+@media (min-width: 1240px) { .packs-wrap { margin-inline: calc(var(--gap) * -1); } }  /* краї рамки рівно з лінією під героєм */
 .pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 36px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
 .pack-row:first-of-type { border-top: 0; }
 .collage { display: grid; grid-template-columns: 1.45fr 1fr; gap: 8px; align-items: stretch; align-content: start; }
