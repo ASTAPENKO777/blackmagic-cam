@@ -95,10 +95,11 @@
   "prev": "Précédent",
   "next": "Suivant",
   "kicker": "LUTs pour iPhone · Blackmagic Camera",
-  "bio_1": "Presque deux ans dans Blackmagic Camera.",
-  "bio_2": "Au lieu d'apprendre à étalonner la vidéo, j'ai appris à la tourner en qualité maximale dès la première image, avec des presets appelés LUTs.",
-  "bio_3": "Tout ce que j'ai appris sur le tournage et la couleur, je le partage volontiers. Ce sont les looks avec lesquels je tourne moi-même.",
-  "quote": "Le plan est fini avant que vous n'appuyiez sur enregistrer."
+  "bio_1": "Presque deux ans dans Blackmagic Camera. Je tiens @blackmagicamera et je filme tout à l'iPhone.",
+  "bio_2": "J'ai sauté le long chemin de l'étalonnage en post-production. J'ai appris à tourner en qualité maximale dès la première image, avec des presets appelés LUTs. La couleur est déjà à l'écran pendant que je filme.",
+  "bio_3": "Chaque look de cette boutique est mon propre travail, conçu et vérifié sur mes propres images, en Rec.709 et Apple Log. Je ne vends que ce avec quoi je tourne moi-même.",
+  "quote": "Le plan est fini avant que vous n'appuyiez sur enregistrer.",
+  "bio_4": "Ce que j'ai appris sur le tournage et la couleur, je le partage : dans la chaîne, dans le pack Starter gratuit et dans le bot. Les questions sur un fichier me parviennent directement."
  },
  "packs": {
   "apple_log_film": {

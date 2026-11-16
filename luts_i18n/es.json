@@ -95,10 +95,11 @@
   "prev": "Anterior",
   "next": "Siguiente",
   "kicker": "LUTs para iPhone · Blackmagic Camera",
-  "bio_1": "Casi dos años dentro de Blackmagic Camera.",
-  "bio_2": "En lugar de aprender a graduar vídeo, aprendí a grabarlo en máxima calidad desde el primer fotograma, con presets llamados LUTs.",
-  "bio_3": "Lo que he aprendido de rodaje y color lo comparto con gusto. Estos son los looks con los que grabo yo mismo.",
-  "quote": "El plano está terminado antes de que pulses grabar."
+  "bio_1": "Casi dos años en Blackmagic Camera. Llevo @blackmagicamera y grabo todo con iPhone.",
+  "bio_2": "Me salté el largo camino de aprender a graduar color en postproducción. Aprendí a grabar en máxima calidad desde el primer fotograma, con presets llamados LUTs. El color ya está en pantalla mientras grabo.",
+  "bio_3": "Cada look de esta tienda es trabajo mío, hecho y probado con mis propias imágenes, en Rec.709 y Apple Log. Solo vendo lo que uso yo mismo.",
+  "quote": "El plano está terminado antes de que pulses grabar.",
+  "bio_4": "Lo que he aprendido de rodaje y color lo comparto: en el canal, en el pack Starter gratis y en el bot. Las preguntas sobre cualquier archivo me llegan directamente."
  },
  "packs": {
   "apple_log_film": {

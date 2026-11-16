@@ -1,8 +1,8 @@
 /* Слайдер LUT OFF / LUT ON без бібліотек: <input type=range> задає ціль, JS плавно доганяє --pos, clip-path відкриває «після».
    Кадр має пропорцію самого фото (before лежить у потоці), зсуву макета немає. Керується з клавіатури, ручка 44px. */
 .ba { position: relative; width: 100%; overflow: hidden; background: var(--surface); --pos: 36%;
-  border-radius: 14px; border: 1px solid var(--line-2); touch-action: pan-y; user-select: none; -webkit-user-select: none;
-  box-shadow: 0 30px 70px -24px rgba(0, 0, 0, .95), 0 0 0 1px rgba(0, 0, 0, .6); }
+  border-radius: var(--radius); border: 1px solid var(--line-2); touch-action: pan-y; user-select: none; -webkit-user-select: none;
+}
 .ba picture { display: block; }
 .ba img { display: block; width: 100%; height: auto; }
 .ba .ba-after { position: absolute; inset: 0; clip-path: inset(0 0 0 var(--pos)); will-change: clip-path; }
@@ -12,22 +12,17 @@ html[dir="rtl"] .ba .ba-after { clip-path: inset(0 var(--pos) 0 0); }
   background: linear-gradient(180deg, transparent, rgba(255, 255, 255, .95) 12%, rgba(255, 255, 255, .95) 88%, transparent); pointer-events: none; }
 .ba-knob { position: absolute; top: 50%; inset-inline-start: var(--pos); width: var(--tap); height: var(--tap); will-change: inset-inline-start;
   margin: calc(var(--tap) / -2) 0 0 calc(var(--tap) / -2); border-radius: 50%; color: #fff; display: grid; place-items: center; pointer-events: none;
-  background: rgba(14, 16, 22, .55); border: 1px solid rgba(255, 255, 255, .5);
-  -webkit-backdrop-filter: blur(10px); backdrop-filter: blur(10px); box-shadow: 0 6px 22px rgba(0, 0, 0, .55); }
+  background: rgba(8, 9, 12, .72); border: 1px solid rgba(255, 255, 255, .6); }
 html[dir="rtl"] .ba-knob { margin: calc(var(--tap) / -2) calc(var(--tap) / -2) 0 0; }
 .ba-knob svg { width: 20px; height: 20px; }
-.ba-tag { position: absolute; bottom: 10px; padding: 5px 8px; border-radius: 6px; background: rgba(7, 8, 11, .62); color: var(--text);
-  border: 1px solid var(--line-2); font: 600 .6875rem/1 var(--mono); letter-spacing: .1em; pointer-events: none; -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+.ba-tag { position: absolute; bottom: 10px; padding: 5px 8px; border-radius: 6px; background: rgba(8, 9, 12, .78); color: var(--text);
+  border: 1px solid var(--line-2); font: 600 .6875rem/1 var(--mono); letter-spacing: .08em; pointer-events: none; }
 .ba-tag.l { inset-inline-start: 10px; }
-.ba-tag.r { inset-inline-end: 10px; color: var(--amber-hi); border-color: rgba(244, 184, 96, .45); }
+.ba-tag.r { inset-inline-end: 10px; color: var(--amber); border-color: rgba(240, 179, 92, .5); }
 .ba-range { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; appearance: none; -webkit-appearance: none; }
 .ba:has(.ba-range:focus-visible) { outline: 2px solid var(--focus); outline-offset: 3px; }
 .ba-hint { position: absolute; top: 10px; inset-inline-start: 50%; transform: translateX(-50%); padding: 5px 11px; border-radius: 999px;
-  background: rgba(7, 8, 11, .62); border: 1px solid var(--line-2); font: 600 .6875rem/1 var(--mono); letter-spacing: .1em; text-transform: uppercase;
+  background: rgba(8, 9, 12, .78); border: 1px solid var(--line-2); font: 600 .6875rem/1 var(--mono); letter-spacing: .08em; text-transform: uppercase;
   color: var(--text); pointer-events: none; transition: opacity .4s var(--ease); }
 html[dir="rtl"] .ba-hint { transform: translateX(50%); }
 .ba.touched .ba-hint { opacity: 0; }
-
-.rec { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--rec); margin-inline-end: 7px; box-shadow: 0 0 0 3px rgba(255, 77, 77, .2); }
-@media (prefers-reduced-motion: no-preference) { .rec { animation: rec 1.8s ease-in-out infinite; } }
-@keyframes rec { 50% { opacity: .35; } }

@@ -2,44 +2,41 @@
 {% from "luts/_m.html" import tg, cover, clip, versions with context %}
 {% block bodyattr %} data-slug="home"{% endblock %}
 {% block head %}
-<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="{{ static_v('luts/img/portrait-480.avif') }} 480w, {{ static_v('luts/img/portrait-768.avif') }} 768w, {{ static_v('luts/img/portrait-1080.avif') }} 1080w" imagesizes="(min-width: 1000px) 420px, 46vw">
+<link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="{{ static_v('luts/img/bust-480.avif') }} 480w, {{ static_v('luts/img/bust-768.avif') }} 768w, {{ static_v('luts/img/bust-1080.avif') }} 1080w" imagesizes="(min-width: 1000px) 470px, 86vw" media="(max-width: 999px)">
 {% endblock %}
 {% block main %}
 <section class="hero">
   <div class="wrap hero-in">
+    <div class="stage">
+      <picture class="portrait">
+        <source media="(min-width: 1000px)" type="image/avif" srcset="{{ static_v('luts/img/portrait-480.avif') }} 480w, {{ static_v('luts/img/portrait-768.avif') }} 768w, {{ static_v('luts/img/portrait-1080.avif') }} 1080w" sizes="470px">
+        <source media="(min-width: 1000px)" type="image/webp" srcset="{{ static_v('luts/img/portrait-480.webp') }} 480w, {{ static_v('luts/img/portrait-768.webp') }} 768w, {{ static_v('luts/img/portrait-1080.webp') }} 1080w" sizes="470px">
+        <source type="image/avif" srcset="{{ static_v('luts/img/bust-480.avif') }} 480w, {{ static_v('luts/img/bust-768.avif') }} 768w, {{ static_v('luts/img/bust-1080.avif') }} 1080w" sizes="86vw">
+        <source type="image/webp" srcset="{{ static_v('luts/img/bust-480.webp') }} 480w, {{ static_v('luts/img/bust-768.webp') }} 768w, {{ static_v('luts/img/bust-1080.webp') }} 1080w" sizes="86vw">
+        <img src="{{ static_v('luts/img/bust-768.webp') }}" width="768" height="765" alt="" fetchpriority="high" decoding="async">
+      </picture>
+    </div>
     <div class="hero-copy">
-      <div class="hero-id">
-        <span class="rule" aria-hidden="true"></span>
-        <p class="kicker mono">{{ T.kicker }}</p>
-        <h1>{{ T.h1 }}</h1>
-        <blockquote class="quote">{{ T.quote }}</blockquote>
-      </div>
+      <h1>{{ T.h1 }}</h1>
       <div class="hero-body">
         <p class="bio-lead">{{ T.bio_1 }}</p>
         <p>{{ T.bio_2 }}</p>
         <p>{{ T.bio_3 }}</p>
+        <p>{{ T.bio_4 }}</p>
         <div class="cta-row">
           <a class="btn btn-primary" id="hero-cta" href="#catalog">{{ T.cta_all }}</a>
           {% if starter %}<a class="btn" href="{{ u('/free') }}">{{ T.cta_free }}</a>{% endif %}
         </div>
       </div>
     </div>
-    <div class="stage">
-      <picture class="portrait">
-        <source type="image/avif" srcset="{{ static_v('luts/img/portrait-480.avif') }} 480w, {{ static_v('luts/img/portrait-768.avif') }} 768w, {{ static_v('luts/img/portrait-1080.avif') }} 1080w" sizes="(min-width: 1000px) 420px, 46vw">
-        <source type="image/webp" srcset="{{ static_v('luts/img/portrait-480.webp') }} 480w, {{ static_v('luts/img/portrait-768.webp') }} 768w, {{ static_v('luts/img/portrait-1080.webp') }} 1080w" sizes="(min-width: 1000px) 420px, 46vw">
-        <img src="{{ static_v('luts/img/portrait-768.webp') }}" width="768" height="1490" alt="" fetchpriority="high" decoding="async">
-      </picture>
-    </div>
   </div>
 </section>
 <div class="band">
-  <div class="bars" aria-hidden="true"></div>
-  <ul class="strip mono"><li>{{ T.strip_1 }}</li><li>{{ T.strip_2 }}</li><li>{{ T.strip_3 }}</li><li>{{ T.strip_4 }}</li></ul>
+  <ul class="strip"><li>{{ T.strip_1 }}</li><li>{{ T.strip_2 }}</li><li>{{ T.strip_3 }}</li><li>{{ T.strip_4 }}</li></ul>
 </div>
 
 <section class="wrap sec" id="catalog">
-  <div class="sec-head"><span class="eyebrow">01</span><h2>{{ T.packs }}</h2><p class="muted sec-sub">{{ T.packs_sub }}</p></div>
+  <div class="sec-head"><h2>{{ T.packs }}</h2><p class="muted sec-sub">{{ T.packs_sub }}</p></div>
   <div class="grid packs">
     {% for p in shop.packs %}
     <article class="card pack {{ p.tint }}{% if loop.last and shop.packs|length > 1 %} pack-top{% endif %}">
@@ -62,7 +59,7 @@
 
 {% if shop.work %}
 <section class="wrap sec">
-  <div class="sec-head"><span class="eyebrow">02</span><h2>{{ T.work_title }}</h2><p class="muted sec-sub">{{ T.work_sub }}</p></div>
+  <div class="sec-head"><h2>{{ T.work_title }}</h2><p class="sec-quote">{{ T.quote }}</p></div>
   <div class="rail-wrap">
     <div class="rail" data-rail>
       {% for m in shop.work %}<figure class="clip">{{ clip(m, T.work_alt) }}</figure>{% endfor %}
@@ -74,7 +71,7 @@
 {% endif %}
 
 <section class="wrap sec">
-  <div class="sec-head"><span class="eyebrow">03</span><h2>{{ T.singles }}</h2><p class="muted sec-sub">{{ T.singles_sub }}</p></div>
+  <div class="sec-head"><h2>{{ T.singles }}</h2><p class="muted sec-sub">{{ T.singles_sub }}</p></div>
   <div class="grid singles">
     {% for s in shop.singles %}
     <article class="card single">
@@ -99,13 +96,13 @@
 {% endif %}
 
 <section class="wrap sec">
-  <div class="sec-head"><span class="eyebrow">04</span><h2>{{ T.how_title }}</h2></div>
+  <div class="sec-head"><h2>{{ T.how_title }}</h2></div>
   <ol class="steps row">{% for s in T.how_steps %}<li>{{ s }}</li>{% endfor %}</ol>
   <p><a href="{{ u('/guide/blackmagic-camera') }}">{{ T.how_more }}</a></p>
 </section>
 
 <section class="wrap sec">
-  <div class="sec-head"><span class="eyebrow">05</span><h2>{{ T.faq_title }}</h2></div>
+  <div class="sec-head"><h2>{{ T.faq_title }}</h2></div>
   {% for q, a in T.faq %}<details class="faq"><summary>{{ q }}</summary><p>{{ a }}</p></details>{% endfor %}
 </section>
 {% endblock %}
