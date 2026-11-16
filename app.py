@@ -652,9 +652,10 @@ def sitemap():
         lines.append("  </url>")
 
     # /luts shop: every language that has a luts_i18n/<lang>.json (see luts_text.translated).
+    luts_lastmod = _lastmod("luts.py", "luts_text.py", "luts_content.py", "templates/luts/home.html")
     for loc, priority, alternates in luts_sitemap_entries(BASE_URL):
         alts = "".join(f'\n    <xhtml:link rel="alternate" hreflang="{code}" href="{href}" />' for code, href in alternates)
-        lines.append(f"  <url>\n    <loc>{loc}</loc>{alts}\n    <changefreq>weekly</changefreq>\n"
+        lines.append(f"  <url>\n    <loc>{loc}</loc>{alts}\n    <lastmod>{luts_lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n"
                      f"    <priority>{priority}</priority>\n  </url>")
 
     lines.append("</urlset>")
