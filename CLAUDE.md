@@ -248,3 +248,14 @@ Deploy checklist:
   python3 -c 'import os,secrets,app; assert app.HMAC_SECRET==os.environ["KOFI_FULFILL_SECRET"]; n=secrets.token_hex(6); print(app.BASE_URL+"/crypto/confirm/"+app._encode_token({"n":n,"t":"cfm","d":"<device-slug>","e":"<customer-email>","net":"<trc20|bep20|erc20|ton>"},"cfm"))'
   ```
   Open the printed link and press "Confirm & send guide" — the normal, once-only fulfilment sends the access email. (`<device-slug>` and the email are in the old owner notification; the old link's payload is plain base64 if you need them.) Alternatively ask the customer to submit `/crypto/checkout` again and confirm the new order.
+
+
+## /luts — LUT shop (Telegram-first)
+
+Self-contained Flask blueprint: `luts.py` (routes, catalog fetch), `luts_text.py` (EN strings; other langs fall back to EN, `TRANSLATED` decides hreflang/sitemap/noindex), `luts_content.py` (pack copy, guides, legal), `templates/luts/*`, `static/luts/{css,js,img}`. It does NOT use `base.html`, `translations.py` or the `/ru` `/ar` machinery.
+
+- Catalog and prices come from the bot: `GET https://bmc-lut-bot.fly.dev/public/catalog.json` (env `LUTS_CATALOG_URL`), 60 s in-process cache, last good copy on failure, `static/luts/catalog_seed.json` on cold start with the bot down. Refresh the seed when the catalog changes a lot (`curl ... > static/luts/catalog_seed.json`).
+- No payments on the site yet: every button is `t.me/<bot>?start=web_<src>__<slug>` (built by `s.js`, first source kept in cookie `bmc_src` for 90 days). `LUTS_CARD_ENABLED` is off, so no `$` appears anywhere (`tests/test_luts.py` enforces it).
+- `s.js` sends `view` / `slider` / `tg_click` to the bot's `/public/event` (sendBeacon). `/luts` pages get their own CSP allowing only the bot origin.
+- Before/after frames: `~/Dev/lut_bot/scripts/site_frames.py` (`--flatten` makes the «before» from a graded frame). Pairs live in `static/luts/img/pairs/`; `luts_content.PACK_COPY[slug]["pair"]` picks the pair per pack.
+- Deploy: `vercel --prod --yes` (git push does not deploy). Tests: `.venv-test/bin/python -m pytest tests -q`.
