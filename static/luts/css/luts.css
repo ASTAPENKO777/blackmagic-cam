@@ -177,38 +177,38 @@ a:hover { color: var(--amber-hover); }
 @media (min-width: 760px) { .sticky { display: none; } }
 @media (max-width: 759px) { .foot .wrap { padding-bottom: calc(90px + env(safe-area-inset-bottom)); } }
 
-/* Паки: великі блоки. Ліворуч колаж (квадратне велике фото зі слайдером і менші відео навколо), праворуч текст у стилі
-   повідомлення Telegram, без рамки. Блоки чергуються. Повідомлення закріплене, поки гортаєш колаж. */
-.pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; padding: 40px 0; border-top: 1px solid var(--line); }
-.pack-row:first-of-type { border-top: 0; padding-top: 8px; }
-.collage { display: grid; grid-template-columns: 3fr 2fr; gap: 8px; align-items: stretch; align-content: start; }
-.collage-lead { grid-column: 1; grid-row: 1; aspect-ratio: 1; min-width: 0; border-radius: var(--radius); overflow: hidden; background: #05060a; position: relative; }
-.collage-lead .ba { height: 100%; aspect-ratio: auto; border-radius: 0; border: 0; }
-.collage-lead .ba picture.ba-before { height: 100%; }
-.collage-lead .ba img { height: 100%; object-fit: cover; }
-.collage-lead > video, .collage-lead > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: contain; }
+/* Паки: спокійні ряди. Колаж (велике фото зі слайдером, два менші збоку, решта відео рядом знизу) і текст поруч.
+   Ряди чергуються: колаж ліворуч, потім праворуч. Текст закріплений, поки гортаєш колаж. */
+.packs-wrap { max-width: 980px; margin-inline: auto; }
+.pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 44px 0; border-top: 1px solid var(--line); }
+.pack-row:first-of-type { border-top: 0; padding-top: 10px; }
+.collage { display: grid; grid-template-columns: 1.45fr 1fr; gap: 8px; align-items: stretch; align-content: start; }
+.collage-big { grid-column: 1; grid-row: 1; aspect-ratio: 4 / 5; min-width: 0; border-radius: var(--radius-sm); overflow: hidden; background: #05060a; position: relative; }
+.collage-big .ba { height: 100%; border-radius: 0; border: 0; }
+.collage-big .ba picture.ba-before { height: 100%; }
+.collage-big .ba img { height: 100%; object-fit: cover; }
+.collage-big > video, .collage-big > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .collage-side { grid-column: 2; grid-row: 1; display: grid; grid-auto-rows: 1fr; gap: 8px; min-height: 0; }
-.collage-bottom { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.collage-bottom { grid-column: 1 / -1; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
 .collage-tile { position: relative; overflow: hidden; border-radius: var(--radius-sm); background: #05060a; min-height: 0; }
-.collage-side .collage-tile video, .collage-side .collage-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
-.collage-bottom .collage-tile { aspect-ratio: 2 / 1; }
-.collage-bottom .collage-tile video, .collage-bottom .collage-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.collage-bottom .collage-tile { aspect-ratio: 16 / 10; }
+.collage-tile video, .collage-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 
-.msg-wrap { max-width: 520px; }
-.msg { background: #182533; color: #fff; border-radius: 16px 16px 16px 4px; padding: 14px 16px 12px; font-size: 1rem; line-height: 1.45; }
-.msg p { margin: 0 0 9px; }
-.msg-title { font-size: 1.25rem; line-height: 1.25; }
-.msg-code { margin: 4px 0 10px; padding: 10px 12px; background: #0e1621; border-radius: 8px; color: #e8edf3; font: .875rem/1.5 var(--mono); white-space: pre; overflow-x: auto; }
-.msg-keys { margin-top: 6px; }
-.btn-block { width: 100%; }
-@media (min-width: 900px) {
-  .pack-row { grid-template-columns: minmax(0, 580px) minmax(0, 1fr); gap: 64px; padding: 56px 0; align-items: start; }
-  .pack-row.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 580px); }
+.pack-text h3 { font-size: clamp(1.75rem, 4.4vw, 2.25rem); font-weight: 680; letter-spacing: -.03em; line-height: 1.1; }
+.pack-desc { margin: 14px 0 0; max-width: 30em; color: var(--muted); font-size: .9375rem; line-height: 1.6; }
+.pack-count { margin: 20px 0 6px; font-weight: 650; font-size: .9375rem; }
+.pack-code { margin: 0; padding: 10px 12px; background: var(--surface); border: 1px solid var(--line); border-radius: 8px; color: #e8edf3; font: .8125rem/1.55 var(--mono); white-space: pre; overflow-x: auto; max-width: 100%; }
+.pack-price { margin: 18px 0 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.pack-price b { font-size: 1.375rem; letter-spacing: -.02em; }
+.pack-per { color: var(--muted); font-size: .875rem; }
+.pack-note { margin: 8px 0 0; color: var(--muted); font-size: .875rem; }
+.btn-compact { margin-top: 18px; min-height: 44px; padding: 0 20px; }
+@media (min-width: 820px) {
+  .pack-row { grid-template-columns: minmax(0, 430px) minmax(0, 1fr); gap: 64px; padding: 56px 0; align-items: start; }
+  .pack-row.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 430px); }
   .pack-row.flip .collage { order: 2; }
-  .pack-info { align-self: stretch; }
-  .msg-wrap { position: sticky; top: 88px; }
+  .pack-text { position: sticky; top: 92px; }
 }
-@media (min-width: 1500px) { .pack-row { grid-template-columns: minmax(0, 640px) minmax(0, 1fr); } .pack-row.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 640px); } .msg-wrap { max-width: 560px; } }
 
 /* Окремі LUT: простий ряд, як на Ko-fi: фото, назва, опис, ціна. Без рамок і кнопок. */
 .singles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }

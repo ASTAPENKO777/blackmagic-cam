@@ -36,35 +36,30 @@
 </div>
 
 <section class="wrap sec" id="catalog">
+ <div class="packs-wrap">
   <div class="sec-head"><h2>{{ T.packs }}</h2><p class="sec-quote">{{ T.quote }}</p><p class="muted sec-sub">{{ T.packs_sub }}</p></div>
   {% for p in shop.packs %}
   <article class="pack-row{% if loop.index is even %} flip{% endif %}">
     <div class="collage">
-      <div class="collage-lead">
+      <div class="collage-big">
         {% if p.pair_meta %}{{ slider(p.pair_meta, alt=p.title) }}{% elif p.media %}{{ tile(p.media[0], p.title) }}{% else %}{{ cover(p) }}{% endif %}
       </div>
       {% if p.side %}<div class="collage-side">{% for m in p.side %}<div class="collage-tile">{{ tile(m, p.title) }}</div>{% endfor %}</div>{% endif %}
       {% if p.bottom %}<div class="collage-bottom">{% for m in p.bottom %}<div class="collage-tile">{{ tile(m, p.title) }}</div>{% endfor %}</div>{% endif %}
     </div>
-    <div class="pack-info">
-      <div class="msg-wrap">
-        <div class="msg">
-          <p class="msg-title"><b>{{ p.title }}</b></p>
-          <p>{{ p.tagline or p.desc }}</p>
-          {% if p.text %}<p>{{ p.text }}</p>{% endif %}
-          <p class="msg-count"><b>{{ T.lut_count.format(count=p.count) }} / {{ p.versions | join(" + ") }}</b></p>
-          <pre class="msg-code" dir="ltr">{{ p.code }}</pre>
-          <p class="msg-price"><b>{{ (p.price_stars ~ " ⭐") | star }}</b></p>
-          {% if p.per %}<p>{{ T.per_lut.format(per=p.per) | star }}</p>{% endif %}
-          {% if p.save %}<p><b>{{ T.save.format(pct=p.save) }}</b></p>{% endif %}
-          {% if not p.has_alone %}<p><b>{{ T.pack_only }}</b></p>{% endif %}
-        </div>
-        <div class="msg-keys">{{ tg(p.slug, T.buy_tg_stars.format(stars=p.price_stars), "btn btn-primary btn-block") }}</div>
-      </div>
+    <div class="pack-text">
+      <h3>{{ p.title }}</h3>
+      <p class="pack-desc">{{ p.tagline or p.desc }}{% if p.text %} {{ p.text }}{% endif %}</p>
+      <p class="pack-count">{{ T.lut_count.format(count=p.count) }} / {{ p.versions | join(" + ") }}</p>
+      <pre class="pack-code" dir="ltr">{{ p.code }}</pre>
+      <p class="pack-price"><b>{{ (p.price_stars ~ " ⭐") | star }}</b>{% if p.per %}<span class="pack-per">{{ T.per_lut.format(per=p.per) | star }}{% if p.save %} · {{ T.save.format(pct=p.save) }}{% endif %}</span>{% endif %}</p>
+      {% if not p.has_alone %}<p class="pack-note">{{ T.pack_only }}</p>{% endif %}
+      {{ tg(p.slug, T.buy_tg, "btn btn-primary btn-compact") }}
     </div>
   </article>
   {% endfor %}
   <p class="small muted pack-help"><a href="{{ u('/rec709-vs-log') }}">{{ T.cmp_more }}</a></p>
+ </div>
 </section>
 
 <section class="wrap sec">

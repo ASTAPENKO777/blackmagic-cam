@@ -227,13 +227,13 @@ def test_name_stays_next_to_i_in_ukrainian_heading(client):
     assert "Одразу навчився знімати" in html and "Я одразу навчився" not in html
 
 
-def test_packs_are_big_alternating_rows_with_collage_and_telegram_style_message(client):
+def test_packs_are_calm_alternating_rows_with_collage(client):
     html = client.get("/luts").data.decode()
     rows = re.findall(r'<article class="pack-row( flip)?">', html)
     assert rows == ["", " flip", ""]  # перший: колаж ліворуч, другий навпаки
-    assert html.count('class="collage-lead"') == 3 and html.count('class="msg"') == 3
-    # у стилі картки бота: «13 LUTs / Rec.709», пронумерований моноширинний список, ціна, «≈ N ⭐ per LUT»
-    assert re.search(r"<b>13 LUTs / Rec\.709</b>", html) and 'class="msg-code"' in html and "1. Era" in html
+    assert html.count('class="collage-big"') == 3 and html.count('class="pack-text"') == 3 and html.count('class="collage-side"') >= 3
+    # склад у тому ж форматі, що в картці бота: «13 LUTs / Rec.709», нумерований моноширинний список, ціна, «≈ N ⭐ per LUT»
+    assert "13 LUTs / Rec.709" in html and 'class="pack-code"' in html and "1. Era" in html
     assert "per LUT" in html and html.count("Buy in Telegram") >= 3
     assert 'href="/luts/cinematic_pro_15"' not in html  # пак не відкривається окремою сторінкою: усе на головній
 

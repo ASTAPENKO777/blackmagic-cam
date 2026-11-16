@@ -133,10 +133,9 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
             look.setdefault("alone", True)
         pack["has_alone"] = any(look["alone"] for look in pack["inside"])
         pack["code"] = numbered_block([look["title"] for look in pack["inside"]], lang)
-        # колаж: до 3-4 відео збоку від великого фото, ще до двох знизу
+        # колаж: велике фото, два менші збоку, решта відео (до трьох) рядом знизу
         reel = pack["media"] if pack.get("pair_meta") else pack["media"][1:]
-        k = len(reel) if len(reel) <= 4 else 3
-        pack["side"], pack["bottom"] = reel[:k], reel[k:k + 2]
+        pack["side"], pack["bottom"] = reel[:2], reel[2:5]
     return {"work": work, "packs": packs, "singles": singles, "by_slug": {i["slug"]: i for i in packs + singles}, "alone": sold_alone}
 
 
