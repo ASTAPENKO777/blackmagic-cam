@@ -1,17 +1,35 @@
 {% extends "base.html" %}
-{% block title %}Order confirmed — Blackmagic Camera Settings{% endblock %}
+{% block title %}{% if sent %}Order confirmed{% else %}Confirm crypto order{% endif %} — Blackmagic Camera Settings{% endblock %}
 {% block content %}
 
 <section style="min-height:70vh;display:flex;align-items:center;justify-content:center;padding:2rem;">
   <div style="max-width:480px;width:100%;text-align:center;">
+    {% if sent %}
     <div style="font-size:3rem;margin-bottom:1rem;">✓</div>
-    <h2 style="margin-bottom:0.5rem;">Guide sent</h2>
+    <h2 style="margin-bottom:0.5rem;">{% if already_sent %}Already sent{% else %}Guide sent{% endif %}</h2>
     <p style="color:var(--muted);margin-bottom:0.5rem;">
-      Access link for <b>{{ device.name }}</b> delivered to <b>{{ email }}</b>.
+      Access link for <b>{{ device.name }}</b> {% if already_sent %}was already{% endif %} delivered to <b>{{ email }}</b>.
     </p>
     <p style="color:var(--muted);font-size:0.85rem;">
       This page is the owner-confirmation view. The customer received their guide by email.
     </p>
+    {% else %}
+    {% if send_failed %}
+    <div role="alert" style="background:#3a1a0d;border:1px solid #ff3c00;border-radius:8px;padding:0.85rem;color:#ff9980;font-size:0.9rem;margin:0 0 1rem;text-align:left;">
+      ⚠️ The access email could not be sent (SMTP error). Nothing was delivered and the order is not marked as sent — press the button again to retry.
+    </div>
+    {% endif %}
+    <h2 style="margin-bottom:0.5rem;">Confirm crypto order</h2>
+    <p style="color:var(--muted);margin-bottom:0.5rem;">
+      <b>{{ device.name }}</b> for <b>{{ email }}</b> ({{ network|upper }}).
+    </p>
+    <p style="color:var(--muted);font-size:0.85rem;margin-bottom:1.5rem;">
+      Press the button only after the deposit has arrived. The guide is emailed once per order.
+    </p>
+    <form method="post" action="{{ confirm_url }}">
+      <button type="submit" class="btn btn-primary">{% if send_failed %}Retry: send guide{% else %}Confirm &amp; send guide{% endif %}</button>
+    </form>
+    {% endif %}
   </div>
 </section>
 

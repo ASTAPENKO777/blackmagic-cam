@@ -10,6 +10,7 @@ import threading
 import urllib.parse
 import urllib.request
 from datetime import datetime, timezone
+from html import escape as html_escape
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 
@@ -20,7 +21,7 @@ from flask_limiter.util import get_remote_address
 from werkzeug.middleware.proxy_fix import ProxyFix
 from dotenv import load_dotenv
 
-from db import (init_db, save_purchase, get_purchase_by_token, purchase_exists_for_session)
+from db import (init_db, save_purchase, purchase_exists_for_session)
 from devices import DEVICES, get_device, group_template
 from learn import (
     get_article as get_learn_article,
@@ -41,6 +42,11 @@ app.wsgi_app = ProxyFix(app.wsgi_app, x_proto=1, x_host=1)
 HMAC_SECRET             = os.environ.get("KOFI_FULFILL_SECRET", "")
 PAYHIP_PRODUCT_URL      = os.environ.get("PAYHIP_PRODUCT_URL", "")
 PAYHIP_API_KEY          = os.environ.get("PAYHIP_API_KEY", "").strip()
+# Payhip's webhook is account-wide: it fires for every product and every event type.
+# Only items matching these keys unlock the guide. Optional comma list of
+# product_key / product_id / product_permalink values; when unset, the key parsed
+# from PAYHIP_PRODUCT_URL (https://payhip.com/b/<key>) is used.
+PAYHIP_GUIDE_PRODUCT_KEYS = os.environ.get("PAYHIP_GUIDE_PRODUCT_KEYS", "")
 GMAIL_USER              = os.environ.get("GMAIL_USER", "")
 GMAIL_APP_PASSWORD      = os.environ.get("GMAIL_APP_PASSWORD", "")
 # BASE_URL feeds every canonical, sitemap entry and emailed access link, and the
@@ -89,6 +95,11 @@ CRYPTO_NETWORKS = {
         "coin": "USDT",
         "network_label": "TON",
         "address": os.environ.get("BINANCE_USDT_ADDRESS_TON") or os.environ.get("TON_ADDRESS", ""),
+        # Binance credits TON deposits to a shared exchange address by MEMO; a
+        # transfer without it is not credited to the owner's account.
+        "memo": os.environ.get("BINANCE_USDT_MEMO_TON", "").strip(),
+        # Configured through the BINANCE_* variable = an exchange deposit address.
+        "exchange": bool(os.environ.get("BINANCE_USDT_ADDRESS_TON", "").strip()),
     },
 }
 
@@ -115,50 +126,72 @@ _EXPECTED_PAYHIP_SIG = hashlib.sha256(PAYHIP_API_KEY.encode()).hexdigest() if PA
 UPSTASH_URL   = (os.environ.get("UPSTASH_REDIS_REST_URL")   or os.environ.get("KV_REST_API_URL")   or "").rstrip("/")
 UPSTASH_TOKEN = (os.environ.get("UPSTASH_REDIS_REST_TOKEN") or os.environ.get("KV_REST_API_TOKEN") or "").strip()
 
-def _kv_set(key: str, value: str, ttl_seconds: int = 86400) -> bool:
-    if not UPSTASH_URL or not UPSTASH_TOKEN:
+def _kv_configured() -> bool:
+    return bool(UPSTASH_URL and UPSTASH_TOKEN)
+
+def _kv_cmd(cmd: list):
+    """Run one Redis command through Upstash REST (JSON command form: POST the
+    base URL with a JSON array body). Returns the `result` field; raises on error."""
+    req = urllib.request.Request(
+        UPSTASH_URL,
+        data=json.dumps([str(c) for c in cmd]).encode("utf-8"),
+        headers={
+            "Authorization": f"Bearer {UPSTASH_TOKEN}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    with urllib.request.urlopen(req, timeout=3) as resp:
+        body = json.loads(resp.read().decode("utf-8"))
+    if isinstance(body, dict) and body.get("error"):
+        raise RuntimeError(f"upstash error: {body['error']}")
+    return body.get("result") if isinstance(body, dict) else None
+
+def _kv_set(key: str, value: str, ttl_seconds: int | None = 86400) -> bool:
+    if not _kv_configured():
         return False
     try:
-        path = f"/set/{urllib.parse.quote(key, safe='')}/{urllib.parse.quote(value, safe='')}?EX={int(ttl_seconds)}"
-        req = urllib.request.Request(
-            UPSTASH_URL + path,
-            headers={"Authorization": f"Bearer {UPSTASH_TOKEN}"},
-            method="POST",
-        )
-        with urllib.request.urlopen(req, timeout=3) as resp:
-            return 200 <= resp.status < 300
+        cmd = ["SET", key, value]
+        if ttl_seconds:
+            cmd += ["EX", int(ttl_seconds)]
+        return _kv_cmd(cmd) == "OK"
     except Exception as e:
-        app.logger.warning(f"kv_set failed: {e}")
+        app.logger.warning(f"kv_set failed key={key!r}: {e}")
         return False
 
+def _kv_set_nx(key: str, value: str, ttl: int | None = None) -> bool:
+    """SET key value NX [EX ttl]. True if this call created the key.
+
+    Fails OPEN: when KV is not configured or the call errors, returns True so a
+    paying customer is never blocked by an outage. Callers that guard fulfilment
+    therefore keep their own secondary check (the SQLite purchase row)."""
+    if not _kv_configured():
+        app.logger.error(f"KV NOT CONFIGURED — set-once guard for {key!r} is disabled (failing open)")
+        return True
+    try:
+        cmd = ["SET", key, value, "NX"]
+        if ttl:
+            cmd += ["EX", int(ttl)]
+        return _kv_cmd(cmd) == "OK"
+    except Exception as e:
+        app.logger.error(f"KV UNAVAILABLE — set-once guard for {key!r} failed open: {e}")
+        return True
+
 def _kv_get(key: str) -> str | None:
-    if not UPSTASH_URL or not UPSTASH_TOKEN:
+    if not _kv_configured():
         return None
     try:
-        path = f"/get/{urllib.parse.quote(key, safe='')}"
-        req = urllib.request.Request(
-            UPSTASH_URL + path,
-            headers={"Authorization": f"Bearer {UPSTASH_TOKEN}"},
-        )
-        with urllib.request.urlopen(req, timeout=3) as resp:
-            body = json.loads(resp.read().decode("utf-8"))
-            result = body.get("result")
-            return result if isinstance(result, str) and result else None
+        result = _kv_cmd(["GET", key])
+        return result if isinstance(result, str) and result else None
     except Exception as e:
-        app.logger.warning(f"kv_get failed: {e}")
+        app.logger.warning(f"kv_get failed key={key!r}: {e}")
         return None
 
 def _kv_del(key: str) -> None:
-    if not UPSTASH_URL or not UPSTASH_TOKEN:
+    if not _kv_configured():
         return
     try:
-        path = f"/del/{urllib.parse.quote(key, safe='')}"
-        req = urllib.request.Request(
-            UPSTASH_URL + path,
-            headers={"Authorization": f"Bearer {UPSTASH_TOKEN}"},
-            method="POST",
-        )
-        urllib.request.urlopen(req, timeout=3).close()
+        _kv_cmd(["DEL", key])
     except Exception:
         pass
 
@@ -179,24 +212,84 @@ limiter = Limiter(
 
 
 
-def _sign(payload: str) -> str:
-    return hmac.new(HMAC_SECRET.encode(), payload.encode(), hashlib.sha256).hexdigest()[:20]
+# ── Tokens ────────────────────────────────────────────────────────────────────
+# Every token is base64url(JSON) + "." + hexdigest[:20]. New tokens carry
+# t=<purpose> and are signed with a purpose-derived key, so a token minted for one
+# job (e.g. the customer's order page) can never be replayed at another (access,
+# owner confirmation). Tokens emailed before purposes existed are signed with the
+# master secret and accepted only by their exact key sets — see _claims().
+TOKEN_PURPOSES = ("acc", "pick", "cfm", "ord")
+_LEGACY_KEYSETS = {"acc": {"e", "d", "s"}, "pick": {"e", "s"}}
 
-def _encode_token(data: dict) -> str:
+def _purpose_key(purpose: str) -> bytes:
+    return hmac.new(HMAC_SECRET.encode(), ("purpose:" + purpose).encode(), hashlib.sha256).digest()
+
+def _sign(payload: str, key: bytes | None = None) -> str:
+    return hmac.new(key or HMAC_SECRET.encode(), payload.encode(), hashlib.sha256).hexdigest()[:20]
+
+def _encode_token(data: dict, purpose: str) -> str:
+    if purpose not in TOKEN_PURPOSES:
+        raise ValueError(f"unknown token purpose {purpose!r}")
+    data = dict(data)
+    if data.get("t", purpose) != purpose:
+        raise ValueError(f"token t={data.get('t')!r} does not match purpose {purpose!r}")
+    data.setdefault("t", purpose)  # keeps a caller-chosen key order (nonce first)
     payload = base64.urlsafe_b64encode(
         json.dumps(data, separators=(',', ':')).encode()
     ).decode().rstrip('=')
-    return f"{payload}.{_sign(payload)}"
+    return f"{payload}.{_sign(payload, _purpose_key(purpose))}"
 
-def _decode_token(token: str) -> dict | None:
+def _decode_token(token: str, key: bytes | None = None) -> dict | None:
     try:
         payload, sig = token.rsplit(".", 1)
-        if not hmac.compare_digest(sig, _sign(payload)):
+        if not hmac.compare_digest(sig.encode(), _sign(payload, key).encode()):
             return None
         padded = payload + "=" * (-len(payload) % 4)
-        return json.loads(base64.urlsafe_b64decode(padded).decode())
+        data = json.loads(base64.urlsafe_b64decode(padded).decode())
+        return data if isinstance(data, dict) else None
     except Exception:
         return None
+
+def _claims(token: str, purpose: str) -> dict | None:
+    """The single gate for every token-bearing route.
+
+    acc  (/access, /api/ai/chat): new t=="acc", or legacy master-signed exactly {e,d,s}
+    pick (/pick/...):             new t=="pick", or legacy master-signed exactly {e,s}
+    cfm  (owner /crypto/confirm): new t=="cfm" only
+    ord  (customer /crypto/pay):  new t=="ord" only
+    A legacy crypto confirm token {d,e,n,net} matches none of these.
+    """
+    if purpose not in TOKEN_PURPOSES or not isinstance(token, str) or not token or len(token) > 600:
+        return None
+    data = _decode_token(token, _purpose_key(purpose))
+    if data is not None and data.get("t") == purpose:
+        return data
+    legacy = _LEGACY_KEYSETS.get(purpose)
+    if legacy:
+        data = _decode_token(token)
+        if (data is not None and set(data) == legacy
+                and all(isinstance(data[k], str) and data[k] for k in legacy)):
+            return data
+    return None
+
+def _purchase_nonce(sale_id: str) -> str:
+    """Stable per-sale nonce: re-sending the access email yields the same link."""
+    return hmac.new(HMAC_SECRET.encode(), ("nonce:" + sale_id).encode(), hashlib.sha256).hexdigest()[:12]
+
+def _new_access_token(email: str, device_slug: str, sale_id: str, nonce: str | None = None) -> str:
+    # Per-purchase unique field first, so the token prefix differs per purchase.
+    return _encode_token(
+        {"n": nonce or _purchase_nonce(sale_id), "t": "acc", "e": email, "d": device_slug, "s": sale_id},
+        "acc",
+    )
+
+def _is_denied(data: dict) -> bool:
+    """Revocation list in KV: deny:s:<sale_id> (refunds) and deny:n:<nonce>."""
+    for field, prefix in (("s", "deny:s:"), ("n", "deny:n:")):
+        value = data.get(field)
+        if isinstance(value, str) and value and _kv_get(prefix + value):
+            return True
+    return False
 
 
 
@@ -615,20 +708,73 @@ def payhip_webhook():
         app.logger.error("PAYHIP_API_KEY is not set — rejecting webhook")
         abort(503)
 
-    raw = request.form.to_dict()
-    if not raw:
-        raw = request.get_json(silent=True) or {}
+    raw = request.get_json(silent=True)
+    if not isinstance(raw, dict):
+        raw = request.form.to_dict()
+        raw["items"] = _form_items(raw)
 
-    signature = (raw.get("signature") or "").strip().lower()
-    if not hmac.compare_digest(signature, _EXPECTED_PAYHIP_SIG):
+    signature = str(raw.get("signature") or "").strip().lower()
+    if not hmac.compare_digest(signature.encode(), _EXPECTED_PAYHIP_SIG.encode()):
         app.logger.warning("Invalid Payhip webhook signature from %s", get_remote_address())
         abort(401)
 
-    buyer_email = (raw.get("email") or raw.get("buyer_email") or "").strip().lower()
-    sale_id     = (raw.get("id") or raw.get("sale_id") or "").strip() or secrets.token_hex(8)
+    event   = str(raw.get("type") or "").strip().lower()
+    sale_id = str(raw.get("id") or raw.get("sale_id") or "").strip()
 
+    if event == "refunded":
+        if not sale_id:
+            app.logger.error("payhip webhook: refunded event without sale id — nothing revoked")
+            return "", 200
+        refunded, price = _payhip_amount(raw.get("amount_refunded")), _payhip_amount(raw.get("price"))
+        if refunded is not None and price is not None and 0 < refunded < price:
+            # Partial refund (e.g. a goodwill discount): access stays. The owner
+            # decides by hand and can set deny:s:<sale_id> in Upstash.
+            app.logger.warning(
+                "payhip webhook: PARTIAL refund sale_id=%s (%s of %s) — access kept, decide manually",
+                sale_id, refunded, price)
+            return "", 200
+        if not _kv_set(f"deny:s:{sale_id}", "refunded", ttl_seconds=None):
+            # Payhip retries only non-200 replies (hourly, 3 h): never lose a refund.
+            app.logger.error("payhip webhook: could not write deny:s:%s to KV — returning 503 for a retry", sale_id)
+            abort(503)
+        app.logger.warning("payhip webhook: refunded sale_id=%s — access revoked", sale_id)
+        return "", 200
+
+    if event != "paid":
+        app.logger.info("payhip webhook: ignoring event type=%r", event)
+        return "", 200
+
+    guide_keys = _payhip_guide_keys()
+    if not guide_keys:
+        # Fail loudly and let Payhip retry (hourly, 3 h) while the env is fixed.
+        app.logger.error("payhip webhook: no guide product configured (PAYHIP_GUIDE_PRODUCT_KEYS / PAYHIP_PRODUCT_URL)")
+        abort(503)
+    items = [i for i in (raw.get("items") if isinstance(raw.get("items"), list) else []) if isinstance(i, dict)]
+    if not any(_payhip_item_ids(item) & guide_keys for item in items):
+        # Loud on purpose: if the guide product key is misconfigured, every real
+        # sale lands here and Payhip does not retry a 200.
+        app.logger.warning(
+            "payhip webhook: paid sale with no guide item sale_id=%s item_keys=%s guide_keys=%s",
+            sale_id, sorted({str(i.get("product_key") or i.get("product_id") or "?") for i in items}),
+            sorted(guide_keys))
+        return "", 200
+
+    if not sale_id:
+        app.logger.error("payhip webhook: paid guide sale without id — cannot fulfil")
+        abort(400)
+
+    buyer_email = str(raw.get("email") or raw.get("buyer_email") or "").strip().lower()
     if not _is_valid_email(buyer_email):
         app.logger.warning("payhip webhook: email missing — nothing sent")
+        return "", 200
+
+    if _kv_get(f"deny:s:{sale_id}"):
+        app.logger.warning("payhip webhook: sale_id=%s is denied — nothing sent", sale_id)
+        return "", 200
+
+    # Payhip retries every hour for 3 h; process each sale once.
+    if not _kv_set_nx(f"payhip:sale:{sale_id}", "1"):
+        app.logger.info("payhip webhook: duplicate delivery sale_id=%s", sale_id)
         return "", 200
 
     kv_key = f"pay:card:{buyer_email}"
@@ -641,21 +787,80 @@ def payhip_webhook():
     )
 
     if device:
-        _kv_del(kv_key)
+        _kv_set_nx(f"pick:{sale_id}", device["slug"])
         session_key = f"{sale_id}:{device['slug']}"
         if not purchase_exists_for_session(session_key):
-            access_token = _encode_token({"e": buyer_email, "d": device["slug"], "s": sale_id})
+            access_token = _new_access_token(buyer_email, device["slug"], sale_id)
+            if not _send_access_email(buyer_email, device["slug"], access_token):
+                return _payhip_send_failed(sale_id)
             try:
                 save_purchase(access_token[:43], device["slug"], session_key)
             except Exception as e:
                 app.logger.warning(f"save_purchase failed (ok on vercel): {e}")
-            _send_access_email(buyer_email, device["slug"], access_token)
+        _kv_del(kv_key)
         return "", 200
 
-    select_token = _encode_token({"e": buyer_email, "s": sale_id})
-    _send_pick_email(buyer_email, select_token)
+    select_token = _encode_token({"t": "pick", "e": buyer_email, "s": sale_id}, "pick")
+    if not _send_pick_email(buyer_email, select_token):
+        return _payhip_send_failed(sale_id)
 
     return "", 200
+
+
+def _payhip_send_failed(sale_id: str):
+    """The email did not go out: forget the sale so Payhip's retry fulfils it."""
+    _kv_del(f"payhip:sale:{sale_id}")
+    app.logger.error("payhip webhook: email failed for sale_id=%s — returning 503 so Payhip retries", sale_id)
+    abort(503)
+
+
+def _payhip_amount(value):
+    """Payhip amounts (price, amount_refunded) as a float, or None if absent/unparsable."""
+    try:
+        return float(str(value).strip()) if value is not None and str(value).strip() else None
+    except ValueError:
+        return None
+
+
+_FORM_ITEM_RE = re.compile(r"^items\[(\d+)\]\[(\w+)\]$")
+
+def _form_items(form: dict) -> list:
+    """items[] from a form-encoded body (items[0][product_key]=...)."""
+    items: dict[int, dict] = {}
+    for key, value in form.items():
+        m = _FORM_ITEM_RE.match(key)
+        if m:
+            items.setdefault(int(m.group(1)), {})[m.group(2)] = value
+    return [items[i] for i in sorted(items)]
+
+def _payhip_key_from_url(url: str) -> str:
+    """Product key from https://payhip.com/b/<KEY> or https://payhip.com/buy?link=<KEY>
+    (also on a custom store domain). "" when the URL carries no product key."""
+    parsed = urllib.parse.urlparse((url or "").strip())
+    link = urllib.parse.parse_qs(parsed.query).get("link", [""])[0].strip()
+    if link:
+        return link
+    parts = [p for p in parsed.path.split("/") if p]
+    if len(parts) >= 2 and parts[-2] == "b":
+        return parts[-1]
+    return ""
+
+def _payhip_guide_keys() -> set:
+    """Explicit PAYHIP_GUIDE_PRODUCT_KEYS, else the key parsed from PAYHIP_PRODUCT_URL.
+    Empty set = unconfigured (the webhook answers 503 so Payhip retries)."""
+    keys = {k.strip() for k in PAYHIP_GUIDE_PRODUCT_KEYS.split(",") if k.strip()}
+    if not keys:
+        key = _payhip_key_from_url(PAYHIP_PRODUCT_URL)
+        if key:
+            keys = {key, PAYHIP_PRODUCT_URL.strip().rstrip("/")}
+    return {k for k in keys if k}
+
+def _payhip_item_ids(item: dict) -> set:
+    ids = {str(item.get(k)).strip() for k in ("product_key", "product_id") if item.get(k)}
+    permalink = str(item.get("product_permalink") or "").strip().rstrip("/")
+    if permalink:
+        ids |= {permalink, _payhip_key_from_url(permalink)}
+    return {i for i in ids if i}
 
 
 
@@ -674,21 +879,20 @@ def crypto_checkout():
     if network not in enabled:
         abort(400, "Unsupported crypto network")
 
-    confirm_token = _encode_token({
-        "d": device_slug,
-        "e": email,
-        "n": secrets.token_hex(4),
-        "net": network,
-    })
+    order = {"n": secrets.token_hex(6), "d": device_slug, "e": email, "net": network}
+    # Two tokens for one order: "cfm" goes only to the owner (it fulfils), "ord"
+    # goes to the customer (it only shows payment instructions).
+    confirm_token = _encode_token({"n": order["n"], "t": "cfm", **order}, "cfm")
+    order_token   = _encode_token({"n": order["n"], "t": "ord", **order}, "ord")
 
     _send_admin_crypto_notification(email, device, confirm_token, network)
 
-    return redirect(url_for("crypto_pay", token=confirm_token))
+    return redirect(url_for("crypto_pay", token=order_token))
 
 
 @app.route("/crypto/pay/<path:token>")
 def crypto_pay(token):
-    data = _decode_token(token)
+    data = _claims(token, "ord")
     if not data or not data.get("d") or not data.get("e"):
         abort(404)
     device = get_device(data["d"])
@@ -708,32 +912,74 @@ def crypto_pay(token):
         address=net_cfg["address"],
         coin=net_cfg["coin"],
         network_label=net_cfg["network_label"],
+        memo=net_cfg.get("memo", ""),
+        exchange_address=net_cfg.get("exchange", False),
+        qr_text=_qr_text(net_cfg),
     )
 
 
-@app.route("/crypto/confirm/<path:token>")
+def _qr_text(net_cfg: dict) -> str:
+    """What the payment QR encodes. With a TON MEMO, a ton://transfer deeplink that
+    pre-fills the comment, so a scanned transfer is not sent without the MEMO."""
+    memo = net_cfg.get("memo", "")
+    if memo:
+        return f"ton://transfer/{net_cfg['address']}?text={urllib.parse.quote(memo, safe='')}"
+    return net_cfg["address"]
+
+
+@app.route("/crypto/confirm/<path:token>", methods=["GET", "POST"])
+@limiter.limit("30 per minute")
 def crypto_confirm(token):
-    data = _decode_token(token)
+    """Owner fulfilment. GET only renders a confirm button (mail scanners and
+    link previews issue GETs); the POST sends the guide, once per order."""
+    data = _claims(token, "cfm")
     if not data or not data.get("d") or not data.get("e") or not data.get("n"):
         abort(404)
 
     device_slug = data["d"]
     email       = data["e"]
+    nonce       = data["n"]
     network     = (data.get("net") or "trc20").lower()
-    if not get_device(device_slug):
+    device      = get_device(device_slug)
+    if not device:
         abort(404)
 
-    session_key = f"crypto:manual:{data['n']}:{device_slug}:{network}"
-    access_token = _encode_token({"e": email, "d": device_slug, "s": data["n"]})
+    session_key = f"crypto:manual:{nonce}:{device_slug}:{network}"
 
-    if not purchase_exists_for_session(session_key):
-        save_purchase(access_token[:43], device_slug, session_key)
-        _send_access_email(email, device_slug, access_token)
+    if request.method == "GET":
+        already = bool(_kv_get(f"crypto:cfm:{nonce}")) or purchase_exists_for_session(session_key)
+        return render_template(
+            "crypto_confirmed.html",
+            email=email, device=device, network=network,
+            sent=already, already_sent=already, confirm_url=request.path,
+        )
+
+    cfm_key = f"crypto:cfm:{nonce}"
+    first = _kv_set_nx(cfm_key, device_slug)
+    # Secondary guard for when KV is unavailable (_kv_set_nx fails open).
+    if first and not purchase_exists_for_session(session_key):
+        access_token = _new_access_token(email, device_slug, nonce, nonce=nonce)
+        if not _send_access_email(email, device_slug, access_token):
+            # Nothing went out: release the once-only key so the owner can press again.
+            _kv_del(cfm_key)
+            app.logger.error("crypto confirm: access email failed for order n=%s — owner can retry", nonce)
+            return render_template(
+                "crypto_confirmed.html",
+                email=email, device=device, network=network,
+                sent=False, already_sent=False, send_failed=True, confirm_url=request.path,
+            ), 502
+        try:
+            save_purchase(access_token[:43], device_slug, session_key)
+        except Exception as e:
+            app.logger.warning(f"save_purchase failed (ok on vercel): {e}")
+        already = False
+    else:
+        already = True
 
     return render_template(
         "crypto_confirmed.html",
-        email=email,
-        device=get_device(device_slug),
+        email=email, device=device, network=network,
+        sent=True, already_sent=already, confirm_url=request.path,
     )
 
 
@@ -741,31 +987,49 @@ def crypto_confirm(token):
 @app.route("/pick/<token>")
 @limiter.limit("60 per minute")
 def pick_device(token):
-    data = _decode_token(token)
-    if not data or not data.get("e"):
+    data = _claims(token, "pick")
+    if not data or not data.get("e") or not data.get("s") or _is_denied(data):
         abort(404)
     return render_template("pick_device.html", token=token, devices=DEVICES)
 
 @app.route("/pick/<token>/confirm", methods=["POST"])
 @limiter.limit("30 per minute")
 def confirm_device(token):
-    data = _decode_token(token)
-    if not data or not data.get("e"):
+    data = _claims(token, "pick")
+    if not data or not data.get("e") or not data.get("s") or _is_denied(data):
         abort(404)
 
-    email      = data["e"]
-    sale_id    = data.get("s", "")
+    email       = data["e"]
+    sale_id     = data["s"]
     device_slug = request.form.get("device", "").strip()
-    device     = get_device(device_slug)
+    device      = get_device(device_slug)
 
     if not device:
         abort(400, "Select a device")
 
-    session_key = f"{sale_id}:{device_slug}"
+    # One sale = one device: the first choice binds the sale for good.
+    pick_key = f"pick:{sale_id}"
+    if not _kv_set_nx(pick_key, device_slug):
+        bound = _kv_get(pick_key)
+        if bound != device_slug:
+            bound_device = get_device(bound) if bound else None
+            msg = TRANSLATIONS[detect_language()]["pick_already_bound"].replace(
+                "{device}", bound_device["name"] if bound_device else "another iPhone"
+            )
+            return render_template("error.html", message=msg), 409
+
+    session_key  = f"{sale_id}:{device_slug}"
+    access_token = _new_access_token(email, device_slug, sale_id)
     if not purchase_exists_for_session(session_key):
-        access_token = _encode_token({"e": email, "d": device_slug, "s": sale_id})
-        save_purchase(access_token[:43], device_slug, session_key)
-        _send_access_email(email, device_slug, access_token)
+        try:
+            save_purchase(access_token[:43], device_slug, session_key)
+        except Exception as e:
+            app.logger.warning(f"save_purchase failed (ok on vercel): {e}")
+    # Same device again: just re-send the (identical) access link.
+    if not _send_access_email(email, device_slug, access_token):
+        # The device stays bound, so pressing again with the same model re-sends.
+        msg = TRANSLATIONS[detect_language()]["email_send_failed"]
+        return render_template("error.html", message=msg), 502
 
     return render_template("guide_sent.html", email=email)
 
@@ -774,7 +1038,7 @@ def confirm_device(token):
 @app.route("/access/<path:token>")
 @limiter.limit("60 per minute")
 def access(token):
-    if not token or len(token) > 300:
+    if not token or len(token) > 600:  # same cap as _claims
         abort(404)
 
     def _render(device, token):
@@ -792,17 +1056,13 @@ def access(token):
         )
         return resp
 
-    data = _decode_token(token)
-    if data and data.get("d"):
+    # Stateless HMAC only. The old SQLite fallback matched the stored token[:43],
+    # which for legacy tokens is base64 of {"e":<email>,"d":... and so could be
+    # rebuilt from a buyer's email without the secret. No emailed link relied on
+    # it (emailed links are full signed tokens).
+    data = _claims(token, "acc")
+    if data and data.get("d") and not _is_denied(data):
         device_slug = data["d"]
-        device      = get_device(device_slug)
-        tmpl        = group_template(device_slug)
-        if tmpl and device:
-            return _render(device, token)
-
-    purchase = get_purchase_by_token(token)
-    if purchase:
-        device_slug = purchase["device_slug"]
         device      = get_device(device_slug)
         tmpl        = group_template(device_slug)
         if tmpl and device:
@@ -950,15 +1210,17 @@ def ai_chat():
     if not message or len(message) > 500:
         return {"error": "bad_message"}, 400
 
-    data = _decode_token(token)
-    if not data or not data.get("d"):
+    data = _claims(token, "acc")
+    if not data or not data.get("d") or _is_denied(data):
         return {"error": "unauthorized"}, 401
     device = get_device(data["d"])
     if not device:
         return {"error": "unauthorized"}, 401
 
     day = datetime.now(timezone.utc).strftime("%Y%m%d")
-    rl_key = f"ai:rl:{token[:43]}:{day}"
+    # Keyed on a hash of the whole token: legacy tokens share long prefixes
+    # (base64 of {"e":...), so token[:43] could pool different buyers' quotas.
+    rl_key = f"ai:rl:{hashlib.sha256(token.encode()).hexdigest()[:32]}:{day}"
     cur = int(_kv_get(rl_key) or "0")
     if cur >= AI_DAILY_LIMIT:
         return {"error": "quota_exceeded", "limit": AI_DAILY_LIMIT}, 429
@@ -1046,7 +1308,7 @@ def ai_chat():
 
 
 
-def _send_pick_email(to_email: str, select_token: str):
+def _send_pick_email(to_email: str, select_token: str) -> bool:
     link = f"{BASE_URL}/pick/{select_token}"
     html = f"""
     <div style="font-family:sans-serif;max-width:480px;margin:auto;padding:2rem;">
@@ -1058,13 +1320,13 @@ def _send_pick_email(to_email: str, select_token: str):
       <p style="color:#888;font-size:0.8rem;">Keep this email — the link lets you access your guide anytime.</p>
     </div>
     """
-    _send_email(to_email, "One more step — Select your iPhone model", html)
+    return _send_email(to_email, "One more step — Select your iPhone model", html)
 
-def _send_access_email(to_email: str, device_slug: str, token: str):
+def _send_access_email(to_email: str, device_slug: str, token: str) -> bool:
     device = get_device(device_slug)
     link   = f"{BASE_URL}/access/{token}"
     html   = render_template("email_access.html", device=device, link=link)
-    _send_email(to_email, f"Your Blackmagic Camera guide — {device['name']}", html)
+    return _send_email(to_email, f"Your Blackmagic Camera guide — {device['name']}", html)
 
 def _send_admin_crypto_notification(customer_email: str, device: dict, confirm_token: str, network: str = "trc20"):
     confirm_link = f"{BASE_URL}/crypto/confirm/{confirm_token}"
@@ -1075,24 +1337,26 @@ def _send_admin_crypto_notification(customer_email: str, device: dict, confirm_t
     <div style="font-family:sans-serif;max-width:520px;margin:auto;padding:2rem;">
       <h2 style="color:#111;">New crypto order (manual fulfillment)</h2>
       <p><b>Device:</b> {device['name']} ({device['chip']})</p>
-      <p><b>Customer email:</b> {customer_email}</p>
+      <p><b>Customer email:</b> {html_escape(customer_email)}</p>
       <p><b>Expected amount:</b> {PRICE_USD:.2f} {coin}</p>
       <p><b>Network:</b> {net_label}</p>
       <p style="color:#444;">Once you see the deposit, click below to send the guide to the customer:</p>
       <a href="{confirm_link}" style="display:inline-block;background:#ff3c00;color:#fff;text-decoration:none;font-weight:700;padding:1rem 2rem;border-radius:8px;margin:1rem 0;">
         Confirm &amp; send guide →
       </a>
-      <p style="color:#888;font-size:0.8rem;">The link is idempotent — clicking twice won't send the email twice.</p>
+      <p style="color:#888;font-size:0.8rem;">The link opens a confirmation page; the guide is sent only when you press its button, and only once per order.</p>
     </div>
     """
     _send_email(ADMIN_EMAIL, f"Crypto order ({coin} {net_label}): {device['name']} — {customer_email}", html)
 
-def _send_email(to_email: str, subject: str, html: str):
+def _send_email(to_email: str, subject: str, html: str) -> bool:
+    """True once the message was handed to Gmail; False if every attempt failed.
+    Fulfilment callers undo their set-once KV key on False so the send can be retried."""
     safe_to      = _sanitize_header(to_email)
     safe_subject = _sanitize_header(subject)
     if not safe_to or "@" not in safe_to:
         app.logger.warning("refusing to send email to invalid address")
-        return
+        return False
 
     msg = MIMEMultipart("alternative")
     msg["Subject"] = safe_subject
@@ -1111,7 +1375,7 @@ def _send_email(to_email: str, subject: str, html: str):
                 smtp.login(GMAIL_USER, GMAIL_APP_PASSWORD)
                 smtp.sendmail(GMAIL_USER, safe_to, raw)
             app.logger.info(f"email sent to={safe_to!r} subject={safe_subject!r} attempt={attempt}")
-            return
+            return True
         except Exception as e:
             last_err = e
             app.logger.warning(f"smtp attempt {attempt} (587/STARTTLS) failed to={safe_to!r}: {e}")
@@ -1121,9 +1385,10 @@ def _send_email(to_email: str, subject: str, html: str):
             smtp.login(GMAIL_USER, GMAIL_APP_PASSWORD)
             smtp.sendmail(GMAIL_USER, safe_to, raw)
         app.logger.info(f"email sent to={safe_to!r} subject={safe_subject!r} via SSL fallback")
-        return
+        return True
     except Exception as e:
         app.logger.error(f"email send failed to={safe_to!r} after retries: 587={last_err} 465={e}")
+        return False
 
 
 

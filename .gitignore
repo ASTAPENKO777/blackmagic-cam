@@ -10,3 +10,6 @@ __pycache__/
 .playwright-mcp/
 
 static/video/
+
+.venv-test/
+.pytest_cache/

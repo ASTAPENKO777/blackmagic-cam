@@ -2,3 +2,6 @@ static/video
 __pycache__
 purchases.db
 .env
+.venv-test
+.pytest_cache
+tests
