@@ -90,10 +90,11 @@
   "inapp": "Ouvrez cette page dans Safari ou Chrome pour un paiement plus simple.",
   "back_all": "Tous les looks",
   "stars_note": "Le paiement se fait en Telegram Stars dans le bot.",
-  "work_title": "Tourné à l'iPhone",
-  "work_sub": "De vrais plans de mes propres tournages, étalonnés avec ces LUTs. Aucune image de banque.",
-  "work_tag": "Tourné à l'iPhone",
-  "work_alt": "Exemple de clip tourné à l'iPhone et étalonné avec des LUTs"
+  "work_title": "Les LUTs en action",
+  "work_sub": "Les mêmes vidéos que dans le bot. De vraies images, aucune banque d'images.",
+  "work_alt": "Vidéo de démonstration d'un LUT",
+  "prev": "Précédent",
+  "next": "Suivant"
  },
  "packs": {
   "apple_log_film": {

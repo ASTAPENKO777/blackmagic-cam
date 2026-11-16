@@ -155,3 +155,25 @@ def test_static_assets_are_versioned(client):
     for ref in re.findall(r'(?:href|src)="(/static/luts/(?:css|js)/[^"]+)"', html):
         assert "?v=" in ref, ref
     assert re.search(r'portrait-768\.webp\?v=', html)
+
+
+def test_only_bot_media_on_the_site(client):
+    """Відео й фото на сайті — копії медіа з бота (static/luts/media/<хеш>), а не окремий матеріал; усе існує на диску."""
+    import luts_media
+
+    html = client.get("/luts").data.decode()
+    refs = set(re.findall(r'(?:data-src|src|poster)="(/static/luts/media/[^"]+)"', html))
+    assert refs, "портфоліо з відео бота має бути на головній"
+    for ref in refs:
+        assert os.path.exists(os.path.join(ROOT, ref.lstrip("/"))), ref
+    assert not os.path.exists(os.path.join(ROOT, "static/luts/video")), "кліпи не з бота прибрано"
+    for entry in luts_media.MEDIA.values():
+        base = os.path.join(ROOT, "static/luts/media", entry["key"])
+        assert os.path.exists(base + (".mp4" if entry["video"] else ".webp"))
+
+
+def test_video_keeps_the_bot_aspect_ratio(client):
+    html = client.get("/luts").data.decode()
+    sizes = {(int(w), int(h)) for w, h in re.findall(r'<video[^>]*width="(\d+)" height="(\d+)"', html)}
+    assert sizes and all(abs(w / h - r) < 0.02 for w, h in sizes for r in [w / h]), sizes
+    assert any(h > w for w, h in sizes) and any(w > h for w, h in sizes)  # вертикальні й горизонтальні — як у боті

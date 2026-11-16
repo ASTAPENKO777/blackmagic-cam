@@ -1,5 +1,5 @@
 {% extends "luts/base.html" %}
-{% from "luts/_m.html" import slider, tg, versions, media_thumb with context %}
+{% from "luts/_m.html" import slider, tg, versions, media_thumb, clip with context %}
 {% block title %}{{ T.prod_title.format(title=item.title, versions=item.versions | join(', ')) }}{% endblock %}
 {% block desc %}{{ item.tagline or item.desc or item.title }} {{ T.looks_n.format(n=item.count) if item.kind == 'pack' else T.look_1 }} · {{ item.versions | join(', ') }} · {{ T.strip_3 }}.{% endblock %}
 {% block bodyattr %} data-slug="{{ item.slug }}"{% endblock %}
@@ -8,9 +8,7 @@
 <section class="wrap prod">
   <div class="prod-media">
     {% if item.kind == 'pack' %}{{ slider(item.pair, eager=True, alt=item.title) }}
-    {% elif item.media %}{% set m = item.media[0] %}
-      {% if m.video %}<video class="shot" src="{{ m.url }}" muted loop playsinline controls preload="none" width="720" height="900"></video>
-      {% else %}<img class="shot" src="{{ m.url }}" alt="{{ item.title }}" width="720" height="900" decoding="async">{% endif %}
+    {% elif item.media %}<div class="shot">{{ clip(item.media[0], item.title) }}</div>
     {% else %}{{ media_thumb(item) }}{% endif %}
   </div>
   <div class="prod-info">
@@ -36,10 +34,7 @@
 {% set rest = item.media if item.kind == 'pack' else item.media[1:] %}
 {% if rest %}
 <section class="wrap gallery">
-  {% for m in rest %}
-    {% if m.video %}<video class="shot" src="{{ m.url }}" muted loop playsinline controls preload="none" width="720" height="900"></video>
-    {% else %}<img class="shot" src="{{ m.url }}" alt="{{ item.title }}" width="720" height="900" loading="lazy" decoding="async">{% endif %}
-  {% endfor %}
+  {% for m in rest %}<div class="shot">{{ clip(m, item.title) }}</div>{% endfor %}
 </section>
 {% endif %}
 {% endblock %}

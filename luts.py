@@ -4,6 +4,7 @@
 """
 import json
 import os
+import re
 import time
 
 import requests
@@ -11,6 +12,7 @@ from markupsafe import Markup, escape
 from flask import Blueprint, Response, abort, current_app, g, render_template, request
 
 import luts_content as content
+from luts_media import MEDIA
 from luts_text import LUT_LANGS, NAMES, RTL, text, translated
 
 bp = Blueprint("luts", __name__)
@@ -48,6 +50,25 @@ def get_catalog() -> dict:
     return _cache["data"]
 
 
+def site_media(items: list[dict]) -> list[dict]:
+    """Медіа бота → легкі копії сайту (scripts/sync_site_media.py): те саме кадрування, менший розмір.
+    Якщо копії ще немає (щойно додане в боті), лишається оригінал із бота."""
+    result, seen = [], set()
+    for media in items:
+        match = re.search(r"/media/(\d+)\.", media["url"])
+        entry = MEDIA.get(int(match.group(1))) if match else None
+        if entry:
+            if entry["key"] in seen:
+                continue
+            seen.add(entry["key"])
+            base = f"/static/luts/media/{entry['key']}"
+            result.append({"video": entry["video"], "url": base + (".mp4" if entry["video"] else ".webp"),
+                           "poster": base + ".webp", "w": entry["w"], "h": entry["h"], "local": True})
+        else:
+            result.append({"video": media["video"], "url": media["url"], "poster": None, "w": 720, "h": 900, "local": False})
+    return result
+
+
 def _field(item: dict, lang: str, key: str, default: str = "") -> str:
     return (item["i18n"].get(lang) or {}).get(key) or (item["i18n"].get("en") or {}).get(key) or default
 
@@ -58,7 +79,7 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
     packs, singles = [], []
     for item in catalog["items"]:
         row = {**item, "title": _field(item, lang, "title", item["slug"].replace("_", " ").title()),
-               "desc": _field(item, lang, "desc")}
+               "desc": _field(item, lang, "desc"), "media": site_media(item["media"])}
         if item["kind"] == "pack":
             row.update(copy.get(item["slug"], {}))
             row.setdefault("pair", content.HERO_PAIR)
@@ -66,6 +87,12 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
         else:
             singles.append(row)
     packs.sort(key=lambda r: r["sort"])
+    seen_clips, work = set(), []
+    for pack in packs:  # портфоліо: відео паків з бота, без повторів
+        for m in pack["media"]:
+            if m["video"] and m["url"] not in seen_clips:
+                seen_clips.add(m["url"])
+                work.append(m)
     sold_alone = {slug for pack in packs for slug in pack["looks"]}
     by_slug = {s["slug"]: s for s in singles}
     for pack in packs:
@@ -74,7 +101,7 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
         for look in pack["inside"]:
             look.setdefault("alone", True)
         pack["has_alone"] = any(look["alone"] for look in pack["inside"])
-    return {"packs": packs, "singles": singles, "by_slug": {i["slug"]: i for i in packs + singles}, "alone": sold_alone}
+    return {"work": work, "packs": packs, "singles": singles, "by_slug": {i["slug"]: i for i in packs + singles}, "alone": sold_alone}
 
 
 def _lang(lang: str) -> str:
@@ -140,7 +167,7 @@ def _route(rule: str):
 @_route("")
 def home(lang):
     shop = view_items(get_catalog(), lang)
-    return _page("home.html", lang, shop=shop, hero=content.HERO_PAIR, work=content.WORK_CLIPS, graph=lambda c: [
+    return _page("home.html", lang, shop=shop, hero=content.HERO_PAIR, graph=lambda c: [
         {"@type": "WebSite", "name": c["T"]["brand"], "url": c["base_url"] + c["u"]()}, faq_ld(c["T"])])
 
 
@@ -186,6 +213,7 @@ def product(lang, slug):
     parents = [p for p in shop["packs"] if slug in p["looks"]] if item["kind"] == "look" else []
     def graph(c):
         photo = next((m["url"] for m in item["media"] if not m["video"]), None)
+        photo = (c["base_url"] + photo) if photo and photo.startswith("/") else photo
         product_ld = {"@type": "Product", "name": item["title"], "brand": {"@type": "Brand", "name": "@blackmagicamera"},
                       "description": item.get("tagline") or item["desc"] or item["title"],
                       "category": "LUT", **({"image": photo} if photo else {})}

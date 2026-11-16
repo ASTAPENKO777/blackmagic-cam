@@ -90,10 +90,11 @@
   "inapp": "Buka halaman ini di Safari atau Chrome supaya pembayaran lebih lancar.",
   "back_all": "Semua look",
   "stars_note": "Pembayaran dengan Telegram Stars di dalam bot.",
-  "work_title": "Direkam dengan iPhone",
-  "work_sub": "Klip asli dari syuting saya sendiri, di-grade dengan LUT ini. Bukan footage stok.",
-  "work_tag": "Direkam dengan iPhone",
-  "work_alt": "Contoh klip yang direkam dengan iPhone dan di-grade dengan LUT"
+  "work_title": "LUT beraksi",
+  "work_sub": "Video yang sama seperti di bot. Rekaman asli, bukan footage stok.",
+  "work_alt": "Video demo LUT",
+  "prev": "Sebelumnya",
+  "next": "Berikutnya"
  },
  "packs": {
   "apple_log_film": {

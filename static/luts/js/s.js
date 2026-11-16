@@ -73,6 +73,15 @@
     document.querySelectorAll("video[data-src]").forEach((v) => vids.observe(v));
   }
 
+  // Стрілки стрічки портфоліо (на телефоні стрічка гортається пальцем).
+  document.querySelectorAll("[data-rail-btn]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const rail = btn.parentElement.querySelector("[data-rail]");
+      const rtl = getComputedStyle(rail).direction === "rtl";
+      rail.scrollBy({ left: Number(btn.dataset.railBtn) * rail.clientWidth * 0.8 * (rtl ? -1 : 1), behavior: "smooth" });
+    });
+  });
+
   // Вбудований браузер TikTok/Instagram/Facebook: Telegram там відкривається гірше.
   if (/musical_ly|TikTok|Bytedance|Instagram|FBAN|FBAV/i.test(navigator.userAgent)) {
     const bar = document.getElementById("inapp"); if (bar) bar.hidden = false;

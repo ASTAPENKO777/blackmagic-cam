@@ -27,9 +27,19 @@
 <a class="{{ cls }}" data-tg data-slug="{{ slug }}" href="https://t.me/{{ bot }}?start=web_site__{{ slug }}" rel="noopener">{{ label | star }}</a>
 {%- endmacro %}
 
+{% macro clip(m, alt="") -%}
+{%- if m.video -%}
+<video muted loop playsinline preload="none" width="{{ m.w }}" height="{{ m.h }}"{% if m.poster %} poster="{{ m.poster }}"{% endif %} data-src="{{ m.url }}" aria-label="{{ alt }}"></video>
+{%- else -%}
+<img src="{{ m.url }}" width="{{ m.w }}" height="{{ m.h }}" alt="{{ alt }}" loading="lazy" decoding="async">
+{%- endif -%}
+{%- endmacro %}
+
 {% macro media_thumb(item) -%}
 {%- set photo = (item.media | rejectattr('video') | first) -%}
-{%- if photo %}<img class="thumb" src="{{ photo.url }}" alt="{{ item.title }}" loading="lazy" decoding="async" width="480" height="600">
+{%- set video = (item.media | selectattr('video') | first) -%}
+{%- if photo %}<img class="thumb" src="{{ photo.url }}" width="{{ photo.w }}" height="{{ photo.h }}" alt="{{ item.title }}" loading="lazy" decoding="async">
+{%- elif video and video.poster %}<img class="thumb" src="{{ video.poster }}" width="{{ video.w }}" height="{{ video.h }}" alt="{{ item.title }}" loading="lazy" decoding="async">
 {%- else %}<div class="thumb thumb-empty" aria-hidden="true"><span>{{ item.title }}</span></div>{% endif %}
 {%- endmacro %}
 
