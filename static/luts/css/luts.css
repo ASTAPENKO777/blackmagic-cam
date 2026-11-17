@@ -43,8 +43,8 @@ a:hover { color: var(--amber-hover); }
 .hero-in { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage" "copy"; padding-top: 18px; }
 .hero-copy { grid-area: copy; padding-bottom: 44px; }
 .stage { grid-area: stage; position: relative; justify-self: end; width: min(86vw, 420px); margin-inline-end: -2vw; }
-.stage::before { content: ""; position: absolute; inset: 6% -8% 0; border-radius: 50%; z-index: 0; pointer-events: none;
-  background: radial-gradient(closest-side, rgba(255, 255, 255, .07), transparent 80%); }  /* один тихий відблиск за фігурою */
+.stage::before { content: ""; position: absolute; z-index: 0; left: 0; right: 0; top: 17%; bottom: 0; border-radius: 26px 26px 0 0;
+  background: #17130e; border: 1px solid rgba(240, 179, 92, .14); border-bottom: 0; }   /* плоска тепла плита за фігурою: голова виступає над її верхом */
 .portrait { position: relative; z-index: 1; display: block; margin: 0;
   -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%); mask-image: linear-gradient(180deg, #000 78%, transparent 100%); }
 .portrait img { display: block; width: 100%; height: auto; }
