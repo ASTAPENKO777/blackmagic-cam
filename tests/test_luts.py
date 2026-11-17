@@ -286,3 +286,11 @@ def test_bio_without_member_count_falls_back(client, monkeypatch):
     monkeypatch.setattr(luts, "get_catalog", lambda: {**seed, "channel_members": None})
     plain = client.get("/luts").data.decode().replace("\u00a0", " ")
     assert "I run <a" in plain and "followed by" not in plain
+
+
+def test_hero_has_an_iphone_with_a_bot_video_behind_the_portrait(client):
+    html = client.get("/luts").data.decode()
+    hero = html[html.index('<section class="hero">'):html.index("</section>", html.index('<section class="hero">'))]
+    assert 'class="phone"' in hero and hero.index('class="phone"') < hero.index('class="portrait"')  # телефон під фігурою
+    src = re.search(r'class="phone".*?data-src="(/static/luts/media/[^"]+\.mp4)"', hero, flags=re.S).group(1)
+    assert os.path.exists(os.path.join(ROOT, src.lstrip("/")))  # відео з бота, не стороннє

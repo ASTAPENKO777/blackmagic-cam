@@ -147,7 +147,8 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
             else:
                 break
         pack["side"], pack["bottom"] = side, reel[len(side):len(side) + 3]
-    return {"work": work, "packs": packs, "singles": singles, "by_slug": {i["slug"]: i for i in packs + singles}, "alone": sold_alone}
+    hero_clip = next((m for p in packs for m in p["media"] if m["video"] and m["h"] > m["w"] and m.get("local")), None)
+    return {"hero_clip": hero_clip, "work": work, "packs": packs, "singles": singles, "by_slug": {i["slug"]: i for i in packs + singles}, "alone": sold_alone}
 
 
 def _lang(lang: str) -> str:

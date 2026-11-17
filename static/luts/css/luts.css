@@ -43,8 +43,11 @@ a:hover { color: var(--amber-hover); }
 .hero-in { display: grid; grid-template-columns: minmax(0, 1fr); grid-template-areas: "stage" "copy"; padding-top: 18px; }
 .hero-copy { grid-area: copy; padding-bottom: 44px; }
 .stage { grid-area: stage; position: relative; justify-self: end; width: min(86vw, 420px); margin-inline-end: -2vw; }
-.stage::before { content: ""; position: absolute; z-index: 0; left: 0; right: 0; top: 17%; bottom: 0; border-radius: 26px 26px 0 0;
-  background: #17130e; border: 1px solid rgba(240, 179, 92, .14); border-bottom: 0; }   /* плоска тепла плита за фігурою: голова виступає над її верхом */
+/* Айфон за фігурою: на екрані відео з бота. Нахил і напіввідкритий край дають глибину, фігура стоїть перед ним. */
+.phone { position: absolute; z-index: 0; right: -9%; top: 26%; width: 47%; aspect-ratio: 9 / 19; transform: rotate(8deg); padding: 6px;
+  background: #07080a; border: 2px solid #3b3e46; border-radius: 15% / 7.2%; box-shadow: 0 0 0 1px #14161a, 0 30px 60px -20px rgba(0, 0, 0, .8); }
+.phone video { display: block; width: 100%; height: 100%; object-fit: cover; border-radius: 13% / 6.2%; background: #000; }
+.phone::before { content: ""; position: absolute; z-index: 2; top: 3.2%; left: 50%; width: 30%; height: 2.6%; transform: translateX(-50%); border-radius: 99px; background: #000; }
 .portrait { position: relative; z-index: 1; display: block; margin: 0;
   -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%); mask-image: linear-gradient(180deg, #000 78%, transparent 100%); }
 .portrait img { display: block; width: 100%; height: auto; }
@@ -234,3 +237,5 @@ a:hover { color: var(--amber-hover); }
 .single-desc { margin: 4px 0 0; color: var(--muted); font-size: .9375rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .single-price { margin: 8px 0 0; font-weight: 700; color: var(--amber); }
 @media (max-width: 480px) { .pack-code { font-size: .6875rem; padding: 28px 14px 12px; } .pack-code::after { top: 8px; right: 10px; } }
+@media (min-width: 1000px) { .phone { right: -36%; top: 14%; width: 52%; transform: rotate(9deg); } }
+@media (min-width: 1000px) and (max-width: 1499px) { .phone { right: -20%; top: 20%; width: 46%; } }

@@ -8,6 +8,7 @@
 <section class="hero">
   <div class="wrap hero-in">
     <div class="stage">
+      {% if shop.hero_clip %}<div class="phone" aria-hidden="true"><video muted loop playsinline preload="none" width="{{ shop.hero_clip.w }}" height="{{ shop.hero_clip.h }}" poster="{{ shop.hero_clip.poster }}" data-src="{{ shop.hero_clip.url }}"></video></div>{% endif %}
       <picture class="portrait">
         <source media="(min-width: 1000px)" type="image/avif" srcset="{{ static_v('luts/img/portrait-480.avif') }} 480w, {{ static_v('luts/img/portrait-768.avif') }} 768w, {{ static_v('luts/img/portrait-1080.avif') }} 1080w" sizes="470px">
         <source media="(min-width: 1000px)" type="image/webp" srcset="{{ static_v('luts/img/portrait-480.webp') }} 480w, {{ static_v('luts/img/portrait-768.webp') }} 768w, {{ static_v('luts/img/portrait-1080.webp') }} 1080w" sizes="470px">
