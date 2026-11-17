@@ -1,10 +1,10 @@
 {# Макроси: слайдер до/після, кнопка в Telegram, картка пака. #}
-{% macro slider(pair, eager=False, alt="") -%}
+{% macro slider(pair, eager=False, alt="", sizes="{{ sizes }}") -%}
 <div class="ba" data-ba>
   {%- for kind in ("before", "after") %}
   <picture class="ba-{{ kind }}">
-    <source type="image/avif" srcset="{% for w in pair.widths %}{{ pair_url(pair.name, kind, w, 'avif') }} {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="(min-width: 760px) 480px, 92vw">
-    <source type="image/webp" srcset="{% for w in pair.widths %}{{ pair_url(pair.name, kind, w, 'webp') }} {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="(min-width: 760px) 480px, 92vw">
+    <source type="image/avif" srcset="{% for w in pair.widths %}{{ pair_url(pair.name, kind, w, 'avif') }} {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="{{ sizes }}">
+    <source type="image/webp" srcset="{% for w in pair.widths %}{{ pair_url(pair.name, kind, w, 'webp') }} {{ w }}w{{ ', ' if not loop.last }}{% endfor %}" sizes="{{ sizes }}">
     <img src="{{ pair_url(pair.name, kind, pair.widths[-1] if pair.widths[-1] <= 768 else 768, 'webp') }}" width="{{ pair.w }}" height="{{ pair.h }}" alt="{{ alt if kind == 'after' else '' }}" {% if eager %}fetchpriority="high" decoding="async"{% else %}loading="lazy" decoding="async"{% endif %}>
   </picture>
   {%- endfor %}
