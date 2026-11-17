@@ -186,17 +186,20 @@ a:hover { color: var(--amber-hover); }
 @media (min-width: 1240px) { .packs-wrap { margin-inline: calc(var(--gap) * -1); } }  /* краї рамки рівно з лінією під героєм */
 .pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 36px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
 .pack-row:first-of-type { border-top: 0; }
-.collage { display: grid; grid-template-columns: 1.45fr 1fr; gap: 8px; align-items: stretch; align-content: start; }
-.collage-big { grid-column: 1; grid-row: 1; aspect-ratio: 4 / 5; min-width: 0; border-radius: var(--radius-sm); overflow: hidden; background: #05060a; position: relative; }
-.collage-big .ba { height: 100%; border-radius: 0; border: 0; }
+/* Колаж по висоті дорівнює тексту: велике фото й відео збоку займають весь простір між верхньою і нижньою лінією. */
+.collage { display: grid; grid-template-columns: 1.45fr 1fr; grid-template-rows: auto; gap: 8px; align-content: start; }
+.collage-big { grid-column: 1; grid-row: 1; position: relative; aspect-ratio: 4 / 5; min-width: 0; border-radius: var(--radius-sm); overflow: hidden; background: #05060a; }
+.collage-big .ba { position: absolute; inset: 0; height: auto; border-radius: 0; border: 0; }
 .collage-big .ba picture.ba-before { height: 100%; }
 .collage-big .ba img { height: 100%; object-fit: cover; }
 .collage-big > video, .collage-big > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.collage-side { grid-column: 2; grid-row: 1; display: grid; grid-auto-rows: 1fr; gap: 8px; min-height: 0; }
+.collage-side { grid-column: 2; grid-row: 1; display: grid; grid-auto-rows: minmax(min-content, 1fr); gap: 8px; min-height: 0; }
+.collage-tall { grid-template-columns: 1fr 1fr; }   /* вертикальне відео: окрема колонка, у яку воно вписується цілком */
 .collage-bottom { grid-column: 1 / -1; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
-.collage-tile { position: relative; overflow: hidden; border-radius: var(--radius-sm); background: #05060a; min-height: 0; }
+.collage-tile { position: relative; overflow: hidden; border-radius: var(--radius-sm); background: #05060a; min-height: 0; display: flex; align-items: center; justify-content: center; }
+.collage-tile video, .collage-tile img { display: block; width: 100%; height: auto; max-height: 100%; object-fit: contain; }   /* кадр цілком, без обрізання */
 .collage-bottom .collage-tile { aspect-ratio: 16 / 10; }
-.collage-tile video, .collage-tile img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
+.collage-bottom .collage-tile video, .collage-bottom .collage-tile img { height: 100%; }
 
 .pack-text h3 { font-size: clamp(1.75rem, 4.4vw, 2.25rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
 .pack-desc { margin: 12px 0 0; max-width: 30em; color: #d9d6d0; font-size: 1rem; line-height: 1.5; }
@@ -214,10 +217,11 @@ a:hover { color: var(--amber-hover); }
 @keyframes star-shine { 0% { transform: translateX(-12px) skewX(-18deg); } 55%, 100% { transform: translateX(36px) skewX(-18deg); } }
 .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 @media (min-width: 820px) {
-  .pack-row { grid-template-columns: minmax(0, 430px) minmax(0, 1fr); gap: 56px; padding: 52px 0; align-items: start; }
+  .pack-row { grid-template-columns: minmax(0, 430px) minmax(0, 1fr); gap: 56px; padding: 52px 0; align-items: stretch; }
   .pack-row.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 430px); }
   .pack-row.flip .collage { order: 2; }
-  .pack-text { position: sticky; top: 92px; }
+  .collage { grid-template-rows: minmax(0, 1fr) auto; height: 100%; }
+  .collage-big { aspect-ratio: auto; min-height: 280px; }
 }
 
 /* Окремі LUT: простий ряд, як на Ko-fi: фото, назва, опис, ціна. Без рамок і кнопок. */

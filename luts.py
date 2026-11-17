@@ -74,6 +74,8 @@ def _field(item: dict, lang: str, key: str, default: str = "") -> str:
     return value.replace(" — ", ", ").replace("—", ",")
 
 
+SIDE_WIDTH = 172     # px: ширина колонки відео збоку від великого фото (430 px колаж)
+SIDE_BUDGET = 430     # px: скільки висоти колонка відео може зайняти
 COLUMNS_FROM = 8      # як у боті: від 8 LUT список у дві колонки
 COLUMNS_WIDTH = 52    # символів у рядку двох колонок
 
@@ -133,9 +135,18 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
             look.setdefault("alone", True)
         pack["has_alone"] = any(look["alone"] for look in pack["inside"])
         pack["code"] = numbered_block([look["title"] for look in pack["inside"]], lang)
-        # колаж: велике фото, два менші збоку, решта відео (до трьох) рядом знизу
+        # колаж: велике фото зі слайдером; збоку відео в НАТУРАЛЬНІЙ пропорції, поки влазять у висоту великого фото
+        # (записи екрана видно цілком, з меню), решта (до трьох) рядом знизу
         reel = pack["media"] if pack.get("pair_meta") else pack["media"][1:]
-        pack["side"], pack["bottom"] = reel[:2], reel[2:5]
+        side, used = [], 0
+        for media in reel:
+            height = SIDE_WIDTH * media["h"] / media["w"]
+            if not side or used + height + 8 <= SIDE_BUDGET:
+                side.append(media)
+                used += height + 8
+            else:
+                break
+        pack["side"], pack["bottom"] = side, reel[len(side):len(side) + 3]
     return {"work": work, "packs": packs, "singles": singles, "by_slug": {i["slug"]: i for i in packs + singles}, "alone": sold_alone}
 
 

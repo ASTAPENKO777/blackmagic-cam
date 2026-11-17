@@ -41,7 +41,7 @@
   <div class="packs-panel">
   {% for p in shop.packs %}
   <article class="pack-row{% if loop.index is even %} flip{% endif %}">
-    <div class="collage">
+    <div class="collage{% if p.side|length == 1 and p.side[0].h > p.side[0].w %} collage-tall{% endif %}">
       <div class="collage-big">
         {% if p.pair_meta %}{{ slider(p.pair_meta, alt=p.title) }}{% elif p.media %}{{ tile(p.media[0], p.title) }}{% else %}{{ cover(p) }}{% endif %}
       </div>
