@@ -221,9 +221,8 @@ html[dir="rtl"] .hero h1 .kicker { font-family: var(--font-rtl); }
 .pack-line b { font-weight: 700; }
 .btn-compact { margin-top: 20px; min-height: 46px; padding: 0 22px; }
 .pack-terms { margin: 12px 0 0; color: var(--muted); font-size: .875rem; }
+.tgs-hl { mix-blend-mode: soft-light; }
 .star-fx { width: 1.05em; height: 1.05em; display: inline-block; vertical-align: -.14em; margin-inline-start: .08em; }
-.star-fx .shine { animation: star-shine 3.4s ease-in-out infinite; transform: skewX(-18deg); }
-@keyframes star-shine { 0% { transform: translateX(-12px) skewX(-18deg); } 55%, 100% { transform: translateX(36px) skewX(-18deg); } }
 .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 @media (min-width: 820px) {
   .pack-row { grid-template-columns: minmax(0, 430px) minmax(0, 1fr); gap: 56px; padding: 52px 0; align-items: stretch; }
@@ -293,12 +292,6 @@ html[dir="rtl"] .stats b { font-family: var(--font-rtl); }
 .c-hist svg { position: absolute; left: calc(var(--u) * 24); right: calc(var(--u) * 24); bottom: calc(var(--u) * 18); width: calc(var(--u) * 372); height: calc(var(--u) * 124); overflow: visible; }
 .c-hist .ch { mix-blend-mode: screen; fill-opacity: .5; }
 .c-hist .hg { fill: none; stroke: rgba(255, 255, 255, .1); stroke-width: 1; vector-effect: non-scaling-stroke; }
-.c-mic { right: calc(var(--u) * 12); }
-.c-mic i { position: absolute; left: calc(var(--u) * 28); top: calc(var(--u) * 18); font-size: calc(var(--u) * 28); }
-.c-mic .mt { position: absolute; left: calc(var(--u) * 28); width: calc(var(--u) * 364); height: calc(var(--u) * 34); background: linear-gradient(90deg, #213b1a 0 62%, #3b3a1c 62% 86%, #4a1c20 86%); }
-.c-mic .mt:nth-of-type(1) { top: calc(var(--u) * 66); } .c-mic .mt:nth-of-type(2) { top: calc(var(--u) * 108); }
-.c-mic .mt em { display: block; width: 19%; height: 100%; background: #5bc53a; }
-.c-mic p { position: absolute; left: calc(var(--u) * 20); width: calc(var(--u) * 380); top: calc(var(--u) * 156); margin: 0; display: flex; justify-content: space-between; font: 500 calc(var(--u) * 24)/1 var(--font); }
 @media (max-width: 999px) {
   .portrait { margin-top: calc(var(--u) * 120); -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%); mask-image: linear-gradient(180deg, #000 78%, transparent 100%); }
   .hc { display: none; }

@@ -295,8 +295,9 @@ def test_hero_is_the_blackmagic_camera_screen_with_proof_badges(client):
     assert 'class="phone"' not in hero and 'vf-focus' not in hero   # без айфона й без рамки фокусу на голові
     for gone in ("Internal Storage", 'class="dots', 'class="xh', 'class="tabs"', 'class="ctrl"'):   # прибрано на прохання власника
         assert gone not in hero, gone
-    for part in ('class="vfinder"', 'class="hud-top"', "00:00:00:00", "SHUTTER", "Rec.709", "Microphone iPhone", 'class="hc c-hist"'):
+    for part in ('class="vfinder"', 'class="hud-top"', "00:00:00:00", "SHUTTER", "Rec.709", 'class="hc c-hist"'):
         assert part in hero, part
+    assert "Microphone iPhone" not in hero and 'c-mic' not in hero   # прибрано: нічого не продає
     stats = hero[hero.index('<ul class="stats">'):hero.index("</ul>", hero.index('<ul class="stats">'))]
     assert stats.count("<li") == 3 and "Blackmagic Camera" in stats and "Almost 2 years" in stats
     assert 'class="st-ver"' in stats and "people</b>" in stats and "tested my LUTs" in stats and "and Rec.709" in stats   # «Свої LUT» злито з 6 000+ у верифіковану колонку
