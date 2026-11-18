@@ -281,6 +281,13 @@ html[dir="rtl"] .stats b { font-family: var(--font-rtl); }
 .hc i { font-style: normal; font: 500 calc(var(--u) * 24)/1 var(--font); }
 .hc em { font-style: normal; }
 .c-hist { left: calc(var(--u) * 12); }
+/* Базова експозиція, як у застосунку: ISO, кадри, витримка. Справа знизу, щоб не лягало на обличчя. */
+.c-exp { right: calc(var(--u) * 12); display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; padding: 0 calc(var(--u) * 16); }
+.c-exp span { display: grid; gap: calc(var(--u) * 12); justify-items: center; }
+.c-exp i { font: 500 calc(var(--u) * 24)/1 var(--font); color: rgba(255, 255, 255, .7); letter-spacing: .02em; }
+.c-exp b { font: 600 calc(var(--u) * 44)/1 var(--font); font-variant-numeric: tabular-nums; }
+.rec { width: calc(var(--u) * 24); height: calc(var(--u) * 24); border-radius: 50%; background: var(--rec); flex: none; margin-inline-end: calc(var(--u) * -10); animation: rec-blink 1.6s steps(1, end) infinite; }
+@keyframes rec-blink { 50% { opacity: .25; } }
 .c-hist i { position: absolute; left: calc(var(--u) * 24); top: calc(var(--u) * 16); font-size: calc(var(--u) * 28); }
 .c-hist svg { position: absolute; left: calc(var(--u) * 24); right: calc(var(--u) * 24); bottom: calc(var(--u) * 18); width: calc(var(--u) * 372); height: calc(var(--u) * 124); overflow: visible; }
 .c-hist .ch { mix-blend-mode: screen; fill-opacity: .5; }

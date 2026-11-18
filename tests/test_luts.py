@@ -298,10 +298,11 @@ def test_hero_is_the_blackmagic_camera_screen_with_proof_badges(client):
     for part in ('class="vfinder"', 'class="hud-top"', "00:00:00:00", "Rec.709", 'class="hc c-hist"'):
         assert part in hero, part
     assert "Microphone iPhone" not in hero and 'c-mic' not in hero   # прибрано: нічого не продає
-    assert "SHUTTER" not in hero and 'hud-row' not in hero and 'b-fl' not in hero   # рядок параметрів і спалах прибрано: лягали на голову
+    assert 'hud-row' not in hero and 'b-fl' not in hero   # рядок параметрів і спалах прибрано: лягали на голову
+    assert 'class="hc c-exp"' in hero and "ISO" in hero and 'class="rec"' in hero   # базові ISO/FPS/витримка, внизу справа
     stats = hero[hero.index('<ul class="stats">'):hero.index("</ul>", hero.index('<ul class="stats">'))]
     assert stats.count("<li") == 3 and "Blackmagic Camera" in stats and "Almost 2 years" in stats
-    assert 'class="st-ver"' in stats and "people</b>" in stats and "tested my LUTs" in stats and "and Rec.709" in stats   # «Свої LUT» злито з 6 000+ у верифіковану колонку
+    assert 'class="st-ver"' in stats and "people</b>" in stats and "tested my LUTs" in stats and "Any video" in stats and "normal and Apple Log" in stats   # «Свої LUT» злито з 6 000+ у верифіковану колонку
     assert "icons/blackmagic-camera-48.webp" in stats   # справжня іконка застосунку з App Store, не саморобна
     assert 'class="proof"' not in hero and "Own LUTs" not in hero and 'class="dim"' not in hero
     assert hero.index('class="stats"') < hero.index('id="hero-cta"') < hero.index('class="story"')   # соцдоказ перед кнопками, історія після
