@@ -22,6 +22,40 @@
   };
   send("view", slug);
 
+  // Живі деталі. Усе вимикається при «зменшити рух» у системі.
+  const noMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if (!noMotion && "IntersectionObserver" in window) {
+    // Плавна поява блоків при скролі. Ховаємо лише те, що ще нижче екрана, тож нічого не блимає при завантаженні.
+    const items = document.querySelectorAll(".sec-head, .pack-row, .single, .steps li, .faq, .foot-top > *");
+    const seen = new IntersectionObserver((entries) => entries.forEach((e) => {
+      if (e.isIntersecting) { e.target.classList.add("rv-in"); seen.unobserve(e.target); }
+    }), { rootMargin: "0px 0px -8% 0px" });
+    items.forEach((node) => {
+      if (node.getBoundingClientRect().top < innerHeight) return;
+      const row = node.parentElement ? Array.prototype.indexOf.call(node.parentElement.children, node) % 3 : 0;
+      node.style.setProperty("--rv-delay", `${row * 70}ms`);
+      node.classList.add("rv");
+      seen.observe(node);
+    });
+    // «6 000+»: число набігає від нуля, коли видно панель.
+    const num = document.querySelector(".st-ver bdi");
+    const target = num && parseInt(num.textContent.replace(/\D/g, ""), 10);
+    if (target) {
+      const fmt = (n) => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, "\u00a0") + "+";
+      const run = () => {
+        const t0 = performance.now(), dur = 1400;
+        const step = (now) => {
+          const k = Math.min(1, (now - t0) / dur), eased = 1 - Math.pow(1 - k, 3);
+          num.textContent = fmt(Math.round(target * eased / 100) * 100);
+          if (k < 1) requestAnimationFrame(step); else num.textContent = fmt(target);
+        };
+        requestAnimationFrame(step);
+      };
+      const io = new IntersectionObserver((e) => { if (e[0].isIntersecting) { io.disconnect(); run(); } });
+      io.observe(num);
+    }
+  }
+
   // Таймкод у кадрі hero: рахує від входу на сторінку, як запис у Blackmagic Camera (24 кадри/с).
   const tc = document.querySelector("[data-tc]");
   if (tc) {

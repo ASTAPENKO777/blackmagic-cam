@@ -51,9 +51,7 @@
   "cmp_log_p": "تصویر تخت با فضای بیشتر برای رنگ‌بندی. وقتی با iPhone 15 Pro و جدیدتر در Apple Log ضبط می‌کنید این را بردارید.",
   "cmp_more": "کدام نسخه را بردارم؟",
   "free_title": "پک رایگان Starter",
-  "free_tile_t": "Starter · {n} LUT",
-  "free_tile_p": "رایگان برای مشترکان ‎@blackmagicamera. ربات اشتراک شما را بررسی می‌کند و LUT ها را فوراً می‌فرستد.",
-  "free_tile_cta": "دریافت رایگان",
+  "free_card_d": "{n} LUT رایگان",
   "free_text": "{n} LUT رایگان برای مشترکان ‎@blackmagicamera. در کانال عضو شوید تا ربات فوراً آن‌ها را بفرستد.",
   "free_cta": "دریافت Starter",
   "free_credit": "لوک‌های Starter آثار CC0 سازندگانشان هستند و نام آن‌ها داخل پک آمده است.",
@@ -84,6 +82,12 @@
     "بله. اگر به پکی که خریده‌اید لوک اضافه کنم، رایگان به دستتان می‌رسد."
    ]
   ],
+  "foot_shop": "فروشگاه",
+  "foot_help": "راهنما",
+  "foot_legal": "حقوقی",
+  "foot_support": "پشتیبانی در ربات",
+  "foot_collab": "همکاری",
+  "foot_tag": "LUT های سینمایی برای Blackmagic Camera روی iPhone. رنگ مستقیم در کادر.",
   "footer_disclaimer": "این پروژه وابسته به Blackmagic Design نیست. Blackmagic Camera علامت تجاری صاحب آن است و این نام فقط برای مشخص کردن اپی که فایل‌ها برایش ساخته شده‌اند آمده است.",
   "terms": "شرایط",
   "privacy": "حریم خصوصی",

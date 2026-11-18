@@ -98,14 +98,13 @@
     </a>
     {% endfor %}
     {%- if starter %}
-    {#- Картка FREE займає вільні місця в останньому ряду (3 колонки на десктопі, 2 на телефоні). Медіа в Starter немає, тож показуємо назви LUT. Бот видає Starter лише після підписки на канал. #}
-    {%- set n = shop.singles | length %}
-    <div class="free-tile d{{ 3 - n % 3 }}">
-      <div class="ft-head"><span class="ft-badge">FREE</span><h3>{{ T.free_tile_t.format(n=starter.count) }}</h3></div>
-      {% if starter_names %}<ul class="ft-names">{% for name in starter_names %}<li>{{ name }}</li>{% endfor %}</ul>{% endif %}
-      <p class="ft-text">{{ T.free_tile_p }}</p>
-      {{ tg("starter", T.free_tile_cta, "btn btn-primary btn-compact") }}
-    </div>
+    {#- Безкоштовний Starter: звичайна картка в кінці сітки. Медіа в Starter немає, тож обкладинка типографська. Бот видає Starter лише після підписки на канал. #}
+    <a class="single single-free" data-tg data-slug="starter" href="https://t.me/{{ bot }}?start=web_site__starter" rel="noopener">
+      <div class="cover free-cover" aria-hidden="true"><span class="fc-word">FREE</span><span class="fc-sub">Starter · {{ starter.count }} LUT</span></div>
+      <h3>{{ T.nav_free }}</h3>
+      <p class="single-desc">{{ T.free_card_d.format(n=starter.count) }}</p>
+      <p class="single-price">FREE</p>
+    </a>
     {%- endif %}
   </div>
 </section>

@@ -51,9 +51,7 @@
   "cmp_log_p": "لقطات مسطّحة تمنحك مساحة أكبر لتدريج الألوان. اختره مع iPhone 15 Pro وما بعده عند التسجيل بصيغة Apple Log.",
   "cmp_more": "أي نسخة أستخدم؟",
   "free_title": "حزمة Starter المجانية",
-  "free_tile_t": "Starter · {n} LUT",
-  "free_tile_p": "مجانًا لمشتركي ‎@blackmagicamera. يتحقق البوت من اشتراكك ويرسل LUT فورًا.",
-  "free_tile_cta": "احصل عليها مجانًا",
+  "free_card_d": "{n} LUT مجانية",
   "free_text": "{n} LUT مجانية لمشتركي ‎@blackmagicamera. اشترك في القناة وسيرسلها البوت فورًا.",
   "free_cta": "احصل على Starter",
   "free_credit": "مظاهر Starter أعمال CC0 لأصحابها، وتُذكر أسماؤهم داخل الحزمة.",
@@ -84,6 +82,12 @@
     "نعم. إذا أضفتُ مظاهر إلى حزمة اشتريتها فستصلك مجانًا."
    ]
   ],
+  "foot_shop": "المتجر",
+  "foot_help": "المساعدة",
+  "foot_legal": "قانوني",
+  "foot_support": "الدعم في البوت",
+  "foot_collab": "التعاون",
+  "foot_tag": "ملفات LUT سينمائية لتطبيق Blackmagic Camera على iPhone. اللون جاهز في الكادر مباشرة.",
   "footer_disclaimer": "هذا المشروع غير تابع لشركة Blackmagic Design. Blackmagic Camera علامة تجارية لصاحبها، ويُذكر الاسم فقط لبيان التطبيق الذي صُنعت له الملفات.",
   "terms": "الشروط",
   "privacy": "الخصوصية",

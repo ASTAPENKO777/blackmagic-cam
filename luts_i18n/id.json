@@ -51,9 +51,7 @@
   "cmp_log_p": "Rekaman datar dengan ruang lebih luas untuk grading. Pilih ini di iPhone 15 Pro ke atas saat merekam dalam Apple Log.",
   "cmp_more": "Pilih yang mana?",
   "free_title": "Paket Starter gratis",
-  "free_tile_t": "Starter · {n} LUT",
-  "free_tile_p": "Gratis untuk subscriber @blackmagicamera. Bot mengecek langgananmu dan langsung mengirim LUT-nya.",
-  "free_tile_cta": "Ambil gratis",
+  "free_card_d": "{n} LUT gratis",
   "free_text": "{n} LUT gratis untuk subscriber @blackmagicamera. Langganan channel-nya, dan bot langsung mengirimkannya.",
   "free_cta": "Ambil Starter",
   "free_credit": "Look Starter adalah karya CC0 dari pembuatnya dan kreditnya ada di dalam paket.",
@@ -84,6 +82,12 @@
     "Ya. Kalau saya menambah look ke paket yang kamu punya, look itu datang gratis."
    ]
   ],
+  "foot_shop": "Toko",
+  "foot_help": "Bantuan",
+  "foot_legal": "Legal",
+  "foot_support": "Dukungan di bot",
+  "foot_collab": "Kerja sama",
+  "foot_tag": "LUT sinematik untuk Blackmagic Camera di iPhone. Warna langsung di frame.",
   "footer_disclaimer": "Tidak berafiliasi dengan Blackmagic Design. Blackmagic Camera adalah merek milik pemiliknya; namanya hanya dipakai untuk menyebut aplikasi yang menjadi tujuan file ini.",
   "terms": "Ketentuan",
   "privacy": "Privasi",

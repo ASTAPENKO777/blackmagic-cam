@@ -51,9 +51,7 @@
   "cmp_log_p": "Une image plate avec plus de marge pour l'étalonnage. À choisir sur iPhone 15 Pro et plus récent quand vous enregistrez en Apple Log.",
   "cmp_more": "Lequel choisir ?",
   "free_title": "Pack Starter gratuit",
-  "free_tile_t": "Starter · {n} LUT",
-  "free_tile_p": "Gratuit pour les abonnés de @blackmagicamera. Le bot vérifie votre abonnement et vous envoie les LUT tout de suite.",
-  "free_tile_cta": "Récupérer gratuitement",
+  "free_card_d": "{n} LUT gratuits",
   "free_text": "{n} LUT gratuits pour les abonnés de @blackmagicamera. Abonnez-vous à la chaîne et le bot vous les envoie tout de suite.",
   "free_cta": "Obtenir le Starter",
   "free_credit": "Les looks du Starter sont des œuvres CC0 de leurs auteurs, créditées dans le pack.",
@@ -84,6 +82,12 @@
     "Oui. Si j'ajoute des looks à un pack que vous possédez, ils vous arrivent gratuitement."
    ]
   ],
+  "foot_shop": "Boutique",
+  "foot_help": "Aide",
+  "foot_legal": "Mentions légales",
+  "foot_support": "Support dans le bot",
+  "foot_collab": "Collaboration",
+  "foot_tag": "LUT cinématographiques pour Blackmagic Camera sur iPhone. La couleur directement dans l'image.",
   "footer_disclaimer": "Non affilié à Blackmagic Design. Blackmagic Camera est une marque de son propriétaire ; le nom sert uniquement à indiquer pour quelle app les fichiers sont faits.",
   "terms": "Conditions",
   "privacy": "Confidentialité",

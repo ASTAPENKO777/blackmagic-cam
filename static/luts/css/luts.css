@@ -174,18 +174,43 @@ html[dir="rtl"] .hero h1 .kicker { font-family: var(--font-rtl); }
 .guide-steps h2::before { content: counter(s) ". "; color: var(--amber); }
 .shot-sm { width: min(100%, 540px); height: auto; border-radius: var(--radius-sm); border: 1px solid var(--line-2); }
 
-.foot { margin-top: 90px; }
-.foot .wrap { border-top: 1px solid var(--line); padding-top: 30px; padding-bottom: calc(34px + env(safe-area-inset-bottom)); }
-.foot-nav { display: flex; flex-wrap: wrap; gap: 6px 22px; margin-bottom: 14px; }
-.foot-nav a { color: var(--muted); text-decoration: none; min-height: 32px; display: inline-flex; align-items: center; }
-.foot-nav a:hover { color: var(--text); }
-.langs a[aria-current] { color: var(--text); font-weight: 600; }
+/* Футер: усе рівно між краями лінії .wrap; величезне ледь видиме слово-логотип унизу, як підпис під кадром. */
+.foot { position: relative; margin-top: 110px; overflow: hidden; background: linear-gradient(180deg, var(--bg) 0%, #0b0d11 100%); }
+.foot-in { padding-bottom: 28px; position: relative; z-index: 1; }
+.foot-top { display: grid; grid-template-columns: 1fr 1fr; gap: 30px 20px; border-top: 1px solid var(--line); padding-top: 48px; }  /* лінія рівно по краях контенту, як нижня */
+@media (min-width: 760px) { .foot-top { grid-template-columns: minmax(0, 1.6fr) repeat(3, minmax(0, 1fr)); gap: 40px; } }
+.foot-brand { grid-column: 1 / -1; }
+.foot-brand .brand { margin: 0; }
+@media (min-width: 760px) { .foot-brand { grid-column: auto; } }
+.foot-tag { margin: 14px 0 18px; max-width: 26em; color: var(--muted); font-size: .9375rem; line-height: 1.5; }
+.foot-social { display: flex; flex-wrap: wrap; gap: 10px; }
+.soc { display: inline-flex; align-items: center; gap: 9px; min-height: 42px; padding: 0 16px 0 12px; border-radius: 999px; border: 1px solid var(--line-2);
+  color: var(--text); text-decoration: none; font: 600 .875rem/1 var(--font); transition: background .2s var(--ease), border-color .2s var(--ease), transform .2s var(--ease); }
+.soc svg { width: 18px; height: 18px; fill: currentColor; }
+.soc-tg svg { fill: #229ED9; }
+.soc:hover { color: var(--text); background: var(--surface-2); border-color: rgba(255, 255, 255, .3); transform: translateY(-1px); }
+.foot-col { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; }
+.foot-col .foot-h { margin: 0 0 8px; font: 600 .75rem/1 var(--font); letter-spacing: .1em; text-transform: uppercase; color: rgba(244, 242, 238, .45); }
+html[dir="rtl"] .foot-col .foot-h { letter-spacing: 0; }
+.foot-col a { color: #c9ccd3; text-decoration: none; font-size: .9375rem; min-height: 34px; display: inline-flex; align-items: center; gap: 4px; transition: color .15s var(--ease); }
+.foot-col a:hover { color: var(--amber); }
+.foot-bottom { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px 24px; margin-top: 44px; padding-top: 20px; border-top: 1px solid var(--line); }
+.foot-bottom p { margin: 0; color: var(--muted); font-size: .875rem; }
+.foot-langs { display: flex; flex-wrap: wrap; gap: 2px; }
+.foot-langs a { display: inline-grid; place-items: center; min-width: 38px; min-height: 32px; padding: 0 8px; border-radius: 8px; color: var(--muted); text-decoration: none; font: 600 .75rem/1 var(--font); letter-spacing: .06em; }
+.foot-langs a:hover { color: var(--text); background: var(--surface-2); }
+.foot-langs a[aria-current] { color: var(--amber); }
+.foot-note { margin: 14px 0 0; color: rgba(164, 169, 180, .7); font-size: .75rem; line-height: 1.5; max-width: 60em; }
+.foot-word { position: relative; z-index: 0; margin: 4px 0 -0.22em; text-align: center; white-space: nowrap; pointer-events: none; user-select: none;
+  font: 800 13.4vw/1 var(--font); letter-spacing: -.06em; color: transparent; -webkit-text-stroke: 1px rgba(255, 255, 255, .07);
+  background: linear-gradient(180deg, rgba(240, 179, 92, .1), transparent 75%); -webkit-background-clip: text; background-clip: text; }
+@media (min-width: 1500px) { .foot-word { font-size: 196px; } }
 
 .sticky { position: fixed; inset-inline: 0; bottom: 0; z-index: 35; padding: 10px var(--gap) calc(10px + env(safe-area-inset-bottom)); display: flex; justify-content: center; background: var(--bg); border-top: 1px solid var(--line); }
 .sticky[hidden] { display: none; }
 .sticky .btn { width: 100%; max-width: 420px; }
 @media (min-width: 760px) { .sticky { display: none; } }
-@media (max-width: 759px) { .foot .wrap { padding-bottom: calc(90px + env(safe-area-inset-bottom)); } }
+@media (max-width: 759px) { .foot { padding-bottom: calc(70px + env(safe-area-inset-bottom)); } }
 
 /* Паки: спокійні ряди. Колаж (велике фото зі слайдером, два менші збоку, решта відео рядом знизу) і текст поруч.
    Ряди чергуються: колаж ліворуч, потім праворуч. Текст закріплений, поки гортаєш колаж. */
@@ -240,18 +265,15 @@ html[dir="rtl"] .hero h1 .kicker { font-family: var(--font-rtl); }
 .single:hover h3 { color: var(--amber); }
 .single-desc { margin: 4px 0 0; color: var(--muted); font-size: .9375rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .single-price { margin: 8px 0 0; font-weight: 700; color: var(--amber); }
-/* FREE: безкоштовний Starter у вільних місцях сітки. Колонки: d1–d3 на десктопі, m1–m2 на телефоні. */
-.free-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 22px; border-radius: var(--radius);
-  background: linear-gradient(180deg, rgba(240, 179, 92, .1), rgba(240, 179, 92, .03)); border: 1px solid rgba(240, 179, 92, .32); }
-.free-tile { grid-column: 1 / -1; }  /* телефон: завжди на всю ширину, у півколонки тісно */
-@media (min-width: 760px) { .free-tile.d1 { grid-column: span 1; } .free-tile.d2 { grid-column: span 2; } .free-tile.d3 { grid-column: 1 / -1; } }
-.ft-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
-.ft-badge { padding: 5px 10px; border-radius: 999px; background: var(--amber); color: var(--on-amber); font: 800 .8125rem/1 var(--font); letter-spacing: .08em; }
-.free-tile h3 { font-size: 1.375rem; letter-spacing: -.02em; }
-.ft-names { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
-.ft-names li { padding: 7px 12px; border-radius: 999px; background: rgba(255, 255, 255, .06); border: 1px solid var(--line); font-size: .875rem; color: #e6e3dd; }
-.ft-text { margin: 0; color: #c9ccd3; font-size: .9375rem; line-height: 1.5; max-width: 34em; }
-.free-tile .btn { margin-top: auto; }
+/* FREE Starter: типографська обкладинка (медіа в Starter немає) з тихим відблиском, що пробігає раз на кілька секунд. */
+.free-cover { display: grid; place-content: center; justify-items: center; gap: 6px; isolation: isolate;
+  background: radial-gradient(120% 140% at 50% 0%, #2a1f0e 0%, #14110b 55%, #0b0c0f 100%); box-shadow: inset 0 0 0 1px rgba(240, 179, 92, .22); }
+.free-cover::after { content: ""; position: absolute; inset: -20% auto -20% -40%; width: 30%; z-index: -1; transform: skewX(-18deg);
+  background: linear-gradient(90deg, transparent, rgba(240, 179, 92, .16), transparent); animation: free-sheen 4.5s var(--ease) infinite; }
+@keyframes free-sheen { 0%, 55% { left: -40%; } 100% { left: 120%; } }
+.fc-word { font: 800 clamp(2.4rem, 6vw, 3.6rem)/1 var(--font); letter-spacing: -.04em; color: var(--amber); }
+.fc-sub { font: 600 .8125rem/1 var(--font); letter-spacing: .08em; text-transform: uppercase; color: rgba(244, 242, 238, .7); }
+.single-free .single-price { letter-spacing: .06em; }
 @media (max-width: 480px) { .pack-code { font-size: .6875rem; padding: 28px 14px 12px; } .pack-code::after { top: 8px; right: 10px; } }
 
 /* Соцдоказ: одна панель із трьома колонками (як статистика профілю в Instagram/Telegram), перед кнопками. */
@@ -306,3 +328,16 @@ html[dir="rtl"] .stats b { font-family: var(--font-rtl); }
   .portrait { margin-top: calc(var(--u) * 120); -webkit-mask-image: linear-gradient(180deg, #000 78%, transparent 100%); mask-image: linear-gradient(180deg, #000 78%, transparent 100%); }
   .hc { display: none; }
   }
+
+/* Рух: поява при скролі (клас ставить s.js лише елементам нижче екрана) і вхід hero. Тільки opacity/transform. */
+.rv { opacity: 0; transform: translateY(18px); transition: opacity .7s var(--ease), transform .7s var(--ease); transition-delay: var(--rv-delay, 0ms); }
+.rv.rv-in { opacity: 1; transform: none; }
+@keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+@keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
+.hero-copy > * , .hero-body > * { animation: rise .8s var(--ease) both; }
+.hero-copy > h1 { animation-delay: .05s; } .hero-body .bio-lead { animation-delay: .15s; } .hero-body .stats { animation-delay: .25s; }
+.hero-body .cta-row { animation-delay: .35s; } .hero-body .story { animation-delay: .45s; }
+.stage { animation: fade-in 1.1s var(--ease) .1s both; }
+.hud-top, .c-hist { animation: fade-in .8s var(--ease) .7s both; }
+.single .cover img, .single .cover video { transition: transform .6s var(--ease); }
+.single:hover .cover img, .single:hover .cover video { transform: scale(1.04); }
