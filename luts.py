@@ -224,7 +224,11 @@ def _route(rule: str):
 def home(lang):
     shop = view_items(get_catalog(), lang)
     return _page("home.html", lang, shop=shop, graph=lambda c: [
-        {"@type": "WebSite", "name": c["T"]["brand"], "url": c["base_url"] + c["u"]()}, faq_ld(c["T"])])
+        {"@type": "WebSite", "name": c["T"]["brand"], "url": c["base_url"] + c["u"]()},
+        {"@type": "Person", "@id": c["base_url"] + "/luts#author", "name": "Mykhailo", "jobTitle": "LUT creator",
+         "url": c["base_url"] + c["u"](), "image": c["base_url"] + "/static/luts/img/bust-768.webp",
+         "sameAs": ["https://t.me/blackmagicamera"]},
+        faq_ld(c["T"])])
 
 
 @_route("/free")

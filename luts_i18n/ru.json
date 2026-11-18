@@ -108,10 +108,12 @@
   "terms_link": "условия",
   "bio_1_n": "Почти два года в Blackmagic Camera. Веду *@blackmagicamera*, где уже больше {n} подписчиков, и снимаю всё на iPhone.",
   "proof_1": "Почти 2 года",
-  "proof_2": "человек используют мои LUT",
+  "proof_2_v": "{n} человек",
+  "proof_2": "проверили мои LUT",
   "proof_3_v": "Свои LUT",
   "proof_3_l": "Проверены на моём видео",
-  "proof_4": "и Rec.709"
+  "proof_4": "и Rec.709",
+  "portrait_alt": "Михаил, автор LUT @blackmagicamera"
  },
  "packs": {
   "apple_log_film": {

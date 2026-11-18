@@ -165,7 +165,8 @@ def test_translated_pages_render_in_their_language_without_dollars(client, lang)
 
     h1 = re.search(r"<h1>(.*?)</h1>", home, flags=re.S).group(1)
     h1 = htmllib.unescape(re.sub(r"</span><span[^>]*>", " ", re.sub(r"^<span[^>]*>|</span>$", "", h1))).replace("\u00a0", " ")
-    assert h1 == luts_text.load(lang)["ui"]["h1"].replace(", ", ", ", 1)
+    ui = luts_text.load(lang)["ui"]
+    assert h1 == ui["kicker"] + " " + ui["h1"]   # SEO: ключова фраза в H1 над привітанням
     assert luts_text.load(lang)["ui"]["cta_all"] in home
 
 
@@ -296,12 +297,13 @@ def test_hero_is_the_blackmagic_camera_screen_with_proof_badges(client):
         assert gone not in hero, gone
     for part in ('class="vfinder"', 'class="hud-top"', "00:00:00:00", "SHUTTER", "Rec.709", "Microphone iPhone", 'class="hc c-hist"'):
         assert part in hero, part
-    assert hero.count("<li>") == 4 and hero.count('class="ck"') == 4 and "Blackmagic Camera" in hero and "Almost 2 years" in hero
-    assert "people use my LUT" in hero and "Own LUTs" in hero and "Checked on my footage" in hero and "and Rec.709" in hero
+    assert hero.count("<li class=") == 3 and hero.count('class="ck"') == 3 and "Blackmagic Camera" in hero and "Almost 2 years" in hero
+    assert 'class="p-ver"' in hero and "people</b>" in hero and "tested my LUTs" in hero and "and Rec.709" in hero   # «Свої LUT» злито з 6 000+ у верифіковану картку
+    assert "Own LUTs" not in hero and 'class="dim"' not in hero
     assert re.search(r"\d[\d\u00a0]*000\+", hero)   # «6 000+», округлення вниз до тисячі
     assert 'style="' not in hero  # CSP: жодних inline-стилів
     for lang, word in (("uk", "LUT"), ("ru", "LUT"), ("es", "LUT"), ("ar", "LUT"), ("fa", "LUT")):  # слово LUT завжди латиницею
         page = client.get(f"/{lang}/luts").data.decode()
         assert word in page[page.index('class="proof"'):page.index("</ul>", page.index('class="proof"'))]
     uk = client.get("/uk/luts").data.decode()
-    assert "Майже 2 роки" in uk and "Свої LUT" in uk and "користуються моїми LUT" in uk
+    assert "Майже 2 роки" in uk and "перевірили мої LUT" in uk

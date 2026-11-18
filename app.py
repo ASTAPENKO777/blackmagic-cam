@@ -556,6 +556,9 @@ def guide(slug, lang="en"):
 _APP_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
+_SANE_MTIME = datetime(2024, 1, 1, tzinfo=timezone.utc).timestamp()
+
+
 def _lastmod(*relpaths) -> str:
     """Newest mtime of the files backing a page, as YYYY-MM-DD.
 
@@ -568,8 +571,10 @@ def _lastmod(*relpaths) -> str:
             newest = max(newest, os.path.getmtime(os.path.join(_APP_DIR, rel)))
         except OSError:
             continue
-    if not newest:
-        return datetime.now(timezone.utc).strftime("%Y-%m-%d")
+    if newest < _SANE_MTIME:
+        # Vercel ships files with a fixed fake mtime (2018-10-20): a wrong lastmod
+        # is worse than none, so the sitemap simply omits it there.
+        return ""
     return datetime.fromtimestamp(newest, timezone.utc).strftime("%Y-%m-%d")
 
 
@@ -619,7 +624,8 @@ def sitemap():
                 f'    <xhtml:link rel="alternate" hreflang="x-default" '
                 f'href="{BASE_URL + base}" />'
             )
-            lines.append(f"    <lastmod>{lastmod}</lastmod>")
+            if lastmod:
+                lines.append(f"    <lastmod>{lastmod}</lastmod>")
             lines.append(f"    <changefreq>{changefreq}</changefreq>")
             lines.append(f"    <priority>{priority}</priority>")
             lines.append("  </url>")
@@ -630,7 +636,8 @@ def sitemap():
     for device in DEVICES:
         lines.append("  <url>")
         lines.append(f"    <loc>{BASE_URL}/guide/{device['slug']}</loc>")
-        lines.append(f"    <lastmod>{guide_lastmod}</lastmod>")
+        if guide_lastmod:
+            lines.append(f"    <lastmod>{guide_lastmod}</lastmod>")
         lines.append("    <changefreq>monthly</changefreq>")
         lines.append("    <priority>0.8</priority>")
         lines.append("  </url>")
@@ -639,23 +646,26 @@ def sitemap():
     learn_lastmod = _lastmod("learn.py", "templates/learn_article.html")
     lines.append("  <url>")
     lines.append(f"    <loc>{BASE_URL}/learn</loc>")
-    lines.append(f"    <lastmod>{learn_lastmod}</lastmod>")
+    if learn_lastmod:
+        lines.append(f"    <lastmod>{learn_lastmod}</lastmod>")
     lines.append("    <changefreq>weekly</changefreq>")
     lines.append("    <priority>0.7</priority>")
     lines.append("  </url>")
     for article in indexable_learn_articles():
         lines.append("  <url>")
         lines.append(f"    <loc>{BASE_URL}/learn/{article['slug']}</loc>")
-        lines.append(f"    <lastmod>{article.get('updated', learn_lastmod)}</lastmod>")
+        if article.get('updated', learn_lastmod):
+            lines.append(f"    <lastmod>{article.get('updated', learn_lastmod)}</lastmod>")
         lines.append("    <changefreq>monthly</changefreq>")
         lines.append("    <priority>0.7</priority>")
         lines.append("  </url>")
 
     # /luts shop: every language that has a luts_i18n/<lang>.json (see luts_text.translated).
     luts_lastmod = _lastmod("luts.py", "luts_text.py", "luts_content.py", "templates/luts/home.html")
+    lm = f"\n    <lastmod>{luts_lastmod}</lastmod>" if luts_lastmod else ""
     for loc, priority, alternates in luts_sitemap_entries(BASE_URL):
         alts = "".join(f'\n    <xhtml:link rel="alternate" hreflang="{code}" href="{href}" />' for code, href in alternates)
-        lines.append(f"  <url>\n    <loc>{loc}</loc>{alts}\n    <lastmod>{luts_lastmod}</lastmod>\n    <changefreq>weekly</changefreq>\n"
+        lines.append(f"  <url>\n    <loc>{loc}</loc>{alts}{lm}\n    <changefreq>weekly</changefreq>\n"
                      f"    <priority>{priority}</priority>\n  </url>")
 
     lines.append("</urlset>")
