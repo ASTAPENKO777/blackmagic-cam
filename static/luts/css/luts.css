@@ -266,6 +266,7 @@ html[dir="rtl"] .stats b { font-family: var(--font-rtl); }
 .vfinder { position: relative; }
 .portrait { position: relative; display: block; margin: 0; -webkit-mask-image: linear-gradient(180deg, #000 90%, transparent 100%); mask-image: linear-gradient(180deg, #000 90%, transparent 100%); }
 .portrait img { display: block; width: 100%; height: auto; }
+@media (min-width: 1000px) { .vfinder { padding-top: calc(var(--u) * 56); } }  /* повітря між таймкодом і маківкою */
 .gl { position: absolute; background: rgba(255, 255, 255, .1); }
 .gl.h1, .gl.h2 { -webkit-mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); mask-image: linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent); }
 .gl.v1, .gl.v2 { -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%, #000 70%, transparent); mask-image: linear-gradient(180deg, transparent, #000 14%, #000 70%, transparent); }
@@ -276,18 +277,11 @@ html[dir="rtl"] .stats b { font-family: var(--font-rtl); }
 .b-fmt { display: grid; width: calc(var(--u) * 76); border-radius: calc(var(--u) * 10); overflow: hidden; border: calc(var(--u) * 2.5) solid #fff; text-align: center; line-height: 1; }
 .b-fmt b { background: #fff; color: #000; font: 800 calc(var(--u) * 30)/1 var(--font); padding: calc(var(--u) * 7) 0 calc(var(--u) * 5); }
 .b-fmt i { background: #0a0c10; color: #fff; font: 600 calc(var(--u) * 21)/1 var(--font); font-style: normal; padding: calc(var(--u) * 6) 0; }
-.tc { font: 600 calc(var(--u) * 50)/1 var(--font); letter-spacing: -.01em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tc { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font: 600 calc(var(--u) * 38)/1 var(--font); letter-spacing: -.01em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .hc { position: absolute; top: calc(var(--u) * 1330); width: calc(var(--u) * 420); height: calc(var(--u) * 205); border-radius: calc(var(--u) * 20); background: rgba(8, 13, 23, .78); }
 .hc i { font-style: normal; font: 500 calc(var(--u) * 24)/1 var(--font); }
 .hc em { font-style: normal; }
 .c-hist { left: calc(var(--u) * 12); }
-/* Базова експозиція, як у застосунку: ISO, кадри, витримка. Справа знизу, щоб не лягало на обличчя. */
-.c-exp { right: calc(var(--u) * 12); display: grid; grid-template-columns: repeat(3, 1fr); align-items: center; padding: 0 calc(var(--u) * 16); }
-.c-exp span { display: grid; gap: calc(var(--u) * 12); justify-items: center; }
-.c-exp i { font: 500 calc(var(--u) * 24)/1 var(--font); color: rgba(255, 255, 255, .7); letter-spacing: .02em; }
-.c-exp b { font: 600 calc(var(--u) * 44)/1 var(--font); font-variant-numeric: tabular-nums; }
-.rec { width: calc(var(--u) * 24); height: calc(var(--u) * 24); border-radius: 50%; background: var(--rec); flex: none; margin-inline-end: calc(var(--u) * -10); animation: rec-blink 1.6s steps(1, end) infinite; }
-@keyframes rec-blink { 50% { opacity: .25; } }
 .c-hist i { position: absolute; left: calc(var(--u) * 24); top: calc(var(--u) * 16); font-size: calc(var(--u) * 28); }
 .c-hist svg { position: absolute; left: calc(var(--u) * 24); right: calc(var(--u) * 24); bottom: calc(var(--u) * 18); width: calc(var(--u) * 372); height: calc(var(--u) * 124); overflow: visible; }
 .c-hist .ch { mix-blend-mode: screen; fill-opacity: .5; }

@@ -22,6 +22,21 @@
   };
   send("view", slug);
 
+  // Таймкод у кадрі hero: рахує від входу на сторінку, як запис у Blackmagic Camera (24 кадри/с).
+  const tc = document.querySelector("[data-tc]");
+  if (tc) {
+    const t0 = performance.now(), pad = (n) => String(n).padStart(2, "0");
+    const still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    let last = "";
+    const tick = (now) => {
+      const ms = now - t0, s = Math.floor(ms / 1000);
+      const v = `${pad(Math.floor(s / 3600))}:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}:${still ? "00" : pad(Math.floor((ms % 1000) * 24 / 1000))}`;
+      if (v !== last) { tc.textContent = v; last = v; }
+      if (still) setTimeout(() => tick(performance.now()), 1000 - (ms % 1000)); else requestAnimationFrame(tick);
+    };
+    tick(t0);
+  }
+
   // Кнопки в Telegram: t.me/<bot>?start=web_<src>__<slug>, не довше 64 символів (інакше без slug).
   document.querySelectorAll("a[data-tg]").forEach((a) => {
     const s = a.dataset.slug;
