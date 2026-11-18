@@ -56,38 +56,41 @@
     }
   }
 
-  // Живі сповіщення: справжні покупки й отримання Starter з бота. Перше через 7 с, далі раз на ~18 с, максимум 4 за сторінку.
-  // Хрестик вимикає їх до кінця сесії. Подій нема — нічого не показуємо.
+  // Живі сповіщення: лише справжні події бота (покупки за Stars і отримання Starter), без імен.
+  // Картка тримається ~9 с, під нею повільно спливає шкала часу (під курсором пауза), потім м'яко змінюється наступною.
+  // Кожна третя — покупка, якщо вони є. Хрестик вимикає сповіщення до кінця сесії.
   const live = document.getElementById("live");
   if (live && EVENT && !sessionStorage.getItem("bmc_live_off")) {
-    const d = live.dataset, titles = JSON.parse(d.titles || "{}");
+    const d = live.dataset, titles = JSON.parse(d.titles || "{}"), HOLD = 9000, GAP = 900;
     const rtf = window.Intl && Intl.RelativeTimeFormat ? new Intl.RelativeTimeFormat(d.lang, { numeric: "auto" }) : null;
     const ago = (at) => {
-      const s = Math.max(1, Date.now() / 1000 - at);
+      const sec = Math.max(60, Date.now() / 1000 - at);
       if (!rtf) return "";
-      if (s < 3600) return rtf.format(-Math.max(1, Math.round(s / 60)), "minute");
-      if (s < 86400) return rtf.format(-Math.round(s / 3600), "hour");
-      return rtf.format(-Math.round(s / 86400), "day");
+      if (sec < 3600) return rtf.format(-Math.round(sec / 60), "minute");
+      if (sec < 86400) return rtf.format(-Math.round(sec / 3600), "hour");
+      return rtf.format(-Math.round(sec / 86400), "day");
     };
     fetch(EVENT.replace(/\/public\/event$/, "/public/activity.json"), { mode: "cors" })
       .then((r) => (r.ok ? r.json() : { events: [] }))
       .then(({ events }) => {
-        const list = (events || []).filter((e) => e.kind === "free" || titles[e.slug]);
-        if (!list.length) return;
-        let i = 0, shown = 0, timer;
-        const card = document.createElement("a");
-        card.className = "live-card";
-        const close = document.createElement("button");
+        const ok = (events || []).filter((e) => e.kind === "free" || titles[e.slug]);
+        if (!ok.length) return;
+        const buys = ok.filter((e) => e.kind === "buy"), frees = ok.filter((e) => e.kind === "free");
+        let n = 0, bi = 0, fi = 0, timer = 0, left = HOLD, started = 0, stopped = false;
+        const pick = () => {
+          const wantBuy = buys.length && (!frees.length || n % 3 === 2);
+          n++;
+          return wantBuy ? buys[bi++ % buys.length] : frees[fi++ % frees.length];
+        };
+        const card = document.createElement("a"), close = document.createElement("button"), bar = document.createElement("i");
+        card.className = "live-card"; bar.className = "live-bar";
         close.type = "button"; close.className = "live-x"; close.setAttribute("aria-label", d.close); close.textContent = "\u00d7";
         live.append(card, close);
         live.hidden = false;
-        const hide = () => live.classList.remove("on");
-        close.addEventListener("click", () => { hide(); clearTimeout(timer); try { sessionStorage.setItem("bmc_live_off", "1"); } catch (e) {} });
-        const next = () => {
-          if (shown >= 4) return;
-          const e = list[i++ % list.length], buy = e.kind === "buy";
+        const render = (e) => {
+          const buy = e.kind === "buy";
           card.href = buy ? `${d.root}/${e.slug}` : d.freeHref;
-          card.innerHTML = "";
+          card.replaceChildren();
           const badge = document.createElement("span");
           badge.className = buy ? "live-ic live-buy" : "live-ic live-free";
           if (buy) badge.innerHTML = '<svg viewBox="0 0 88 84" aria-hidden="true"><use href="#tg-star-gold"/></svg>'; else badge.textContent = "FREE";
@@ -96,11 +99,29 @@
           const b = document.createElement("b"); b.textContent = buy ? titles[e.slug] : d.freeTitle;
           const small = document.createElement("small"); small.textContent = `${buy ? d.buy : d.free} · ${ago(e.at)}`;
           text.append(b, small);
-          card.append(badge, text);
-          live.classList.add("on"); shown++;
-          timer = setTimeout(() => { hide(); timer = setTimeout(next, 13000); }, 5200);
+          card.append(badge, text, bar);
         };
-        timer = setTimeout(next, 7000);
+        const run = (ms) => {   // шкала: тривалість = скільки лишилося показу
+          started = performance.now(); left = ms;
+          bar.style.transition = "none"; bar.style.transform = `scaleX(${ms / HOLD})`;
+          void bar.offsetWidth;
+          bar.style.transition = `transform ${ms}ms linear`; bar.style.transform = "scaleX(0)";
+          timer = setTimeout(swap, ms);
+        };
+        const show = () => { if (stopped) return; render(pick()); live.classList.add("on"); run(HOLD); };
+        const swap = () => { live.classList.remove("on"); timer = setTimeout(show, GAP); };
+        live.addEventListener("mouseenter", () => {   // пауза під курсором: встигнути прочитати
+          if (!live.classList.contains("on")) return;
+          clearTimeout(timer);
+          left = Math.max(800, left - (performance.now() - started));
+          bar.style.transition = "none"; bar.style.transform = `scaleX(${left / HOLD})`;
+        });
+        live.addEventListener("mouseleave", () => { if (live.classList.contains("on") && !stopped) run(left); });
+        close.addEventListener("click", () => {
+          stopped = true; clearTimeout(timer); live.classList.remove("on");
+          try { sessionStorage.setItem("bmc_live_off", "1"); } catch (e) {}
+        });
+        timer = setTimeout(show, 4000);
       })
       .catch(() => {});
   }

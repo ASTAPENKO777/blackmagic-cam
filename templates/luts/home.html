@@ -58,10 +58,10 @@
 <div class="band">
   {#- Бігуча стрічка: переваги й назви LUT з каталогу. Друга копія лише для безшовного циклу, тому прихована від читачів екрана. #}
   {%- set mq = [T.strip_1, T.strip_2, T.strip_3, T.strip_4] + (shop.packs | map(attribute='title') | list) + (shop.singles | map(attribute='title') | list) %}
-  <div class="marquee" dir="ltr">
+  <div class="wrap"><div class="marquee" dir="ltr">
     <ul class="mq-track">{% for t in mq %}<li>{{ t }}</li>{% endfor %}</ul>
     <ul class="mq-track" aria-hidden="true">{% for t in mq %}<li>{{ t }}</li>{% endfor %}</ul>
-  </div>
+  </div></div>
 </div>
 
 <section class="wrap sec" id="catalog">
