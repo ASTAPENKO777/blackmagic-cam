@@ -56,6 +56,12 @@
   "free_text": "{n} LUTs gratis para los suscriptores de @blackmagicamera. Suscríbete al canal y el bot te los envía al momento.",
   "free_cta": "Conseguir Starter",
   "free_credit": "Los looks del Starter son obras CC0 de sus autores y llevan sus créditos en el pack.",
+  "posts_title": "Lo último del canal",
+  "posts_sub": "Ya somos más de {n} en @blackmagicamera",
+  "posts_cta": "Suscribirse",
+  "live_buy": "comprado en el bot",
+  "live_free": "reclamado en el bot",
+  "live_close": "Cerrar",
   "faq_title": "Preguntas",
   "faq": [
    [

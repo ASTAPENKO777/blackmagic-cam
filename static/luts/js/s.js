@@ -56,6 +56,55 @@
     }
   }
 
+  // Живі сповіщення: справжні покупки й отримання Starter з бота. Перше через 7 с, далі раз на ~18 с, максимум 4 за сторінку.
+  // Хрестик вимикає їх до кінця сесії. Подій нема — нічого не показуємо.
+  const live = document.getElementById("live");
+  if (live && EVENT && !sessionStorage.getItem("bmc_live_off")) {
+    const d = live.dataset, titles = JSON.parse(d.titles || "{}");
+    const rtf = window.Intl && Intl.RelativeTimeFormat ? new Intl.RelativeTimeFormat(d.lang, { numeric: "auto" }) : null;
+    const ago = (at) => {
+      const s = Math.max(1, Date.now() / 1000 - at);
+      if (!rtf) return "";
+      if (s < 3600) return rtf.format(-Math.max(1, Math.round(s / 60)), "minute");
+      if (s < 86400) return rtf.format(-Math.round(s / 3600), "hour");
+      return rtf.format(-Math.round(s / 86400), "day");
+    };
+    fetch(EVENT.replace(/\/public\/event$/, "/public/activity.json"), { mode: "cors" })
+      .then((r) => (r.ok ? r.json() : { events: [] }))
+      .then(({ events }) => {
+        const list = (events || []).filter((e) => e.kind === "free" || titles[e.slug]);
+        if (!list.length) return;
+        let i = 0, shown = 0, timer;
+        const card = document.createElement("a");
+        card.className = "live-card";
+        const close = document.createElement("button");
+        close.type = "button"; close.className = "live-x"; close.setAttribute("aria-label", d.close); close.textContent = "\u00d7";
+        live.append(card, close);
+        live.hidden = false;
+        const hide = () => live.classList.remove("on");
+        close.addEventListener("click", () => { hide(); clearTimeout(timer); try { sessionStorage.setItem("bmc_live_off", "1"); } catch (e) {} });
+        const next = () => {
+          if (shown >= 4) return;
+          const e = list[i++ % list.length], buy = e.kind === "buy";
+          card.href = buy ? `${d.root}/${e.slug}` : d.freeHref;
+          card.innerHTML = "";
+          const badge = document.createElement("span");
+          badge.className = buy ? "live-ic live-buy" : "live-ic live-free";
+          if (buy) badge.innerHTML = '<svg viewBox="0 0 88 84" aria-hidden="true"><use href="#tg-star-gold"/></svg>'; else badge.textContent = "FREE";
+          const text = document.createElement("span");
+          text.className = "live-text";
+          const b = document.createElement("b"); b.textContent = buy ? titles[e.slug] : d.freeTitle;
+          const small = document.createElement("small"); small.textContent = `${buy ? d.buy : d.free} · ${ago(e.at)}`;
+          text.append(b, small);
+          card.append(badge, text);
+          live.classList.add("on"); shown++;
+          timer = setTimeout(() => { hide(); timer = setTimeout(next, 13000); }, 5200);
+        };
+        timer = setTimeout(next, 7000);
+      })
+      .catch(() => {});
+  }
+
   // Таймкод у кадрі hero: рахує від входу на сторінку, як запис у Blackmagic Camera (24 кадри/с).
   const tc = document.querySelector("[data-tc]");
   if (tc) {

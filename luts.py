@@ -2,6 +2,7 @@
 
 Поки оплата карткою не підключена (CARD_ENABLED = False), єдина дія на сторінці — перейти в Telegram-бота.
 """
+import html
 import json
 import os
 import re
@@ -48,6 +49,49 @@ def get_catalog() -> dict:
     if not _cache["data"]:
         _cache.update(data=_seed(), etag=None, at=now - CACHE_SECONDS + 10)  # знімок: пробуємо бота знову за 10 с
     return _cache["data"]
+
+
+CHANNEL_FEED = "https://t.me/s/blackmagicamera"
+POSTS_TTL, POSTS_RETRY = 1800, 600
+_posts: dict = {"at": -POSTS_TTL, "data": []}
+
+
+def parse_posts(page: str, limit: int = 3) -> list[dict]:
+    """Останні пости каналу з фото чи відео (публічна сторінка t.me/s). Текстові пропускаємо:
+    сайт показує кадри, а не оголошення."""
+    found = []
+    for block in reversed(page.split('<div class="tgme_widget_message_wrap')[1:]):
+        post = re.search(r'data-post="(\w+/\d+)"', block)
+        media = re.search(r"tgme_widget_message_(photo_wrap|video_thumb)[^>]*background-image:url\('(https://[^']+)'\)", block)
+        if not post or not media:
+            continue
+        body = re.search(r'<div class="tgme_widget_message_text[^>]*>(.*?)</div>', block, re.S)
+        text = html.unescape(re.sub(r"<[^>]+>", " ", body.group(1))) if body else ""
+        text = re.sub(r"\s+", " ", re.sub(r"https?://\S+", "", text)).strip()
+        when = re.search(r'<time datetime="(\d{4})-(\d{2})-(\d{2})', block)
+        views = re.search(r'tgme_widget_message_views">([^<]+)<', block)
+        found.append({"url": f"https://t.me/{post.group(1)}", "img": media.group(2), "video": media.group(1) == "video_thumb",
+                      "text": text[:150], "date": f"{when.group(3)}.{when.group(2)}.{when.group(1)}" if when else "",
+                      "views": views.group(1).strip() if views else ""})
+        if len(found) >= limit:
+            break
+    return found
+
+
+def channel_posts() -> list[dict]:
+    """Кеш на 30 хв; Telegram недоступний — блок просто не показується, спроба знову за 10 хв."""
+    now = time.time()
+    if now - _posts["at"] < POSTS_TTL:
+        return _posts["data"]
+    try:
+        resp = requests.get(CHANNEL_FEED, timeout=2.5, headers={"User-Agent": "Mozilla/5.0"})
+        data = parse_posts(resp.text) if resp.status_code == 200 else []
+    except requests.RequestException:
+        data = []
+    if data or not _posts["data"]:
+        _posts["data"] = data
+    _posts["at"] = now if data else now - POSTS_TTL + POSTS_RETRY
+    return _posts["data"]
 
 
 def site_media(items: list[dict]) -> list[dict]:
@@ -179,7 +223,8 @@ def _base_ctx(lang: str, **extra) -> dict:
     return {
         "lang": lang, "dir": "rtl" if lang in RTL else "ltr", "T": text(lang), "u": u, "bot": catalog["bot"],
         "starter": catalog.get("starter"), "members": members_label(catalog.get("channel_members")), "users": users_label(catalog.get("channel_members")), "card_enabled": CARD_ENABLED, "event_url": EVENT_URL,
-        "translated": lang in done, "year": time.gmtime().tm_year, "alternates": done, "sub": sub,
+        "translated": lang in done, "year": time.gmtime().tm_year,
+        "live_titles": {i["slug"]: _field(i, lang, "title", i["slug"].replace("_", " ").title()) for i in catalog["items"]}, "alternates": done, "sub": sub,
         "switch": [(c, NAMES[c], u(sub, c)) for c in done],
         "base_url": base, "path": path, "pair_url": lambda name, kind, w, ext: f"/static/luts/img/pairs/{name}-{kind}-{w}.{ext}",
         **extra,
@@ -223,7 +268,7 @@ def _route(rule: str):
 @_route("")
 def home(lang):
     shop = view_items(get_catalog(), lang)
-    return _page("home.html", lang, shop=shop, graph=lambda c: [
+    return _page("home.html", lang, shop=shop, posts=channel_posts(), graph=lambda c: [
         {"@type": "WebSite", "name": c["T"]["brand"], "url": c["base_url"] + c["u"]()},
         {"@type": "Person", "@id": c["base_url"] + "/luts#author", "name": "Mykhailo", "jobTitle": "LUT creator",
          "url": c["base_url"] + c["u"](), "image": c["base_url"] + "/static/luts/img/bust-768.webp",

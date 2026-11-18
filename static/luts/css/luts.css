@@ -223,11 +223,11 @@ html[dir="rtl"] .foot-col .foot-h { letter-spacing: 0; }
 /* Паки: спокійні ряди. Колаж (велике фото зі слайдером, два менші збоку, решта відео рядом знизу) і текст поруч.
    Ряди чергуються: колаж ліворуч, потім праворуч. Текст закріплений, поки гортаєш колаж. */
 .packs-wrap { max-width: none; }  /* рамка по ширині контенту, рівно з лінією під героєм */
-.packs-panel { background: #17130e; border: 1px solid rgba(240, 179, 92, .12); border-radius: 0; padding: 4px 18px; }
-@media (min-width: 820px) { .packs-panel { padding: 16px clamp(48px, 9.5vw, 132px); border-radius: 0; } }
+.packs-panel { display: grid; gap: 22px; }
+
 @media (min-width: 1240px) { .packs-wrap { margin-inline: calc(var(--gap) * -1); } }  /* краї рамки рівно з лінією під героєм */
-.pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 36px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
-.pack-row:first-of-type { border-top: 0; }
+.pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 18px 18px 28px; background: linear-gradient(180deg, var(--surface) 0%, #0c0e12 100%); border: 1px solid var(--line); }
+
 /* Колаж по висоті дорівнює тексту: велике фото й відео збоку займають весь простір між верхньою і нижньою лінією. */
 .collage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; align-content: start; }
 .collage-big { position: relative; aspect-ratio: 4 / 5; min-width: 0; border-radius: 0; overflow: hidden; background: #05060a; }
@@ -243,13 +243,23 @@ html[dir="rtl"] .foot-col .foot-h { letter-spacing: 0; }
 .collage-tiles.n3 .collage-tile:last-child { aspect-ratio: 800 / 330; }
 .collage-tile video, .collage-tile img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: left center; }
 
-.pack-text h3 { font-size: clamp(1.75rem, 4.4vw, 2.25rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
+.pack-text { display: flex; flex-direction: column; justify-content: center; }
+.pack-idx { margin: 0 0 14px; font: 600 .8125rem/1 var(--mono); letter-spacing: .08em; color: var(--amber); }
+.pack-idx i { font-style: normal; color: rgba(244, 242, 238, .35); }
+.pack-text h3 { font-size: clamp(2rem, 4.6vw, 3.25rem); font-weight: 760; letter-spacing: -.04em; line-height: 1.02; }
 .pack-desc { margin: 12px 0 0; max-width: 30em; color: #d9d6d0; font-size: 1rem; line-height: 1.5; }
-.pack-count { margin: 18px 0 8px; font-weight: 700; font-size: 1.0625rem; }
+.pack-count { margin: 20px 0 10px; color: var(--muted); font: 600 .8125rem/1.3 var(--font); letter-spacing: .06em; text-transform: uppercase; }
+html[dir="rtl"] .pack-count { letter-spacing: 0; }
+.pack-chips { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; max-width: 34rem; }
+.pack-chips li { padding: 7px 12px; border: 1px solid var(--line-2); border-radius: 999px; font-size: .875rem; color: #e6e3dd; background: rgba(255, 255, 255, .03); }
+.pack-buy { margin-top: 26px; padding-top: 22px; border-top: 1px solid var(--line); }
+.pack-tags { list-style: none; margin: 10px 0 18px; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.pack-tags li { padding: 6px 10px; border-radius: 8px; background: var(--surface-2); color: #d9d6d0; font-size: .8125rem; font-weight: 600; }
+.pack-tags .tag-save { background: rgba(61, 220, 132, .14); color: #6ee7a3; }
 .pack-code { position: relative; display: block; width: fit-content; max-width: 100%; margin: 6px 0 16px; padding: 30px 18px 14px; background: rgba(255, 255, 255, .06);
   border-left: 3px solid #5a9bf0; border-radius: 4px 10px 10px 4px; color: #eef2f7; font: .875rem/1.55 var(--mono); white-space: pre; overflow-x: auto; }
 .pack-code::after { content: "</>"; position: absolute; top: 9px; right: 14px; color: #5a9bf0; font: 700 .75rem/1 var(--mono); }
-.pack-price { margin: 0; font-size: 1.375rem; letter-spacing: -.02em; }
+.pack-price { margin: 0; font-size: clamp(2rem, 4vw, 2.5rem); font-weight: 760; letter-spacing: -.03em; line-height: 1; }
 .pack-line { margin: 4px 0 0; font-size: 1rem; line-height: 1.45; }
 .pack-line b { font-weight: 700; }
 .btn-compact { margin-top: 20px; min-height: 46px; padding: 0 22px; }
@@ -258,8 +268,9 @@ html[dir="rtl"] .foot-col .foot-h { letter-spacing: 0; }
 .star-fx { width: 1.05em; height: 1.05em; display: inline-block; vertical-align: -.14em; margin-inline-start: .08em; }
 .defs { position: absolute; width: 0; height: 0; overflow: hidden; }
 @media (min-width: 820px) {
-  .pack-row { grid-template-columns: minmax(0, 430px) minmax(0, 1fr); gap: 56px; padding: 52px 0; align-items: stretch; }
-  .pack-row.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 430px); }
+  .pack-row { grid-template-columns: minmax(0, 460px) minmax(0, 1fr); gap: clamp(36px, 5vw, 72px); padding: 28px clamp(28px, 4vw, 56px) 28px 28px; align-items: stretch; }
+  .pack-row.flip { padding: 28px 28px 28px clamp(28px, 4vw, 56px); }
+  .pack-row.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 460px); }
   .pack-row.flip .collage { order: 2; }
   .pack-row > .collage { align-self: center; }
 }
@@ -342,11 +353,76 @@ html[dir="rtl"] .stats b { font-family: var(--font-rtl); }
 .rv.rv-in { opacity: 1; transform: none; }
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
 @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
-.hero-copy > * , .hero-body > * { animation: rise .8s var(--ease) both; }
-.hero-copy > h1 { animation-delay: .05s; } .hero-body .bio-lead { animation-delay: .15s; } .hero-body .stats { animation-delay: .25s; }
-.hero-body .cta-row { animation-delay: .35s; } .hero-body .story { animation-delay: .45s; }
-.stage { animation: fade-in 1.1s var(--ease) .1s both; }
-.hud-top, .c-hist { animation: fade-in .8s var(--ease) .7s both; }
+.hero-copy > * , .hero-body > * { animation: rise .8s var(--ease) both; animation-delay: var(--intro, 0s); }
+.hero-copy > h1 { animation-delay: calc(var(--intro, 0s) + .05s); } .hero-body .bio-lead { animation-delay: calc(var(--intro, 0s) + .15s); } .hero-body .stats { animation-delay: calc(var(--intro, 0s) + .25s); }
+.hero-body .cta-row { animation-delay: calc(var(--intro, 0s) + .35s); } .hero-body .story { animation-delay: calc(var(--intro, 0s) + .45s); }
+.stage { animation: fade-in 1.1s var(--ease) calc(var(--intro, 0s) + .1s) both; }
+.hud-top, .c-hist { animation: fade-in .8s var(--ease) calc(var(--intro, 0s) + .7s) both; }
+
+/* Заставка (лише головна, раз за сесію; вмикає js/intro.js класом intro-on): REC і таймкод, смужка запису,
+   потім кадр «відкривається» шторками вгору й униз. Без JS і при «зменшити рух» її немає. */
+.intro { display: none; }
+html.intro-on { --intro: .8s; }
+html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 100; pointer-events: none; animation: intro-gone 0s linear 1.6s forwards; }
+.intro-half { position: absolute; left: 0; right: 0; height: 50.5%; background: var(--bg); }
+.intro-half.ih-top { top: 0; animation: intro-up .6s cubic-bezier(.7, 0, .2, 1) .95s forwards; }
+.intro-half.ih-bot { bottom: 0; animation: intro-down .6s cubic-bezier(.7, 0, .2, 1) .95s forwards; }
+.intro-core { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 16px; animation: intro-core .9s var(--ease) both; }
+.intro-rec { display: flex; align-items: center; gap: 12px; font: 600 1.375rem/1 var(--font); font-variant-numeric: tabular-nums; letter-spacing: .02em; color: var(--text); }
+.intro-rec .rec { width: 12px; height: 12px; }
+.intro-bar { width: 180px; height: 2px; background: rgba(255, 255, 255, .1); overflow: hidden; }
+.intro-bar i { display: block; height: 100%; background: var(--amber); transform-origin: left; animation: intro-fill .85s cubic-bezier(.4, 0, .2, 1) .05s both; }
+.intro-name { font: 600 .75rem/1 var(--font); letter-spacing: .32em; text-transform: uppercase; color: rgba(244, 242, 238, .55); }
+@keyframes intro-fill { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+@keyframes intro-core { 0% { opacity: 0; transform: scale(.97); } 18%, 80% { opacity: 1; transform: none; } 100% { opacity: 0; transform: scale(1.02); } }
+@keyframes intro-up { to { transform: translateY(-100%); } }
+@keyframes intro-down { to { transform: translateY(100%); } }
+@keyframes intro-gone { to { visibility: hidden; } }
 .single .cover img, .single .cover video { transition: transform .6s var(--ease); }
 .single:hover .cover img, .single:hover .cover video { transform: scale(1.04); }
 .btn-tg svg { width: 20px; height: 20px; flex: none; }
+
+/* Свіже з каналу: три останні пости з кадрами, клік веде в пост. На телефоні гортаються вбік. */
+.sec-row { display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 16px 24px; }
+.posts { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(78%, 1fr); gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding-bottom: 6px; scrollbar-width: none; }
+.posts::-webkit-scrollbar { display: none; }
+@media (min-width: 760px) { .posts { grid-auto-flow: row; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 24px; overflow: visible; } }
+.post { scroll-snap-align: start; display: flex; flex-direction: column; color: var(--text); text-decoration: none; background: var(--surface); border: 1px solid var(--line); transition: border-color .25s var(--ease), transform .25s var(--ease); }
+.post:hover { color: var(--text); border-color: rgba(240, 179, 92, .45); transform: translateY(-3px); }
+.post-media { position: relative; aspect-ratio: 4 / 5; overflow: hidden; background: #05060a; }
+.post-media img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; transition: transform .7s var(--ease); }
+.post:hover .post-media img { transform: scale(1.04); }
+.post-play { position: absolute; left: 50%; top: 50%; width: 56px; height: 56px; margin: -28px 0 0 -28px; display: grid; place-items: center; border-radius: 50%; background: rgba(8, 9, 12, .55); border: 1px solid rgba(255, 255, 255, .35); color: #fff; }
+.post-play svg { width: 20px; height: 20px; margin-left: 3px; }
+.post-text { margin: 14px 16px 0; font-size: .9375rem; line-height: 1.45; color: #e6e3dd; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.post-meta { margin: auto 0 0; padding: 12px 16px 14px; display: flex; justify-content: space-between; align-items: center; color: var(--muted); font-size: .8125rem; }
+.post-views { display: inline-flex; align-items: center; gap: 6px; }
+.post-views svg { width: 15px; height: 15px; }
+
+/* Живі сповіщення: маленька картка зліва знизу, випливає й ховається. На телефоні над прилиплою кнопкою. */
+.live { position: fixed; z-index: 45; left: 16px; bottom: calc(86px + env(safe-area-inset-bottom)); display: flex; align-items: flex-start; gap: 0;
+  opacity: 0; transform: translateY(14px) scale(.98); pointer-events: none; transition: opacity .45s var(--ease), transform .45s var(--ease); }
+html[dir="rtl"] .live { left: auto; right: 16px; }
+@media (min-width: 760px) { .live { left: 24px; bottom: 24px; } html[dir="rtl"] .live { right: 24px; } }
+.live.on { opacity: 1; transform: none; pointer-events: auto; }
+.live[hidden] { display: none; }
+.live-card { display: flex; align-items: center; gap: 12px; min-width: 240px; max-width: min(340px, calc(100vw - 72px)); padding: 12px 16px 12px 12px; text-decoration: none; color: var(--text);
+  background: rgba(16, 18, 24, .96); border: 1px solid var(--line-2); border-radius: 14px; box-shadow: 0 18px 50px rgba(0, 0, 0, .55); }
+.live-card:hover { color: var(--text); border-color: rgba(240, 179, 92, .45); }
+.live-ic { flex: none; display: grid; place-items: center; width: 40px; height: 40px; border-radius: 10px; }
+.live-buy { background: #241c10; } .live-buy svg { width: 24px; height: 24px; }
+.live-free { background: var(--amber); color: var(--on-amber); font: 800 .625rem/1 var(--font); letter-spacing: .06em; }
+.live-text { display: grid; gap: 3px; min-width: 0; }
+.live-text b { font: 650 .9375rem/1.2 var(--font); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.live-text small { color: var(--muted); font-size: .8125rem; }
+.live-x { margin-inline-start: -14px; margin-top: -8px; width: 26px; height: 26px; border-radius: 50%; border: 1px solid var(--line-2); background: var(--surface-2); color: var(--muted); font: 600 16px/1 var(--font); cursor: pointer; }
+.live-x:hover { color: var(--text); }
+
+/* Вітрина паків: при скролі кадр «розкривається» з легким наближенням, текст випливає слідом. */
+.pack-row.rv .collage-big { clip-path: inset(7% 7% 7% 7%); transform: scale(1.06); transition: clip-path 1.1s cubic-bezier(.2, .7, .2, 1), transform 1.4s cubic-bezier(.2, .7, .2, 1); }
+.pack-row.rv.rv-in .collage-big { clip-path: inset(0); transform: none; }
+.pack-row.rv .pack-text > * { opacity: 0; transform: translateY(14px); transition: opacity .7s var(--ease), transform .7s var(--ease); }
+.pack-row.rv.rv-in .pack-text > * { opacity: 1; transform: none; }
+.pack-row.rv.rv-in .pack-text > :nth-child(2) { transition-delay: .08s; } .pack-row.rv.rv-in .pack-text > :nth-child(3) { transition-delay: .14s; }
+.pack-row.rv.rv-in .pack-text > :nth-child(4) { transition-delay: .2s; } .pack-row.rv.rv-in .pack-text > :nth-child(5) { transition-delay: .26s; }
+.pack-row.rv.rv-in .pack-text > :nth-child(6) { transition-delay: .32s; }

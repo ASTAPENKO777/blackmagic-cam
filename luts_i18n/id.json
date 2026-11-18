@@ -56,6 +56,12 @@
   "free_text": "{n} LUT gratis untuk subscriber @blackmagicamera. Langganan channel-nya, dan bot langsung mengirimkannya.",
   "free_cta": "Ambil Starter",
   "free_credit": "Look Starter adalah karya CC0 dari pembuatnya dan kreditnya ada di dalam paket.",
+  "posts_title": "Terbaru dari channel",
+  "posts_sub": "Sudah lebih dari {n} subscriber di @blackmagicamera",
+  "posts_cta": "Langganan",
+  "live_buy": "dibeli di bot",
+  "live_free": "diambil di bot",
+  "live_close": "Tutup",
   "faq_title": "Pertanyaan",
   "faq": [
    [

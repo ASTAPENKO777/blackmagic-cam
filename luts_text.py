@@ -97,6 +97,12 @@ EN = {
     "free_text": "{n} free LUTs for subscribers of @blackmagicamera. Subscribe to the channel and the bot sends them right away.",
     "free_cta": "Get free Starter",
     "free_credit": "Starter looks are CC0 works of their authors and are credited in the pack.",
+    "posts_title": "Fresh from the channel",
+    "posts_sub": "More than {n} people already follow @blackmagicamera",
+    "posts_cta": "Subscribe",
+    "live_buy": "bought in the bot",
+    "live_free": "claimed in the bot",
+    "live_close": "Close",
     "faq_title": "Questions",
     "faq": [
         ("Which apps does it work in?", "The .cube files are made for Blackmagic Camera on iPhone and Android. They also load in CapCut, VN, LumaFusion and DaVinci Resolve."),

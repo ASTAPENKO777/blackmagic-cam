@@ -56,6 +56,12 @@
   "free_text": "{n} LUT مجانية لمشتركي ‎@blackmagicamera. اشترك في القناة وسيرسلها البوت فورًا.",
   "free_cta": "احصل على Starter",
   "free_credit": "مظاهر Starter أعمال CC0 لأصحابها، وتُذكر أسماؤهم داخل الحزمة.",
+  "posts_title": "الجديد من القناة",
+  "posts_sub": "أكثر من {n} مشترك في ‎@blackmagicamera",
+  "posts_cta": "اشترك",
+  "live_buy": "تم شراؤه في البوت",
+  "live_free": "تم الحصول عليه في البوت",
+  "live_close": "إغلاق",
   "faq_title": "أسئلة شائعة",
   "faq": [
    [

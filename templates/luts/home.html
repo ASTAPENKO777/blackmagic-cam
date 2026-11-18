@@ -2,9 +2,14 @@
 {% from "luts/_m.html" import tg, cover, tile, slider, vslider, versions with context %}
 {% block bodyattr %} data-slug="home"{% endblock %}
 {% block head %}
+<script src="{{ static_v('luts/js/intro.js') }}"></script>
 <link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="{{ static_v('luts/img/bust-480.avif') }} 480w, {{ static_v('luts/img/bust-768.avif') }} 768w, {{ static_v('luts/img/bust-1080.avif') }} 1080w" imagesizes="(min-width: 1000px) 470px, 86vw" media="(max-width: 999px)">
 {% endblock %}
 {% block main %}
+<div class="intro" aria-hidden="true">
+  <div class="intro-half ih-top"></div><div class="intro-half ih-bot"></div>
+  <div class="intro-core"><div class="intro-rec" dir="ltr"><span class="rec"></span><span class="intro-tc">00:00:00:00</span></div><div class="intro-bar"><i></i></div><p class="intro-name" dir="ltr">blackmagicamera</p></div>
+</div>
 <section class="hero">
   <div class="wrap hero-in">
     <div class="stage">
@@ -72,16 +77,21 @@
       {% if p.tiles %}<div class="collage-tiles n{{ p.tiles|length }}">{% for m in p.tiles %}<div class="collage-tile">{{ tile(m, p.title) }}</div>{% endfor %}</div>{% endif %}
     </div>
     <div class="pack-text">
+      <p class="pack-idx" dir="ltr">{{ '%02d' % loop.index }} <i>/ {{ '%02d' % loop.length }}</i></p>
       <h3>{{ p.title }}</h3>
       <p class="pack-desc">{% for line in p.desc | lines %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}</p>
-      <p class="pack-count">{{ T.lut_count.format(count=p.count) }} / {{ p.versions | join(" + ") }}</p>
-      <pre class="pack-code" dir="ltr">{{ p.code }}</pre>
-      <p class="pack-price"><b>{{ (p.price_stars ~ " ⭐") | star_fx }}</b></p>
-      {% if p.per %}<p class="pack-line">{{ T.per_lut.format(per=p.per) | star_fx }}</p>{% endif %}
-      {% if p.save %}<p class="pack-line"><b>{{ T.save.format(pct=p.save) }}</b></p>{% endif %}
-      {% if not p.has_alone %}<p class="pack-line"><b>{{ T.pack_only }}</b></p>{% endif %}
-      {{ tg(p.slug, T.buy_tg_stars.format(stars=p.price_stars), "btn btn-primary btn-compact") }}
-      <p class="pack-terms">{{ T.pay_note.split("{terms}")[0] }}<a href="{{ u('/legal/terms') }}">{{ T.terms_link }}</a>{{ T.pay_note.split("{terms}")[1] }}</p>
+      <p class="pack-count">{{ T.lut_count.format(count=p.count) }} · {{ p.versions | join(" + ") }}</p>
+      <ul class="pack-chips">{% for look in p.inside %}<li>{{ look.title }}</li>{% endfor %}</ul>
+      <div class="pack-buy">
+        <p class="pack-price"><b>{{ (p.price_stars ~ " ⭐") | star_fx }}</b></p>
+        <ul class="pack-tags">
+          {% if p.save %}<li class="tag-save">−{{ p.save }}%</li>{% endif %}
+          {% if p.per %}<li>{{ T.per_lut.format(per=p.per) | star_fx }}</li>{% endif %}
+          {% if not p.has_alone %}<li>{{ T.pack_only }}</li>{% endif %}
+        </ul>
+        {{ tg(p.slug, T.buy_tg_stars.format(stars=p.price_stars), "btn btn-primary btn-compact") }}
+        <p class="pack-terms">{{ T.pay_note.split("{terms}")[0] }}<a href="{{ u('/legal/terms') }}">{{ T.terms_link }}</a>{{ T.pay_note.split("{terms}")[1] }}</p>
+      </div>
     </div>
   </article>
   {% endfor %}
@@ -113,6 +123,25 @@
   </div>
 </section>
 
+
+{% if posts %}
+<section class="wrap sec" id="channel">
+  {#- Останні пости каналу з кадрами. Іконки: Lucide (ISC), логотип Telegram (Simple Icons). #}
+  <div class="sec-head sec-row">
+    <div><h2>{{ T.posts_title }}</h2>{% if members %}<p class="muted sec-sub">{{ T.posts_sub.format(n=members) }}</p>{% endif %}</div>
+    <a class="btn btn-tg" href="https://t.me/blackmagicamera" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#fff"/><path fill="#229ED9" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>{{ T.posts_cta }}</a>
+  </div>
+  <div class="posts">
+    {%- for p in posts %}
+    <a class="post" href="{{ p.url }}" rel="noopener" dir="ltr">
+      <div class="post-media"><img src="{{ p.img }}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">{% if p.video %}<span class="post-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg></span>{% endif %}</div>
+      {% if p.text %}<p class="post-text">{{ p.text }}</p>{% endif %}
+      <p class="post-meta"><span>{{ p.date }}</span>{% if p.views %}<span class="post-views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>{{ p.views }}</span>{% endif %}</p>
+    </a>
+    {%- endfor %}
+  </div>
+</section>
+{% endif %}
 
 <section class="wrap sec">
   <div class="sec-head"><h2>{{ T.how_title }}</h2></div>

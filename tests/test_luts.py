@@ -13,6 +13,7 @@ import test_security  # noqa: E402,F401
 
 import pytest  # noqa: E402
 import requests  # noqa: E402
+import time  # noqa: E402
 
 import app as appmod  # noqa: E402
 import luts  # noqa: E402
@@ -26,6 +27,7 @@ def client(monkeypatch):
         raise requests.ConnectionError("bot is down")
     monkeypatch.setattr(luts.requests, "get", offline)
     luts._cache.update(data=None, etag=None, at=0.0)  # холодний старт без бота: працює знімок
+    luts._posts.update(at=-luts.POSTS_TTL, data=[])
     return appmod.app.test_client()
 
 
@@ -236,7 +238,7 @@ def test_packs_are_calm_alternating_rows_with_collage(client):
     assert rows == ["", " flip", ""]  # перший: колаж ліворуч, другий навпаки
     assert html.count('class="collage-big"') == 3 and html.count('class="pack-text"') == 3 and html.count('class="collage-tiles') >= 2
     # склад у тому ж форматі, що в картці бота: «13 LUTs / Rec.709», нумерований моноширинний список, ціна, «≈ N ⭐ per LUT»
-    assert "13 LUTs / Rec.709" in html and 'class="pack-code"' in html and "1. Era" in html
+    assert "13 LUTs · Rec.709" in html and 'class="pack-chips"' in html and "<li>Era</li>" in html and 'class="pack-code"' not in html   # назви LUT чіпами, без «коду»
     assert "per LUT" in html and html.count("Buy in Telegram") >= 3
     assert 'href="/luts/cinematic_pro_15"' not in html  # пак не відкривається окремою сторінкою: усе на головній
 
@@ -321,3 +323,24 @@ def test_free_card_is_a_plain_single_card_that_goes_to_the_bot(client):
     free = grid[grid.index('class="single single-free"'):]
     assert "start=web_site__starter" in free and "6 безкоштовних LUT" in free and "FREE" in free   # просто: скільки безкоштовних LUT
     assert 'class="free-tile' not in html and 'class="card free"' not in html
+
+
+TG_PAGE = (
+    '<div class="tgme_widget_message_wrap"><div data-post="blackmagicamera/10"><div class="tgme_widget_message_text">Only text</div></div></div>'
+    '<div class="tgme_widget_message_wrap"><div data-post="blackmagicamera/11"><a class="tgme_widget_message_photo_wrap" style="width:1px;background-image:url(\'https://cdn4.telesco.pe/file/a.jpg\')"></a>'
+    '<div class="tgme_widget_message_text">Shot on iPhone &amp; LUT https://vt.tiktok.com/x</div>'
+    '<span class="tgme_widget_message_views">5.3K</span><time datetime="2026-10-23T17:46:43+00:00"></time></div></div>')
+
+
+def test_channel_posts_parse_only_posts_with_frames():
+    posts = luts.parse_posts(TG_PAGE)
+    assert posts == [{"url": "https://t.me/blackmagicamera/11", "img": "https://cdn4.telesco.pe/file/a.jpg", "video": False,
+                      "text": "Shot on iPhone & LUT", "date": "23.10.2026", "views": "5.3K"}]
+
+
+def test_home_shows_channel_posts_and_hides_the_block_when_telegram_is_down(client, monkeypatch):
+    assert 'id="channel"' not in client.get("/uk/luts").data.decode()   # Telegram недоступний: блоку немає
+    monkeypatch.setitem(luts._posts, "data", luts.parse_posts(TG_PAGE))
+    monkeypatch.setitem(luts._posts, "at", time.time())
+    html = client.get("/uk/luts").data.decode()
+    assert 'id="channel"' in html and "https://t.me/blackmagicamera/11" in html and "Підписатися" in html

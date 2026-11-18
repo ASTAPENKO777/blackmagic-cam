@@ -56,6 +56,12 @@
   "free_text": "{n} бесплатных LUT для подписчиков @blackmagicamera. Подпишитесь на канал, и бот сразу их пришлёт.",
   "free_cta": "Получить Starter",
   "free_credit": "Образы из Starter: произведения CC0 их авторов, в паке есть ссылки на авторов.",
+  "posts_title": "Свежее из канала",
+  "posts_sub": "Уже больше {n} подписчиков в @blackmagicamera",
+  "posts_cta": "Подписаться",
+  "live_buy": "куплено в боте",
+  "live_free": "забрали в боте",
+  "live_close": "Закрыть",
   "faq_title": "Вопросы",
   "faq": [
    [

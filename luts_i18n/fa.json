@@ -56,6 +56,12 @@
   "free_text": "{n} LUT رایگان برای مشترکان ‎@blackmagicamera. در کانال عضو شوید تا ربات فوراً آن‌ها را بفرستد.",
   "free_cta": "دریافت Starter",
   "free_credit": "لوک‌های Starter آثار CC0 سازندگانشان هستند و نام آن‌ها داخل پک آمده است.",
+  "posts_title": "تازه‌ها از کانال",
+  "posts_sub": "بیش از {n} مشترک در ‎@blackmagicamera",
+  "posts_cta": "عضویت",
+  "live_buy": "در ربات خریداری شد",
+  "live_free": "در ربات دریافت شد",
+  "live_close": "بستن",
   "faq_title": "پرسش‌ها",
   "faq": [
    [
