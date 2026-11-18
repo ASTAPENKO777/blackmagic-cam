@@ -32,15 +32,14 @@
       <h1><span class="kicker">{{ T.kicker }}</span>{{ T.h1 | h1 }}</h1>
       <div class="hero-body">
         <p class="bio-lead">{{ (T.bio_1_n.format(n=members) if members else T.bio_1) | bio }}</p>
-        {#- Іконки тільки справжні: Blackmagic Camera = іконка з App Store, verified = Material Symbols, video = Lucide (ISC). Саморобних не малюємо. #}
+        {#- Іконки тільки справжні: Blackmagic Camera = іконка з App Store, verified = Material Symbols. Саморобних не малюємо. #}
         <ul class="stats">
           <li><img class="st-ic st-app" src="{{ static_v('luts/img/icons/blackmagic-camera-48.webp') }}" srcset="{{ static_v('luts/img/icons/blackmagic-camera-96.webp') }} 2x" width="40" height="40" alt=""><b>Blackmagic Camera</b><span>{{ T.proof_1 }}</span></li>
           <li class="st-ver"><svg class="st-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="#fff"/><path fill="#2f9bff" d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>{% if users %}{% set pv = T.proof_2_v.split("{n}") %}<b>{{ pv[0] }}<bdi dir="ltr">{{ users }}+</bdi>{{ pv[1] }}</b><span>{{ T.proof_2 }}</span>{% else %}<b>{{ T.proof_3_v }}</b><span>{{ T.proof_3_l }}</span>{% endif %}</li>
-          <li><span class="st-ic st-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m16 13 5.223 3.482a.5.5 0 0 0 .777-.416V7.87a.5.5 0 0 0-.752-.432L16 10.5"/><rect x="2" y="6" width="14" height="12" rx="2"/></svg></span><b>{{ T.proof_4_v }}</b><span>{{ T.proof_4 }}</span></li>
         </ul>
         <div class="cta-row">
           <a class="btn btn-primary" id="hero-cta" href="#catalog">{{ T.cta_all }}</a>
-          {% if starter %}<a class="btn" href="{{ u('/free') }}">{{ T.cta_free }}</a>{% endif %}
+          <a class="btn btn-tg" href="https://t.me/blackmagicamera" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#fff"/><path fill="#229ED9" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>{{ T.cta_channel }}</a>
         </div>
         <div class="story">
           <p>{{ T.bio_2 | nb }}</p>
@@ -52,7 +51,12 @@
   </div>
 </section>
 <div class="band">
-  <ul class="strip"><li>{{ T.strip_1 }}</li><li>{{ T.strip_2 }}</li><li>{{ T.strip_3 }}</li><li>{{ T.strip_4 }}</li></ul>
+  {#- Бігуча стрічка: переваги й назви LUT з каталогу. Друга копія лише для безшовного циклу, тому прихована від читачів екрана. #}
+  {%- set mq = [T.strip_1, T.strip_2, T.strip_3, T.strip_4] + (shop.packs | map(attribute='title') | list) + (shop.singles | map(attribute='title') | list) %}
+  <div class="marquee" dir="ltr">
+    <ul class="mq-track">{% for t in mq %}<li>{{ t }}</li>{% endfor %}</ul>
+    <ul class="mq-track" aria-hidden="true">{% for t in mq %}<li>{{ t }}</li>{% endfor %}</ul>
+  </div>
 </div>
 
 <section class="wrap sec" id="catalog">

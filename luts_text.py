@@ -29,6 +29,7 @@ EN = {
     "bio_4": "What I learned about shooting and color, I share: in the channel, in the free Starter pack, in the bot. Questions about any file reach me directly.",
     "quote": "The shot is finished before you hit record.",
     "cta_all": "See all looks",
+    "cta_channel": "Telegram channel",
     "cta_free": "Get free Starter",
     "drag": "Drag",
     "before": "LUT OFF",
