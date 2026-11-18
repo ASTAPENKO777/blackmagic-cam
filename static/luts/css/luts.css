@@ -176,7 +176,7 @@ a:hover { color: var(--amber-hover); }
 .crumbs { padding-top: 16px; font-size: .875rem; }
 .prod { display: grid; gap: 26px; padding-top: 18px; padding-bottom: 24px; }
 .prod-media { display: grid; gap: 14px; align-content: start; }
-.shot { border-radius: var(--radius); overflow: hidden; background: var(--surface); border: 1px solid var(--line); line-height: 0; }
+.shot { border-radius: 0; overflow: hidden; background: var(--surface); border: 1px solid var(--line); line-height: 0; }
 .shot video, .shot img { display: block; width: 100%; height: auto; }
 .inside { list-style: none; padding: 0; margin: 10px 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 0 18px; }
 .inside li { padding: 9px 0; border-bottom: 1px solid var(--line); }
@@ -206,14 +206,14 @@ a:hover { color: var(--amber-hover); }
 /* Паки: спокійні ряди. Колаж (велике фото зі слайдером, два менші збоку, решта відео рядом знизу) і текст поруч.
    Ряди чергуються: колаж ліворуч, потім праворуч. Текст закріплений, поки гортаєш колаж. */
 .packs-wrap { max-width: none; }  /* рамка по ширині контенту, рівно з лінією під героєм */
-.packs-panel { background: #17130e; border: 1px solid rgba(240, 179, 92, .12); border-radius: 24px; padding: 4px 18px; }
-@media (min-width: 820px) { .packs-panel { padding: 16px clamp(48px, 9.5vw, 132px); border-radius: 28px; } }
+.packs-panel { background: #17130e; border: 1px solid rgba(240, 179, 92, .12); border-radius: 0; padding: 4px 18px; }
+@media (min-width: 820px) { .packs-panel { padding: 16px clamp(48px, 9.5vw, 132px); border-radius: 0; } }
 @media (min-width: 1240px) { .packs-wrap { margin-inline: calc(var(--gap) * -1); } }  /* краї рамки рівно з лінією під героєм */
 .pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 36px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
 .pack-row:first-of-type { border-top: 0; }
 /* Колаж по висоті дорівнює тексту: велике фото й відео збоку займають весь простір між верхньою і нижньою лінією. */
 .collage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; align-content: start; }
-.collage-big { position: relative; aspect-ratio: 4 / 5; min-width: 0; border-radius: var(--radius-sm); overflow: hidden; background: #05060a; }
+.collage-big { position: relative; aspect-ratio: 4 / 5; min-width: 0; border-radius: 0; overflow: hidden; background: #05060a; }
 .collage-big .ba { position: absolute; inset: 0; height: auto; border-radius: 0; border: 0; }
 .collage-big .ba picture.ba-before, .collage-big .ba video.ba-before { height: 100%; }
 .collage-big .ba img { height: 100%; object-fit: cover; }
@@ -222,7 +222,7 @@ a:hover { color: var(--amber-hover); }
 .collage-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
 .collage-tiles.n1 { grid-template-columns: minmax(0, 1fr); }
 .collage-tiles.n3 .collage-tile:last-child { grid-column: 1 / -1; }
-.collage-tile { position: relative; overflow: hidden; border-radius: var(--radius-sm); background: #05060a; aspect-ratio: 800 / 410; }
+.collage-tile { position: relative; overflow: hidden; border-radius: 0; background: #05060a; aspect-ratio: 800 / 410; }
 .collage-tiles.n3 .collage-tile:last-child { aspect-ratio: 800 / 330; }
 .collage-tile video, .collage-tile img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: left center; }
 
@@ -252,7 +252,7 @@ a:hover { color: var(--amber-hover); }
 .singles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }
 @media (min-width: 760px) { .singles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 28px; } }
 .single { display: block; color: var(--text); text-decoration: none; }
-.single .cover { border-radius: var(--radius); aspect-ratio: 1.9 / 1; }
+.single .cover { border-radius: 0; aspect-ratio: 1.9 / 1; }
 .single h3 { margin-top: 12px; font-size: 1.0625rem; letter-spacing: -.01em; }
 .single:hover h3 { color: var(--amber); }
 .single-desc { margin: 4px 0 0; color: var(--muted); font-size: .9375rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }

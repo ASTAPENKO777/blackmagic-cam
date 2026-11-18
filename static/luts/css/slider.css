@@ -1,7 +1,7 @@
 /* Слайдер LUT OFF / LUT ON без бібліотек: <input type=range> задає ціль, JS плавно доганяє --pos, clip-path відкриває «після».
    Кадр має пропорцію самого фото (before лежить у потоці), зсуву макета немає. Керується з клавіатури, ручка 44px. */
 .ba { position: relative; width: 100%; overflow: hidden; background: var(--surface); --pos: 36%;
-  border-radius: var(--radius); border: 1px solid var(--line-2); touch-action: pan-y; user-select: none; -webkit-user-select: none;
+  border-radius: 0; border: 1px solid var(--line-2); touch-action: pan-y; user-select: none; -webkit-user-select: none;
 }
 .ba picture { display: block; }
 .ba img { display: block; width: 100%; height: auto; }
