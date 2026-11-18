@@ -178,7 +178,7 @@ def _base_ctx(lang: str, **extra) -> dict:
     done = translated()
     return {
         "lang": lang, "dir": "rtl" if lang in RTL else "ltr", "T": text(lang), "u": u, "bot": catalog["bot"],
-        "starter": catalog.get("starter"), "members": members_label(catalog.get("channel_members")), "card_enabled": CARD_ENABLED, "event_url": EVENT_URL,
+        "starter": catalog.get("starter"), "members": members_label(catalog.get("channel_members")), "users": users_label(catalog.get("channel_members")), "card_enabled": CARD_ENABLED, "event_url": EVENT_URL,
         "translated": lang in done, "alternates": done, "sub": sub,
         "switch": [(c, NAMES[c], u(sub, c)) for c in done],
         "base_url": base, "path": path, "pair_url": lambda name, kind, w, ext: f"/static/luts/img/pairs/{name}-{kind}-{w}.{ext}",
@@ -313,6 +313,13 @@ def bio(value) -> Markup:
     channel = "https://t.me/blackmagicamera"
     text = str(nb(value))
     return Markup(re.sub(r"\*(.+?)\*", f'<a href="{channel}" rel="noopener">\\1</a>', text))
+
+
+def users_label(count) -> str | None:
+    """«6 000+ людей користуються моїми LUT»: тут округлення вниз до тисячі, щоб число завжди було правдою."""
+    if not isinstance(count, int) or count < 1000:
+        return None
+    return f"{count // 1000 * 1000:,}".replace(",", "\u00a0")
 
 
 def members_label(count) -> str | None:

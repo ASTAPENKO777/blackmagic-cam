@@ -8,24 +8,50 @@
 <section class="hero">
   <div class="wrap hero-in">
     <div class="stage">
-      <picture class="portrait">
-        <source media="(min-width: 1000px)" type="image/avif" srcset="{{ static_v('luts/img/portrait-480.avif') }} 480w, {{ static_v('luts/img/portrait-768.avif') }} 768w, {{ static_v('luts/img/portrait-1080.avif') }} 1080w" sizes="470px">
-        <source media="(min-width: 1000px)" type="image/webp" srcset="{{ static_v('luts/img/portrait-480.webp') }} 480w, {{ static_v('luts/img/portrait-768.webp') }} 768w, {{ static_v('luts/img/portrait-1080.webp') }} 1080w" sizes="470px">
-        <source type="image/avif" srcset="{{ static_v('luts/img/bust-480.avif') }} 480w, {{ static_v('luts/img/bust-768.avif') }} 768w, {{ static_v('luts/img/bust-1080.avif') }} 1080w" sizes="86vw">
-        <source type="image/webp" srcset="{{ static_v('luts/img/bust-480.webp') }} 480w, {{ static_v('luts/img/bust-768.webp') }} 768w, {{ static_v('luts/img/bust-1080.webp') }} 1080w" sizes="86vw">
-        <img src="{{ static_v('luts/img/bust-768.webp') }}" width="768" height="765" alt="" fetchpriority="high" decoding="async">
-      </picture>
-      <div class="vf" aria-hidden="true">
-        <span class="vf-grid"></span><i class="vf-c tl"></i><i class="vf-c tr"></i><i class="vf-c bl"></i><i class="vf-c br"></i>
-        <span class="vf-rec"><i></i>REC <time id="vf-tc">00:00:00:00</time></span>
-        <span class="vf-lut">LUT ON</span><span class="vf-fmt">Apple Log</span>
-        <span class="vf-focus"><b>AF</b></span>
-        <span class="vf-level l"></span><span class="vf-level r"></span>
-        <span class="vf-meta l">4K · 24 · 180°</span><span class="vf-meta r">ISO 100 · 5600K</span>
+      <div class="app" aria-hidden="true">
+        <div class="vfinder">
+          <picture class="portrait">
+            <source media="(min-width: 1000px)" type="image/avif" srcset="{{ static_v('luts/img/portrait-480.avif') }} 480w, {{ static_v('luts/img/portrait-768.avif') }} 768w, {{ static_v('luts/img/portrait-1080.avif') }} 1080w" sizes="400px">
+            <source media="(min-width: 1000px)" type="image/webp" srcset="{{ static_v('luts/img/portrait-480.webp') }} 480w, {{ static_v('luts/img/portrait-768.webp') }} 768w, {{ static_v('luts/img/portrait-1080.webp') }} 1080w" sizes="400px">
+            <source type="image/avif" srcset="{{ static_v('luts/img/bust-480.avif') }} 480w, {{ static_v('luts/img/bust-768.avif') }} 768w, {{ static_v('luts/img/bust-1080.avif') }} 1080w" sizes="86vw">
+            <source type="image/webp" srcset="{{ static_v('luts/img/bust-480.webp') }} 480w, {{ static_v('luts/img/bust-768.webp') }} 768w, {{ static_v('luts/img/bust-1080.webp') }} 1080w" sizes="86vw">
+            <img src="{{ static_v('luts/img/bust-768.webp') }}" width="768" height="765" alt="" fetchpriority="high" decoding="async">
+          </picture>
+          <i class="gl v1"></i><i class="gl v2"></i><i class="gl h1"></i><i class="gl h2"></i>
+          <i class="xh h"></i><i class="xh v"></i>
+          <span class="dots l"><b></b><b></b><b></b></span><span class="dots r"><b></b><b></b><b></b></span>
+          <div class="hud-top">
+            <span class="b-lut">LUT</span>
+            <span class="b-fmt"><b>4K</b><i>16:9</i></span>
+            <span class="tc">00:00:00:00</span>
+            <span class="b-fl"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M27 4L11 27h12l-4 17 18-25H25z" fill="currentColor" stroke="none"/></svg><em>A</em></span>
+          </div>
+          <div class="hud-row">
+            <span><i>LENS</i><b>48mm</b></span><span><i>FPS</i><b>24</b></span><span><i>SHUTTER</i><b>180°</b></span><span class="dim"><i>IRIS</i><b>f/1.8</b></span><span><i>ISO</i><b>640</b></span><span><i>WB <u>A</u></i><b>3510K</b></span><span><i>TINT</i><b>-16</b></span>
+          </div>
+          <div class="card c-stor"><span class="ph"></span><i>Internal Storage</i><b>15:39</b><s></s><p><em>3%</em><em>7GB</em></p></div>
+          <div class="card c-hist"><i>Rec.709</i><svg viewBox="0 0 270 80" preserveAspectRatio="none"><path fill="rgba(255,70,70,.8)" d="M0 80V66C6 30 12 6 20 22c8 18 18 40 40 48 40 12 110 6 150 8l60 2v2z"/><path fill="rgba(90,220,90,.75)" d="M0 80V70C8 40 16 24 26 38c10 16 24 38 50 44 40 6 90 0 130 4l64 2v2z"/><path fill="rgba(90,150,255,.75)" d="M0 80V72C10 52 20 40 30 52c10 12 30 26 60 30l180 0z"/></svg><span class="lv"></span></div>
+          <div class="card c-mic"><i>Microphone iPhone</i><span class="mt"><em></em></span><span class="mt"><em></em></span><p><em>-45</em><em>-30</em><em>-20</em><em>-10</em><em>-6</em><em>-3</em><em>0</em><em>3</em></p></div>
+        </div>
+        <div class="ctrl">
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 17V9h8M32 9h8v8M8 31v8h8M32 39h8v-8"/><circle cx="24" cy="24" r="6"/></svg>
+          <span class="lutbtn"><b>LUT</b><i></i></span>
+          <span class="lens"><b></b><em>2.0x</em></span>
+          <span class="rec"><b></b></span>
+          <svg viewBox="0 0 48 48" aria-hidden="true"><rect x="4" y="4" width="40" height="40" rx="10" fill="#fff"/><path d="M13 18h14M20 11v14M27 34h12" stroke="#080d17" stroke-width="3.6" stroke-linecap="round" fill="none"/></svg>
+          <span class="camA"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="9" width="30" height="30" rx="9"/><circle cx="20" cy="24" r="6.5"/></svg><em>A</em></span>
+          <svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M8 20V13a5 5 0 015-5h7M28 8h7a5 5 0 015 5v7M8 28v7a5 5 0 005 5h7M28 40h7a5 5 0 005-5v-7"/></svg>
+        </div>
+        <nav class="tabs">
+          <span class="on"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="13" width="26" height="22" rx="5"/><path d="M31 22l11-6v16l-11-6z"/></svg><em>Camera</em></span>
+          <span><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="9" width="34" height="30" rx="5"/><path d="M20 18l12 6-12 6z" fill="currentColor"/></svg><em>Media</em></span>
+          <span><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 9h30a3 3 0 013 3v17a3 3 0 01-3 3H23l-9 7v-7h-5a3 3 0 01-3-3V12a3 3 0 013-3z"/><path d="M17 21h.1M24 21h.1M31 21h.1" stroke-width="4.6"/></svg><em>Chat</em></span>
+          <span><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="24" cy="24" r="6.5"/><path d="M24 5v6M24 37v6M5 24h6M37 24h6M10.5 10.5l4.2 4.2M33.3 33.3l4.2 4.2M37.5 10.5l-4.2 4.2M14.7 33.3l-4.2 4.2"/></svg><em>Settings</em></span>
+        </nav>
       </div>
       <ul class="proof">
         <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3.5"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg></span><b>Blackmagic Camera</b><span class="t">{{ T.proof_1 }}</span></li>
-        {% if members %}<li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg></span><b dir="ltr">{{ members }}+</b><span class="t">{{ T.proof_2 }}</span></li>{% endif %}
+        {% if users %}<li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg></span><b dir="ltr">{{ users }}+</b><span class="t">{{ T.proof_2 }}</span></li>{% endif %}
         <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg></span><b>{{ T.proof_3_v }}</b><span class="t">{{ T.proof_3_l }}</span></li>
         <li><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="square" aria-hidden="true"><path d="M4 12.5l5 5L20 6.5"/></svg></span><b>Apple Log</b><span class="t">{{ T.proof_4 }}</span></li>
       </ul>

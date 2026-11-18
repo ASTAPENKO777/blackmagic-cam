@@ -288,13 +288,18 @@ def test_bio_without_member_count_falls_back(client, monkeypatch):
     assert "I run <a" in plain and "followed by" not in plain
 
 
-def test_hero_is_a_camera_viewfinder_with_proof_badges(client):
+def test_hero_is_the_blackmagic_camera_screen_with_proof_badges(client):
     html = client.get("/luts").data.decode()
     hero = html[html.index('<section class="hero">'):html.index("</section>", html.index('<section class="hero">'))]
-    assert 'class="phone"' not in hero
-    assert 'class="vf"' in hero and 'id="vf-tc"' in hero and "LUT ON" in hero and 'class="vf-focus"' in hero
+    assert 'class="phone"' not in hero and 'vf-focus' not in hero   # без айфона й без рамки фокусу на голові
+    for part in ('class="vfinder"', 'class="hud-top"', "00:00:00:00", "SHUTTER", "Internal Storage", "Microphone iPhone", 'class="rec"', 'class="tabs"', "Camera", "Media", "Chat", "Settings"):
+        assert part in hero, part
     assert hero.count("<li>") == 4 and hero.count('class="ck"') == 4 and "Blackmagic Camera" in hero and "Almost 2 years" in hero
-    assert "Checked on my footage" in hero and "and Rec.709" in hero
+    assert "people use my LUT" in hero and "Own LUTs" in hero and "Checked on my footage" in hero and "and Rec.709" in hero
+    assert re.search(r"\d[\d\u00a0]*000\+", hero)   # «6 000+», округлення вниз до тисячі
     assert 'style="' not in hero  # CSP: жодних inline-стилів
+    for lang, word in (("uk", "LUT"), ("ru", "LUT"), ("es", "LUT"), ("ar", "LUT"), ("fa", "LUT")):  # слово LUT завжди латиницею
+        page = client.get(f"/{lang}/luts").data.decode()
+        assert word in page[page.index('class="proof"'):page.index("</ul>", page.index('class="proof"'))]
     uk = client.get("/uk/luts").data.decode()
-    assert "Майже 2 роки" in uk and "Свої луки" in uk
+    assert "Майже 2 роки" in uk and "Свої LUT" in uk and "користуються моїми LUT" in uk
