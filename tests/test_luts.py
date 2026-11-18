@@ -313,3 +313,12 @@ def test_hero_is_the_blackmagic_camera_screen_with_proof_badges(client):
         assert word in page[page.index('class="stats"'):page.index("</ul>", page.index('class="stats"'))]
     uk = client.get("/uk/luts").data.decode()
     assert "Майже 2 роки" in uk and "перевірили мої LUT" in uk
+
+def test_free_tile_fills_the_singles_grid_and_goes_to_the_bot(client):
+    html = client.get("/uk/luts").data.decode()
+    grid = html[html.index('<div class="singles">'):html.index("</section>", html.index('<div class="singles">'))]
+    assert 'class="free-tile' in grid and "FREE" in grid and "Jade Gold" in grid   # справжні назви з бота
+    assert "start=web_site__starter" in grid and "підписників @blackmagicamera" in grid   # бот видає лише після підписки
+    n = grid.count('class="single"')
+    assert f'free-tile d{3 - n % 3}"' in grid   # на десктопі займає саме вільні місця останнього ряду
+    assert 'class="card free"' not in html   # окремий блок Starter прибрано, щоб не дублювати

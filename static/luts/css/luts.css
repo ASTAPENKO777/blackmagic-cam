@@ -240,6 +240,18 @@ html[dir="rtl"] .hero h1 .kicker { font-family: var(--font-rtl); }
 .single:hover h3 { color: var(--amber); }
 .single-desc { margin: 4px 0 0; color: var(--muted); font-size: .9375rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .single-price { margin: 8px 0 0; font-weight: 700; color: var(--amber); }
+/* FREE: безкоштовний Starter у вільних місцях сітки. Колонки: d1–d3 на десктопі, m1–m2 на телефоні. */
+.free-tile { display: flex; flex-direction: column; align-items: flex-start; gap: 14px; padding: 22px; border-radius: var(--radius);
+  background: linear-gradient(180deg, rgba(240, 179, 92, .1), rgba(240, 179, 92, .03)); border: 1px solid rgba(240, 179, 92, .32); }
+.free-tile { grid-column: 1 / -1; }  /* телефон: завжди на всю ширину, у півколонки тісно */
+@media (min-width: 760px) { .free-tile.d1 { grid-column: span 1; } .free-tile.d2 { grid-column: span 2; } .free-tile.d3 { grid-column: 1 / -1; } }
+.ft-head { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.ft-badge { padding: 5px 10px; border-radius: 999px; background: var(--amber); color: var(--on-amber); font: 800 .8125rem/1 var(--font); letter-spacing: .08em; }
+.free-tile h3 { font-size: 1.375rem; letter-spacing: -.02em; }
+.ft-names { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.ft-names li { padding: 7px 12px; border-radius: 999px; background: rgba(255, 255, 255, .06); border: 1px solid var(--line); font-size: .875rem; color: #e6e3dd; }
+.ft-text { margin: 0; color: #c9ccd3; font-size: .9375rem; line-height: 1.5; max-width: 34em; }
+.free-tile .btn { margin-top: auto; }
 @media (max-width: 480px) { .pack-code { font-size: .6875rem; padding: 28px 14px 12px; } .pack-code::after { top: 8px; right: 10px; } }
 
 /* Соцдоказ: одна панель із трьома колонками (як статистика профілю в Instagram/Telegram), перед кнопками. */

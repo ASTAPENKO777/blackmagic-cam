@@ -160,6 +160,17 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
     return {"hero_clip": hero_clip, "work": work, "packs": packs, "singles": singles, "by_slug": {i["slug"]: i for i in packs + singles}, "alone": sold_alone}
 
 
+def starter_names(starter: dict | None, lang: str) -> list[str]:
+    """Назви безкоштовних LUT мовою сторінки (з бота), для картки FREE."""
+    if not starter:
+        return []
+    names = starter.get("look_names") or {}
+    def title(slug: str) -> str:
+        data = names.get(slug) or {}
+        return (data.get(lang) or data.get("en") or {}).get("title") or slug.replace("_", " ").title()
+    return [title(slug) for slug in starter.get("looks") or []]
+
+
 def _lang(lang: str) -> str:
     return lang if lang in LUT_LANGS else "en"
 
@@ -178,7 +189,7 @@ def _base_ctx(lang: str, **extra) -> dict:
     done = translated()
     return {
         "lang": lang, "dir": "rtl" if lang in RTL else "ltr", "T": text(lang), "u": u, "bot": catalog["bot"],
-        "starter": catalog.get("starter"), "members": members_label(catalog.get("channel_members")), "users": users_label(catalog.get("channel_members")), "card_enabled": CARD_ENABLED, "event_url": EVENT_URL,
+        "starter": catalog.get("starter"), "starter_names": starter_names(catalog.get("starter"), lang), "members": members_label(catalog.get("channel_members")), "users": users_label(catalog.get("channel_members")), "card_enabled": CARD_ENABLED, "event_url": EVENT_URL,
         "translated": lang in done, "alternates": done, "sub": sub,
         "switch": [(c, NAMES[c], u(sub, c)) for c in done],
         "base_url": base, "path": path, "pair_url": lambda name, kind, w, ext: f"/static/luts/img/pairs/{name}-{kind}-{w}.{ext}",
