@@ -14,6 +14,7 @@ PACK_COPY = {
         "tagline": "Eight looks for normal iPhone video.",
         "text": "V1 to V8, from soft teal to amber shadows, for footage shot in the default Rec.709 mode. These eight are not sold anywhere else.",
         "pair": {"name": "s-forest", "w": 768, "h": 960, "widths": [480, 768, 1080]},
+        "big_clip": 222,   # id медіа в боті: чистий ролик (дерево в тумані) замість цього фото, до/після на відео
         "tint": "tint-teal",
     },
     "cinematic_pro_15": {

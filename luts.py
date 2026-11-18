@@ -144,11 +144,17 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
         # колаж: велике (відео-слайдер LUT OFF/ON з чистого ролика, інакше фото-слайдер, інакше перше відео)
         # і під ним відео-плитки, обрізані без бокового меню камери, на всю плитку
         big = next((m for m in pack["media"] if m.get("before")), None)
+        if big is None and pack.get("big_clip"):  # ролик з іншого товару, що ідентичний фото-слайдеру цього паку
+            extra = site_media([{"url": f"/media/{pack['big_clip']}.mp4", "video": True}])[0]
+            big = extra if extra.get("before") else None
         pack["big_video"] = big
-        rest = [m for m in pack["media"] if m["video"] and m is not big and m["w"] > m["h"]]
+        rest = [m for m in pack["media"] if m["video"] and not (big and m["url"] == big["url"]) and m["w"] > m["h"]]
         if big is None and not pack.get("pair_meta") and rest:
             pack["big_video"] = rest.pop(0)
         pack["tiles"] = rest[:4]
+    big_urls = {p["big_video"]["url"] for p in packs if p.get("big_video")}
+    for p in packs:  # відео, що вже стало великим в іншому паку, не повторюємо плиткою
+        p["tiles"] = [m for m in p["tiles"] if m["url"] not in big_urls]
     hero_pool = [m for p in packs for m in p["media"] if m.get("before") and m["h"] > m["w"] and m is not p.get("big_video")]
     hero_clip = hero_pool[0] if hero_pool else None
     return {"hero_clip": hero_clip, "work": work, "packs": packs, "singles": singles, "by_slug": {i["slug"]: i for i in packs + singles}, "alone": sold_alone}
