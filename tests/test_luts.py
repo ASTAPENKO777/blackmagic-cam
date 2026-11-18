@@ -292,7 +292,9 @@ def test_hero_is_the_blackmagic_camera_screen_with_proof_badges(client):
     html = client.get("/luts").data.decode()
     hero = html[html.index('<section class="hero">'):html.index("</section>", html.index('<section class="hero">'))]
     assert 'class="phone"' not in hero and 'vf-focus' not in hero   # без айфона й без рамки фокусу на голові
-    for part in ('class="vfinder"', 'class="hud-top"', "00:00:00:00", "SHUTTER", "Internal Storage", "Microphone iPhone", 'class="rec"', 'class="tabs"', "Camera", "Media", "Chat", "Settings"):
+    for gone in ("Internal Storage", 'class="dots', 'class="xh', 'class="tabs"', 'class="ctrl"'):   # прибрано на прохання власника
+        assert gone not in hero, gone
+    for part in ('class="vfinder"', 'class="hud-top"', "00:00:00:00", "SHUTTER", "Rec.709", "Microphone iPhone"):
         assert part in hero, part
     assert hero.count("<li>") == 4 and hero.count('class="ck"') == 4 and "Blackmagic Camera" in hero and "Almost 2 years" in hero
     assert "people use my LUT" in hero and "Own LUTs" in hero and "Checked on my footage" in hero and "and Rec.709" in hero
