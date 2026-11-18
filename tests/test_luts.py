@@ -297,13 +297,16 @@ def test_hero_is_the_blackmagic_camera_screen_with_proof_badges(client):
         assert gone not in hero, gone
     for part in ('class="vfinder"', 'class="hud-top"', "00:00:00:00", "SHUTTER", "Rec.709", "Microphone iPhone", 'class="hc c-hist"'):
         assert part in hero, part
-    assert hero.count("<li class=") == 3 and hero.count('class="ck"') == 3 and "Blackmagic Camera" in hero and "Almost 2 years" in hero
-    assert 'class="p-ver"' in hero and "people</b>" in hero and "tested my LUTs" in hero and "and Rec.709" in hero   # «Свої LUT» злито з 6 000+ у верифіковану картку
-    assert "Own LUTs" not in hero and 'class="dim"' not in hero
+    stats = hero[hero.index('<ul class="stats">'):hero.index("</ul>", hero.index('<ul class="stats">'))]
+    assert stats.count("<li") == 3 and "Blackmagic Camera" in stats and "Almost 2 years" in stats
+    assert 'class="st-ver"' in stats and "people</b>" in stats and "tested my LUTs" in stats and "and Rec.709" in stats   # «Свої LUT» злито з 6 000+ у верифіковану колонку
+    assert "icons/blackmagic-camera-48.webp" in stats   # справжня іконка застосунку з App Store, не саморобна
+    assert 'class="proof"' not in hero and "Own LUTs" not in hero and 'class="dim"' not in hero
+    assert hero.index('class="stats"') < hero.index('id="hero-cta"') < hero.index('class="story"')   # соцдоказ перед кнопками, історія після
     assert re.search(r"\d[\d\u00a0]*000\+", hero)   # «6 000+», округлення вниз до тисячі
     assert 'style="' not in hero  # CSP: жодних inline-стилів
     for lang, word in (("uk", "LUT"), ("ru", "LUT"), ("es", "LUT"), ("ar", "LUT"), ("fa", "LUT")):  # слово LUT завжди латиницею
         page = client.get(f"/{lang}/luts").data.decode()
-        assert word in page[page.index('class="proof"'):page.index("</ul>", page.index('class="proof"'))]
+        assert word in page[page.index('class="stats"'):page.index("</ul>", page.index('class="stats"'))]
     uk = client.get("/uk/luts").data.decode()
     assert "Майже 2 роки" in uk and "перевірили мої LUT" in uk

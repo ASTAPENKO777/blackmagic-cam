@@ -22,7 +22,7 @@
             <span class="b-lut">LUT</span>
             <span class="b-fmt"><b>4K</b><i>16:9</i></span>
             <span class="tc">00:00:00:00</span>
-            <span class="b-fl"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M27 4L11 27h12l-4 17 18-25H25z" fill="currentColor" stroke="none"/></svg><em>A</em></span>
+            <span class="b-fl"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg><em>A</em></span>
           </div>
           <div class="hud-row">
             <span><i>LENS</i><b>48mm</b></span><span><i>FPS</i><b>24</b></span><span><i>SHUTTER</i><b>180°</b></span><span><i>IRIS</i><b>f/1.8</b></span><span><i>ISO</i><b>640</b></span><span><i>WB <u>A</u></i><b>3510K</b></span><span><i>TINT</i><b>-16</b></span>
@@ -31,22 +31,25 @@
           <div class="hc c-mic"><i>Microphone iPhone</i><span class="mt"><em></em></span><span class="mt"><em></em></span><p><em>-45</em><em>-30</em><em>-20</em><em>-10</em><em>-6</em><em>-3</em><em>0</em><em>3</em></p></div>
         </div>
       </div>
-      <ul class="proof">
-        <li class="p-app"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3.5"/><circle cx="12" cy="12" r="4.6"/><circle cx="12" cy="12" r="1.4" fill="currentColor" stroke="none"/></svg></span><b>Blackmagic Camera</b><span class="t">{{ T.proof_1 }}</span></li>
-        <li class="p-ver"><span class="ck"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="#3d9bff" d="M23.82 12.00L23.56 12.76L22.91 13.44L22.22 14.03L21.83 14.63L21.86 15.35L22.16 16.21L22.39 17.12L22.24 17.91L21.63 18.44L20.73 18.70L19.83 18.87L19.19 19.19L18.87 19.83L18.70 20.73L18.44 21.63L17.91 22.24L17.12 22.39L16.21 22.16L15.35 21.86L14.63 21.83L14.03 22.22L13.44 22.91L12.76 23.56L12.00 23.82L11.24 23.56L10.56 22.91L9.97 22.22L9.37 21.83L8.65 21.86L7.79 22.16L6.88 22.39L6.09 22.24L5.56 21.63L5.30 20.73L5.13 19.83L4.81 19.19L4.17 18.87L3.27 18.70L2.37 18.44L1.76 17.91L1.61 17.12L1.84 16.21L2.14 15.35L2.17 14.63L1.78 14.03L1.09 13.44L0.44 12.76L0.18 12.00L0.44 11.24L1.09 10.56L1.78 9.97L2.17 9.37L2.14 8.65L1.84 7.79L1.61 6.88L1.76 6.09L2.37 5.56L3.27 5.30L4.17 5.13L4.81 4.81L5.13 4.17L5.30 3.27L5.56 2.37L6.09 1.76L6.88 1.61L7.79 1.84L8.65 2.14L9.37 2.17L9.97 1.78L10.56 1.09L11.24 0.44L12.00 0.18L12.76 0.44L13.44 1.09L14.03 1.78L14.63 2.17L15.35 2.14L16.21 1.84L17.12 1.61L17.91 1.76L18.44 2.37L18.70 3.27L18.87 4.17L19.19 4.81L19.83 5.13L20.73 5.30L21.63 5.56L22.24 6.09L22.39 6.88L22.16 7.79L21.86 8.65L21.83 9.37L22.22 9.97L22.91 10.56L23.56 11.24Z"/><path d="M7.4 12.3l3.1 3.1 6.1-6.3" fill="none" stroke="#fff" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"/></svg></span>{% if users %}{% set pv = T.proof_2_v.split("{n}") %}<b>{{ pv[0] }}<bdi dir="ltr">{{ users }}+</bdi>{{ pv[1] }}</b><span class="t">{{ T.proof_2 }}</span>{% else %}<b>{{ T.proof_3_v }}</b><span class="t">{{ T.proof_3_l }}</span>{% endif %}</li>
-        <li class="p-fmt"><span class="ck"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg></span><b>Apple Log</b><span class="t">{{ T.proof_4 }}</span></li>
-      </ul>
     </div>
     <div class="hero-copy">
       <h1><span class="kicker">{{ T.kicker }}</span>{{ T.h1 | h1 }}</h1>
       <div class="hero-body">
         <p class="bio-lead">{{ (T.bio_1_n.format(n=members) if members else T.bio_1) | bio }}</p>
-        <p>{{ T.bio_2 | nb }}</p>
-        <p>{{ T.bio_3 | nb }}</p>
-        <p>{{ T.bio_4 | nb }}</p>
+        {#- Іконки тільки справжні: Blackmagic Camera = іконка з App Store, verified = Material Symbols, aperture = Lucide (ISC). Саморобних не малюємо. #}
+        <ul class="stats">
+          <li><img class="st-ic st-app" src="{{ static_v('luts/img/icons/blackmagic-camera-48.webp') }}" srcset="{{ static_v('luts/img/icons/blackmagic-camera-96.webp') }} 2x" width="40" height="40" alt=""><b>Blackmagic Camera</b><span>{{ T.proof_1 }}</span></li>
+          <li class="st-ver"><svg class="st-ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="7" fill="#fff"/><path fill="#2f9bff" d="m23 12-2.44-2.79.34-3.69-3.61-.82-1.89-3.2L12 2.96 8.6 1.5 6.71 4.69 3.1 5.5l.34 3.7L1 12l2.44 2.79-.34 3.7 3.61.82L8.6 22.5l3.4-1.47 3.4 1.46 1.89-3.19 3.61-.82-.34-3.69L23 12zm-12.91 4.72-3.8-3.81 1.48-1.48 2.32 2.33 5.85-5.87 1.48 1.48-7.33 7.35z"/></svg>{% if users %}{% set pv = T.proof_2_v.split("{n}") %}<b>{{ pv[0] }}<bdi dir="ltr">{{ users }}+</bdi>{{ pv[1] }}</b><span>{{ T.proof_2 }}</span>{% else %}<b>{{ T.proof_3_v }}</b><span>{{ T.proof_3_l }}</span>{% endif %}</li>
+          <li><span class="st-ic st-tile"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="m14.31 8 5.74 9.94"/><path d="M9.69 8h11.48"/><path d="m7.38 12 5.74-9.94"/><path d="M9.69 16 3.95 6.06"/><path d="M14.31 16H2.83"/><path d="m16.62 12-5.74 9.94"/></svg></span><b>Apple Log</b><span>{{ T.proof_4 }}</span></li>
+        </ul>
         <div class="cta-row">
           <a class="btn btn-primary" id="hero-cta" href="#catalog">{{ T.cta_all }}</a>
           {% if starter %}<a class="btn" href="{{ u('/free') }}">{{ T.cta_free }}</a>{% endif %}
+        </div>
+        <div class="story">
+          <p>{{ T.bio_2 | nb }}</p>
+          <p>{{ T.bio_3 | nb }}</p>
+          <p>{{ T.bio_4 | nb }}</p>
         </div>
       </div>
     </div>

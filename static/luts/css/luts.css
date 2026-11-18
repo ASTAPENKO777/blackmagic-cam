@@ -21,21 +21,33 @@ a:hover { color: var(--amber-hover); }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); font-weight: 650; letter-spacing: -.015em; text-decoration: none; white-space: nowrap; margin-inline-end: auto; }
 .brand:hover { color: var(--text); }
 .mark { width: 40px; height: 29px; flex: none; }   /* значок LUT, як кнопка LUT у Blackmagic Camera */
-.top-nav { display: flex; gap: 4px; }
-.top-nav a { white-space: nowrap; color: var(--muted); text-decoration: none; font-size: .9375rem; min-height: var(--tap); padding: 0 12px; display: inline-flex; align-items: center; border-radius: var(--radius-sm); }
-.top-nav a:hover { color: var(--text); background: var(--surface-2); }
+.top-nav { display: flex; align-items: center; gap: 6px; }
+.top-nav a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px; white-space: nowrap; text-decoration: none; font: 500 .9375rem/1 var(--font); letter-spacing: -.005em; transition: background .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease); }
+.top-nav svg { width: 17px; height: 17px; flex: none; }
+.nav-link { color: #c7cbd3; }
+.nav-link:hover { color: var(--text); background: var(--surface-2); }
+.nav-free { color: var(--amber); background: rgba(240, 179, 92, .1); border: 1px solid rgba(240, 179, 92, .3); }
+.nav-free:hover { color: var(--amber-hover); background: rgba(240, 179, 92, .17); border-color: rgba(240, 179, 92, .5); }
+.tg-btn { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; transition: transform .15s var(--ease), background .15s var(--ease); }
+.tg-btn svg { width: 30px; height: 30px; }
+.tg-btn:hover { background: var(--surface-2); }
+.tg-btn:active { transform: scale(.95); }
 .lang { position: relative; }
-.lang summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; min-height: 40px; padding: 0 12px; border-radius: var(--radius-sm);
-  border: 1px solid var(--line-2); background: var(--surface); font: 600 .8125rem/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--text); }
+.lang summary { list-style: none; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 0 10px 0 12px; border-radius: 999px;
+  border: 1px solid var(--line); background: transparent; color: #c7cbd3; font: 600 .8125rem/1 var(--font); letter-spacing: .04em; text-transform: uppercase; transition: background .15s var(--ease), color .15s var(--ease); }
 .lang summary::-webkit-details-marker { display: none; }
-.lang summary:hover, .lang[open] summary { background: var(--surface-2); }
+.lang summary:hover, .lang[open] summary { background: var(--surface-2); color: var(--text); }
 .lang summary svg { width: 16px; height: 16px; }
-.lang-menu { position: absolute; inset-inline-end: 0; top: calc(100% + 8px); z-index: 50; min-width: 190px; padding: 6px; margin: 0; list-style: none;
-  background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--radius); }
+.lang summary .chev { width: 14px; height: 14px; opacity: .7; transition: transform .2s var(--ease); }
+.lang[open] summary .chev { transform: rotate(180deg); }
+.lang-menu { position: absolute; inset-inline-end: 0; top: calc(100% + 8px); z-index: 50; min-width: 200px; padding: 6px; margin: 0; list-style: none;
+  background: var(--surface); border: 1px solid var(--line-2); border-radius: var(--radius); box-shadow: 0 18px 48px rgba(0, 0, 0, .55); }
 .lang-menu a { display: flex; align-items: center; justify-content: space-between; min-height: var(--tap); padding: 0 12px; border-radius: 8px; color: var(--text); text-decoration: none; font-size: .9375rem; }
 .lang-menu a:hover { background: var(--surface-2); }
 .lang-menu a[aria-current] { color: var(--amber); font-weight: 600; }
 .lang-menu a[aria-current]::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); }
+.top-in { gap: 8px; }
+@media (max-width: 760px) { .nav-link { display: none !important; } }
 @media (max-width: 560px) { .top-nav { display: none; } }
 
 /* Герой: профіль автора. Мобільний: фото (груди й голова) зверху, далі ім'я й біографія. */
@@ -57,7 +69,7 @@ html[dir="rtl"] .hero h1 .kicker { font-family: var(--font-rtl); }
   .hero h1 { font-size: clamp(3.4rem, 5.6vw, 5.4rem); }
   .hero-body { padding-top: 26px; }
   .hero-body p { max-width: 29em; }
-  .stage { justify-self: stretch; width: auto; margin: 0; }
+  .stage { justify-self: stretch; align-self: start; width: auto; margin: 0; }
 }
 @media (min-width: 1500px) { .hero-in { grid-template-columns: minmax(0, 1fr) 520px; } .hero h1 { font-size: 5.4rem; } }
 @media (max-width: 480px) { .hero .cta-row .btn { padding: 0 18px; } .hero .cta-row { gap: 8px; } }
@@ -231,21 +243,22 @@ html[dir="rtl"] .hero h1 .kicker { font-family: var(--font-rtl); }
 .single-price { margin: 8px 0 0; font-weight: 700; color: var(--amber); }
 @media (max-width: 480px) { .pack-code { font-size: .6875rem; padding: 28px 14px 12px; } .pack-code::after { top: 8px; right: 10px; } }
 
-.proof { position: absolute; z-index: 3; inset-inline-start: -31%; top: calc(var(--u) * 720); display: grid; gap: 1.9cqw; width: 47cqw; margin: 0; padding: 0; list-style: none; direction: inherit; }
-.proof li { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 2.8cqw; padding: 2.3cqw 3cqw 2.3cqw 2.4cqw; background: rgba(8, 13, 23, .9); color: #fff; border: 1px solid rgba(255, 255, 255, .15); border-radius: 3cqw; }
-.proof .ck { grid-row: 1 / 3; display: grid; place-items: center; width: 7.2cqw; height: 7.2cqw; color: #fff; }
-.proof .ck svg { width: 100%; height: 100%; display: block; }
-.proof b { font: 650 3.5cqw/1.12 var(--font); white-space: nowrap; letter-spacing: -.01em; text-transform: none; }
-.proof span.t { font: 500 2.8cqw/1.25 var(--font); letter-spacing: 0; text-transform: none; color: #a4adbb; }
-/* 6 000+ з галочкою верифікації: головний доказ, виділений синім, як «verified» у Telegram/Instagram */
-.proof .p-ver { background: #0c1830; border-color: rgba(61, 155, 255, .6); }
-.proof .p-ver .ck { width: 8.2cqw; height: 8.2cqw; }
-.proof .p-ver b { font-size: 4.3cqw; font-weight: 750; }
-.proof .p-ver span.t { color: #8fc0ff; }
-.proof .p-fmt .ck { border: 1px solid rgba(255, 255, 255, .28); border-radius: 50%; }
-.proof .p-fmt .ck svg { width: 52%; height: 52%; }
-@media (max-width: 999px) { .proof { inset-inline-start: 2%; top: auto; bottom: 6%; gap: 1.6cqw; width: 64cqw; } .proof li:nth-child(n+3) { display: none; } .proof b { font-size: 4.2cqw; } .proof .p-ver b { font-size: 5cqw; } .proof .p-ver .ck { width: 9.6cqw; height: 9.6cqw; } .proof span.t { font-size: 3.3cqw; } .proof .ck { width: 8.6cqw; height: 8.6cqw; } }
-html[dir="rtl"] .proof b, html[dir="rtl"] .proof span.t { font-family: var(--font-rtl); }
+/* Соцдоказ: одна панель із трьома колонками (як статистика профілю в Instagram/Telegram), перед кнопками. */
+.stats { list-style: none; margin: 22px 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); max-width: 37rem;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 16px; }
+.stats li { display: flex; flex-direction: column; align-items: flex-start; gap: 3px; padding: 16px; min-width: 0; }
+.stats li + li { border-inline-start: 1px solid var(--line); }
+.stats .st-ic { width: 40px; height: 40px; margin-bottom: 9px; flex: none; display: block; }
+.stats .st-app { border-radius: 22.5%; box-shadow: 0 0 0 1px rgba(255, 255, 255, .08); }
+.stats .st-tile { display: grid; place-items: center; border-radius: 22.5%; background: #241c10; color: var(--amber); box-shadow: inset 0 0 0 1px rgba(240, 179, 92, .25); }
+.stats .st-tile svg { width: 22px; height: 22px; }
+.stats b { font: 650 .9688rem/1.2 var(--font); letter-spacing: -.01em; color: #fff; text-wrap: balance; }
+.stats span { font-size: .8125rem; line-height: 1.3; color: var(--muted); }
+.stats .st-ver span { color: #8fc0ff; }
+html[dir="rtl"] .stats b { font-family: var(--font-rtl); }
+@media (max-width: 480px) { .stats li { padding: 14px 12px; } .stats .st-ic { width: 34px; height: 34px; margin-bottom: 7px; } .stats b { font-size: .875rem; } .stats span { font-size: .75rem; } }
+.story { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); max-width: 37rem; }
+.hero-body .story p { font-size: 1rem; color: #bfc3cb; }
 
 /* ---------- Екран Blackmagic Camera: фото як живий кадр у видошукачі, навколо ті самі елементи й кольори, що в застосунку.
    Усе в одиницях --u = ширина сцени / 923 (за скріншотом застосунку), тому масштабується цілком. Інтерфейс камери завжди LTR. */
