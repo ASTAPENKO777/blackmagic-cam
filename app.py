@@ -572,9 +572,13 @@ def _lastmod(*relpaths) -> str:
         except OSError:
             continue
     if newest < _SANE_MTIME:
-        # Vercel ships files with a fixed fake mtime (2018-10-20): a wrong lastmod
-        # is worse than none, so the sitemap simply omits it there.
-        return ""
+        # Vercel ships files with a fixed fake mtime (2018-10-20): use the deploy
+        # date that scripts/deploy.sh writes into build_info.json instead.
+        try:
+            with open(os.path.join(_APP_DIR, "build_info.json"), encoding="utf-8") as fh:
+                return json.load(fh)["date"]
+        except (OSError, ValueError, KeyError):
+            return ""
     return datetime.fromtimestamp(newest, timezone.utc).strftime("%Y-%m-%d")
 
 
