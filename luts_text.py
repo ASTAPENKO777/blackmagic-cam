@@ -102,6 +102,7 @@ EN = {
     "posts_cta": "Subscribe",
     "live_buy": "bought in the bot",
     "live_free": "claimed in the bot",
+    "live_free_lines": ["channel subscriber", "{n} LUTs as a gift", "received in the bot"],
     "live_close": "Close",
     "faq_title": "Questions",
     "faq": [

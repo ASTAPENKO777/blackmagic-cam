@@ -57,11 +57,12 @@
   }
 
   // Живі сповіщення: лише справжні події бота (покупки за Stars і отримання Starter), без імен.
-  // Картка тримається ~9 с, під нею повільно спливає шкала часу (під курсором пауза), потім м'яко змінюється наступною.
+  // Картка тримається ~12 с, під нею повільно спливає шкала часу (під курсором пауза), потім м'яко змінюється наступною.
   // Кожна третя — покупка, якщо вони є. Хрестик вимикає сповіщення до кінця сесії.
   const live = document.getElementById("live");
   if (live && EVENT && !sessionStorage.getItem("bmc_live_off")) {
-    const d = live.dataset, titles = JSON.parse(d.titles || "{}"), HOLD = 9000, GAP = 900;
+    const d = live.dataset, titles = JSON.parse(d.titles || "{}"), HOLD = 12000, GAP = 1400;
+    const freeLines = JSON.parse(d.freeLines || "[]").map((t) => t.replace("{n}", d.starterN));
     const rtf = window.Intl && Intl.RelativeTimeFormat ? new Intl.RelativeTimeFormat(d.lang, { numeric: "auto" }) : null;
     const ago = (at) => {
       const sec = Math.max(60, Date.now() / 1000 - at);
@@ -97,7 +98,9 @@
           const text = document.createElement("span");
           text.className = "live-text";
           const b = document.createElement("b"); b.textContent = buy ? titles[e.slug] : d.freeTitle;
-          const small = document.createElement("small"); small.textContent = `${buy ? d.buy : d.free} · ${ago(e.at)}`;
+          // «Д*** · підписник каналу · 5 годин тому»: лише перша літера імені, фрази по черзі, щоб не було однаково
+          const what = buy ? d.buy : (freeLines.length ? freeLines[(n - 1) % freeLines.length] : d.free);
+          const small = document.createElement("small"); small.textContent = [e.who ? `${e.who}***` : "", what, ago(e.at)].filter(Boolean).join(" · ");
           text.append(b, small);
           card.append(badge, text, bar);
         };

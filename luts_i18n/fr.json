@@ -61,6 +61,7 @@
   "posts_cta": "S'abonner",
   "live_buy": "acheté dans le bot",
   "live_free": "récupéré dans le bot",
+  "live_free_lines": ["abonné de la chaîne", "{n} LUT offerts", "reçu dans le bot"],
   "live_close": "Fermer",
   "faq_title": "Questions",
   "faq": [

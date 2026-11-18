@@ -61,6 +61,7 @@
   "posts_cta": "Suscribirse",
   "live_buy": "comprado en el bot",
   "live_free": "reclamado en el bot",
+  "live_free_lines": ["suscriptor del canal", "{n} LUTs de regalo", "recibido en el bot"],
   "live_close": "Cerrar",
   "faq_title": "Preguntas",
   "faq": [

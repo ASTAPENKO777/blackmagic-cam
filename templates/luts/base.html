@@ -98,7 +98,7 @@
 </footer>
 {% block sticky %}{% endblock %}
 {#- Живі сповіщення: лише справжні події з бота (/public/activity.json), без імен. Тексти тут, логіка в s.js. #}
-<div id="live" class="live" hidden data-lang="{{ lang }}" data-titles='{{ live_titles | tojson }}' data-free-title="{{ T.nav_free }}" data-buy="{{ T.live_buy }}" data-free="{{ T.live_free }}" data-free-href="{{ u('/free') }}" data-root="{{ u() }}" data-close="{{ T.live_close }}"></div>
+<div id="live" class="live" hidden data-lang="{{ lang }}" data-titles='{{ live_titles | tojson }}' data-free-title="{{ T.nav_free }}" data-buy="{{ T.live_buy }}" data-free="{{ T.live_free }}" data-free-href="{{ u('/free') }}" data-root="{{ u() }}" data-close="{{ T.live_close }}" data-free-lines='{{ T.live_free_lines | tojson }}' data-starter-n="{{ starter.count if starter else 6 }}"></div>
 <script src="{{ static_v('luts/js/s.js') }}" defer data-event="{{ event_url }}" data-bot="{{ bot }}"></script>
 {% block ld %}{% endblock %}
 </body>
