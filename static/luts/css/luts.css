@@ -277,7 +277,11 @@ html[dir="rtl"] .stats b { font-family: var(--font-rtl); }
 .b-fmt { display: grid; width: calc(var(--u) * 76); border-radius: calc(var(--u) * 10); overflow: hidden; border: calc(var(--u) * 2.5) solid #fff; text-align: center; line-height: 1; }
 .b-fmt b { background: #fff; color: #000; font: 800 calc(var(--u) * 30)/1 var(--font); padding: calc(var(--u) * 7) 0 calc(var(--u) * 5); }
 .b-fmt i { background: #0a0c10; color: #fff; font: 600 calc(var(--u) * 21)/1 var(--font); font-style: normal; padding: calc(var(--u) * 6) 0; }
-.tc { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); font: 600 calc(var(--u) * 38)/1 var(--font); letter-spacing: -.01em; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.tc-box { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); display: flex; align-items: center; gap: calc(var(--u) * 14); }
+/* REC: м'яке «дихання» (прозорість + легке світіння), як індикатор запису в камері. */
+.rec { width: calc(var(--u) * 20); height: calc(var(--u) * 20); border-radius: 50%; background: var(--rec); flex: none; box-shadow: 0 0 0 0 rgba(255, 77, 77, .55); animation: rec-pulse 1.8s ease-in-out infinite; }
+@keyframes rec-pulse { 0%, 100% { opacity: 1; box-shadow: 0 0 calc(var(--u) * 14) calc(var(--u) * 2) rgba(255, 77, 77, .55); } 50% { opacity: .35; box-shadow: 0 0 0 0 rgba(255, 77, 77, 0); } }
+.tc { font: 600 calc(var(--u) * 38)/1 var(--font); letter-spacing: -.01em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .hc { position: absolute; top: calc(var(--u) * 1330); width: calc(var(--u) * 420); height: calc(var(--u) * 205); border-radius: calc(var(--u) * 20); background: rgba(8, 13, 23, .78); }
 .hc i { font-style: normal; font: 500 calc(var(--u) * 24)/1 var(--font); }
 .hc em { font-style: normal; }
