@@ -63,8 +63,8 @@ def test_sliders_live_in_pack_blocks_not_in_the_hero(client):
     """Герой — профіль автора без повзунка. Повзунок LUT OFF / LUT ON стоїть на 36% у кожному пак-блоці головної й на сторінках паків."""
     home = client.get("/luts").data.decode()
     hero = home[home.index('<section class="hero">'):home.index("</section>", home.index('<section class="hero">'))]
-    assert hero.count("data-ba") == 1 and hero.index("data-ba") > hero.index('class="phone"')  # у героєві слайдер лише на екрані айфона
-    assert home.count("data-ba") == 4 and home.count('value="36"') == 4 and "LUT OFF" in home
+    assert hero.count("data-ba") == 0  # у героєві слайдера немає
+    assert home.count("data-ba") == 3 and home.count('value="36"') == 3 and "LUT OFF" in home
     page = client.get("/luts/rec709_collection").data.decode()
     assert 'type="range"' in page and 'aria-label="Compare before and after"' in page and 'value="36"' in page
     assert re.search(r'<img[^>]+width="768" height="960"', page)  # місце під кадр зарезервоване: CLS 0
@@ -288,10 +288,13 @@ def test_bio_without_member_count_falls_back(client, monkeypatch):
     assert "I run <a" in plain and "followed by" not in plain
 
 
-def test_hero_iphone_has_the_lut_slider_on_its_screen(client):
+def test_hero_is_a_camera_viewfinder_with_proof_badges(client):
     html = client.get("/luts").data.decode()
     hero = html[html.index('<section class="hero">'):html.index("</section>", html.index('<section class="hero">'))]
-    assert 'class="phone"' in hero and hero.index('class="phone"') < hero.index('class="portrait"')  # телефон під фігурою
-    assert 'class="phone-island"' in hero and 'data-ba' in hero and 'value="36"' in hero         # слайдер на екрані, старт 36%
-    for kind in ("before", "after"):
-        assert os.path.exists(os.path.join(ROOT, f"static/luts/img/pairs/phone-{kind}-768.webp"))
+    assert 'class="phone"' not in hero
+    assert 'class="vf"' in hero and 'id="vf-tc"' in hero and "LUT ON" in hero and 'class="vf-focus"' in hero
+    assert hero.count("<li>") == 4 and hero.count('class="ck"') == 4 and "Blackmagic Camera" in hero and "Almost 2 years" in hero
+    assert "Checked on my footage" in hero and "and Rec.709" in hero
+    assert 'style="' not in hero  # CSP: жодних inline-стилів
+    uk = client.get("/uk/luts").data.decode()
+    assert "Майже 2 роки" in uk and "Свої луки" in uk

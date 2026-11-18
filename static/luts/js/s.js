@@ -31,6 +31,16 @@
     a.addEventListener("click", () => send("tg_click", s));
   });
 
+  // Таймкод у видошукачі: біжить від завантаження сторінки, 24 кадри/с (без руху при prefers-reduced-motion лишається нулями).
+  const tc = document.getElementById("vf-tc");
+  if (tc && !(window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches)) {
+    const t0 = performance.now(), pad = (n) => String(n).padStart(2, "0");
+    setInterval(() => {
+      const f = Math.floor((performance.now() - t0) / 1000 * 24), s = Math.floor(f / 24);
+      tc.textContent = `00:${pad(Math.floor(s / 60) % 60)}:${pad(s % 60)}:${pad(f % 24)}`;
+    }, 83);
+  }
+
   // Слайдер: ручка задає ціль, а --pos плавно доганяє її (без ривків); початок на 36%.
   // Поки людина не торкнулась, він тихо «подихає» вправо раз на ~2 с. Після першого дотику подих вимикається.
   const calm = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;

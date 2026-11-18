@@ -106,7 +106,12 @@
   "price": "Цена",
   "pay_note": "Оплачивая, вы принимаете {terms}",
   "terms_link": "условия",
-  "bio_1_n": "Почти два года в Blackmagic Camera. Веду *@blackmagicamera*, где уже больше {n} подписчиков, и снимаю всё на iPhone."
+  "bio_1_n": "Почти два года в Blackmagic Camera. Веду *@blackmagicamera*, где уже больше {n} подписчиков, и снимаю всё на iPhone.",
+  "proof_1": "Почти 2 года",
+  "proof_2": "в канале",
+  "proof_3_v": "Свои луки",
+  "proof_3_l": "Проверены на моём видео",
+  "proof_4": "и Rec.709"
  },
  "packs": {
   "apple_log_film": {

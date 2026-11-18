@@ -106,7 +106,12 @@
   "price": "قیمت",
   "pay_note": "با پرداخت، {terms} را می‌پذیرید",
   "terms_link": "شرایط",
-  "bio_1_n": "نزدیک دو سال در Blackmagic Camera. *@blackmagicamera* را اداره می‌کنم که بیش از {n} دنبال‌کننده دارد و همه‌چیز را با iPhone فیلم می‌گیرم."
+  "bio_1_n": "نزدیک دو سال در Blackmagic Camera. *@blackmagicamera* را اداره می‌کنم که بیش از {n} دنبال‌کننده دارد و همه‌چیز را با iPhone فیلم می‌گیرم.",
+  "proof_1": "نزدیک دو سال",
+  "proof_2": "در کانال",
+  "proof_3_v": "لوک‌های خودم",
+  "proof_3_l": "تست‌شده روی فیلم‌های خودم",
+  "proof_4": "و Rec.709"
  },
  "packs": {
   "apple_log_film": {

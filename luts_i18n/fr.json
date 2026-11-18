@@ -106,7 +106,12 @@
   "price": "Prix",
   "pay_note": "En payant, vous acceptez {terms}",
   "terms_link": "les conditions",
-  "bio_1_n": "Presque deux ans dans Blackmagic Camera. Je tiens *@blackmagicamera*, suivi par plus de {n} abonnés, et je filme tout à l'iPhone."
+  "bio_1_n": "Presque deux ans dans Blackmagic Camera. Je tiens *@blackmagicamera*, suivi par plus de {n} abonnés, et je filme tout à l'iPhone.",
+  "proof_1": "Presque 2 ans",
+  "proof_2": "dans le canal",
+  "proof_3_v": "Looks maison",
+  "proof_3_l": "Testés sur mes rushs",
+  "proof_4": "et Rec.709"
  },
  "packs": {
   "apple_log_film": {
