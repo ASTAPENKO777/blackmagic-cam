@@ -1,5 +1,5 @@
 {% extends "luts/base.html" %}
-{% from "luts/_m.html" import slider, tg, versions, cover, clip with context %}
+{% from "luts/_m.html" import slider, vslider, tg, versions, cover, clip with context %}
 {% block title %}{{ T.prod_title.format(title=item.title, versions=item.versions | join(', ')) }}{% endblock %}
 {% block desc %}{{ item.tagline or item.desc or item.title }} {{ T.looks_n.format(n=item.count) if item.kind == 'pack' else T.look_1 }} · {{ item.versions | join(', ') }} · {{ T.strip_3 }}.{% endblock %}
 {% block bodyattr %} data-slug="{{ item.slug }}"{% endblock %}
@@ -7,7 +7,9 @@
 <nav class="wrap crumbs" aria-label="Breadcrumb"><a href="{{ u() }}">{{ T.back_all }}</a></nav>
 <section class="wrap prod">
   <div class="prod-media">
-    {% if item.pair_meta %}{{ slider(item.pair_meta, eager=True, alt=item.title) }}
+    {% set lead = (item.media | selectattr('before') | first) %}
+    {% if lead %}{{ vslider(lead, alt=item.title) }}
+    {% elif item.pair_meta %}{{ slider(item.pair_meta, eager=True, alt=item.title) }}
     {% elif item.media %}<div class="shot">{{ clip(item.media[0], item.title) }}</div>
     {% else %}{{ cover(item) }}{% endif %}
   </div>
@@ -31,7 +33,7 @@
     <p><a href="{{ u('/guide/blackmagic-camera') }}">{{ T.how_more }}</a> · <a href="{{ u('/rec709-vs-log') }}">{{ T.cmp_more }}</a></p>
   </div>
 </section>
-{% set rest = item.media if item.pair_meta else item.media[1:] %}
+{% set rest = (item.media | reject("equalto", lead) | list) if lead else (item.media if item.pair_meta else item.media[1:]) %}
 {% if rest %}
 <section class="wrap gallery">
   {% for m in rest %}<div class="shot">{{ clip(m, item.title) }}</div>{% endfor %}

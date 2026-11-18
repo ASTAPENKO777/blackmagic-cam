@@ -62,8 +62,14 @@ def site_media(items: list[dict]) -> list[dict]:
                 continue
             seen.add(entry["key"])
             base = f"/static/luts/media/{entry['key']}"
-            result.append({"video": entry["video"], "url": base + (".mp4" if entry["video"] else ".webp"),
-                           "poster": base + ".webp", "w": entry["w"], "h": entry["h"], "local": True})
+            row = {"video": entry["video"], "url": base + (".mp4" if entry["video"] else ".webp"),
+                   "poster": base + ".webp", "w": entry["w"], "h": entry["h"], "local": True}
+            if entry.get("start"):  # запис екрана: з цієї секунди LUT увімкнений, картки й плитки грають лише «ON»
+                row["start"] = entry["start"]
+            if entry.get("before"):  # чистий ролик: є плоска версія «до» для слайдера на відео
+                row["before"] = f"/static/luts/media/{entry['before']}.mp4"
+                row["bposter"] = f"/static/luts/media/{entry['before']}.webp"
+            result.append(row)
         else:
             result.append({"video": media["video"], "url": media["url"], "poster": None, "w": 720, "h": 900, "local": False})
     return result
@@ -135,19 +141,16 @@ def view_items(catalog: dict, lang: str = "en") -> dict:
             look.setdefault("alone", True)
         pack["has_alone"] = any(look["alone"] for look in pack["inside"])
         pack["code"] = numbered_block([look["title"] for look in pack["inside"]], lang)
-        # колаж: велике фото зі слайдером; збоку відео в НАТУРАЛЬНІЙ пропорції, поки влазять у висоту великого фото
-        # (записи екрана видно цілком, з меню), решта (до трьох) рядом знизу
-        reel = pack["media"] if pack.get("pair_meta") else pack["media"][1:]
-        side, used = [], 0
-        for media in reel:
-            height = SIDE_WIDTH * media["h"] / media["w"]
-            if not side or used + height + 8 <= SIDE_BUDGET:
-                side.append(media)
-                used += height + 8
-            else:
-                break
-        pack["side"], pack["bottom"] = side, reel[len(side):len(side) + 3]
-    hero_clip = next((m for p in packs for m in p["media"] if m["video"] and m["h"] > m["w"] and m.get("local")), None)
+        # колаж: велике (відео-слайдер LUT OFF/ON з чистого ролика, інакше фото-слайдер, інакше перше відео)
+        # і під ним відео-плитки, обрізані без бокового меню камери, на всю плитку
+        big = next((m for m in pack["media"] if m.get("before")), None)
+        pack["big_video"] = big
+        rest = [m for m in pack["media"] if m["video"] and m is not big and m["w"] > m["h"]]
+        if big is None and not pack.get("pair_meta") and rest:
+            pack["big_video"] = rest.pop(0)
+        pack["tiles"] = rest[:4]
+    hero_pool = [m for p in packs for m in p["media"] if m.get("before") and m["h"] > m["w"] and m is not p.get("big_video")]
+    hero_clip = hero_pool[0] if hero_pool else None
     return {"hero_clip": hero_clip, "work": work, "packs": packs, "singles": singles, "by_slug": {i["slug"]: i for i in packs + singles}, "alone": sold_alone}
 
 

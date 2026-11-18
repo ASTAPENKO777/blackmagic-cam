@@ -46,13 +46,13 @@ a:hover { color: var(--amber-hover); }
 /* iPhone 15 Pro (натуральний титан) за фігурою, пропорції реального пристрою (екран 393×852 pt). Усе в cqw: 1 pt = 100cqw / 393.
    Шари: титанова рамка зі скошеною гранню й антенними смужками, чорний ободок екрана ~2 pt, Dynamic Island з лінзою, бокові кнопки.
    На екрані слайдер LUT OFF / LUT ON (36%, як у паках). */
-.phone { position: absolute; z-index: 0; right: -9%; top: 22%; width: 48%; aspect-ratio: 393 / 852; transform: rotate(6deg); container-type: inline-size; }
+.phone { position: absolute; z-index: 0; right: -9%; top: 3%; width: 46%; aspect-ratio: 393 / 852; transform: rotate(6deg); container-type: inline-size; }
 .phone-body { position: absolute; inset: 0; border-radius: 16.2cqw; padding: .95cqw; box-sizing: border-box;
   background: linear-gradient(100deg, #d6d3cc 0%, #8f8c86 9%, #6f6d68 28%, #a9a69f 47%, #66645f 72%, #96938c 93%, #cfccc5 100%);
   box-shadow: inset 0 0 0 .3cqw rgba(255, 255, 255, .55), inset 0 0 0 .75cqw rgba(40, 39, 37, .55), 0 9cqw 16cqw -5cqw rgba(0, 0, 0, .8); }
 .phone-screen { position: relative; width: 100%; height: 100%; border-radius: 15.2cqw; overflow: hidden; background: #000; box-sizing: border-box; border: .55cqw solid #040405; }
 .phone-screen .ba { position: absolute; inset: 0; height: auto; border: 0; border-radius: 0; box-shadow: none; }
-.phone-screen .ba picture.ba-before { height: 100%; }
+.phone-screen .ba picture.ba-before, .phone-screen .ba video.ba-before { height: 100%; }
 .phone-screen .ba img { height: 100%; object-fit: cover; }
 .phone-screen .ba-tag { bottom: 9cqw; font-size: 3.1cqw; padding: 1.2cqw 2cqw; border-radius: 1.4cqw; }
 .phone-screen .ba-tag.l { inset-inline-start: 4.5cqw; } .phone-screen .ba-tag.r { inset-inline-end: 4.5cqw; }
@@ -128,7 +128,7 @@ a:hover { color: var(--amber-hover); }
 /* Обкладинки: фото як є, відео без обрізання */
 .cover-link { display: block; text-decoration: none; }
 .cover { position: relative; aspect-ratio: 16 / 10; overflow: hidden; background: var(--surface-2); }
-.single .cover { aspect-ratio: 4 / 3; }
+.single .cover { aspect-ratio: 1.9 / 1; }
 .cover img, .cover video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .cover video.fit { object-fit: contain; background: #05060a; }
 .cover-empty { position: absolute; inset: 0; display: grid; place-items: center; padding: 12px; text-align: center; color: var(--muted); font-weight: 600; }
@@ -212,19 +212,19 @@ a:hover { color: var(--amber-hover); }
 .pack-row { display: grid; grid-template-columns: minmax(0, 1fr); gap: 26px; padding: 36px 0; border-top: 1px solid rgba(255, 255, 255, .08); }
 .pack-row:first-of-type { border-top: 0; }
 /* Колаж по висоті дорівнює тексту: велике фото й відео збоку займають весь простір між верхньою і нижньою лінією. */
-.collage { display: grid; grid-template-columns: 1.45fr 1fr; grid-template-rows: auto; gap: 8px; align-content: start; }
-.collage-big { grid-column: 1; grid-row: 1; position: relative; aspect-ratio: 4 / 5; min-width: 0; border-radius: var(--radius-sm); overflow: hidden; background: #05060a; }
+.collage { display: grid; grid-template-columns: minmax(0, 1fr); gap: 8px; align-content: start; }
+.collage-big { position: relative; aspect-ratio: 4 / 5; min-width: 0; border-radius: var(--radius-sm); overflow: hidden; background: #05060a; }
 .collage-big .ba { position: absolute; inset: 0; height: auto; border-radius: 0; border: 0; }
-.collage-big .ba picture.ba-before { height: 100%; }
+.collage-big .ba picture.ba-before, .collage-big .ba video.ba-before { height: 100%; }
 .collage-big .ba img { height: 100%; object-fit: cover; }
 .collage-big > video, .collage-big > img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
-.collage-side { grid-column: 2; grid-row: 1; display: grid; grid-auto-rows: minmax(min-content, 1fr); gap: 8px; min-height: 0; }
-.collage-tall { grid-template-columns: 1fr 1fr; }   /* вертикальне відео: окрема колонка, у яку воно вписується цілком */
-.collage-bottom { grid-column: 1 / -1; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 8px; }
-.collage-tile { position: relative; overflow: hidden; border-radius: var(--radius-sm); background: #05060a; min-height: 0; display: flex; align-items: center; justify-content: center; }
-.collage-tile video, .collage-tile img { display: block; width: 100%; height: auto; max-height: 100%; object-fit: contain; }   /* кадр цілком, без обрізання */
-.collage-bottom .collage-tile { aspect-ratio: 16 / 10; }
-.collage-bottom .collage-tile video, .collage-bottom .collage-tile img { height: 100%; }
+/* плитки відео: запис екрана iPhone без правого меню (острівок і кнопка запису лишаються), кадр на всю плитку, без чорних смуг */
+.collage-tiles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.collage-tiles.n1 { grid-template-columns: minmax(0, 1fr); }
+.collage-tiles.n3 .collage-tile:last-child { grid-column: 1 / -1; }
+.collage-tile { position: relative; overflow: hidden; border-radius: var(--radius-sm); background: #05060a; aspect-ratio: 800 / 410; }
+.collage-tiles.n3 .collage-tile:last-child { aspect-ratio: 800 / 330; }
+.collage-tile video, .collage-tile img { position: absolute; inset: 0; display: block; width: 100%; height: 100%; object-fit: cover; object-position: left center; }
 
 .pack-text h3 { font-size: clamp(1.75rem, 4.4vw, 2.25rem); font-weight: 700; letter-spacing: -.03em; line-height: 1.1; }
 .pack-desc { margin: 12px 0 0; max-width: 30em; color: #d9d6d0; font-size: 1rem; line-height: 1.5; }
@@ -245,19 +245,18 @@ a:hover { color: var(--amber-hover); }
   .pack-row { grid-template-columns: minmax(0, 430px) minmax(0, 1fr); gap: 56px; padding: 52px 0; align-items: stretch; }
   .pack-row.flip { grid-template-columns: minmax(0, 1fr) minmax(0, 430px); }
   .pack-row.flip .collage { order: 2; }
-  .collage { grid-template-rows: minmax(0, 1fr) auto; height: 100%; }
-  .collage-big { aspect-ratio: auto; min-height: 280px; }
+  .pack-row > .collage { align-self: center; }
 }
 
 /* Окремі LUT: простий ряд, як на Ko-fi: фото, назва, опис, ціна. Без рамок і кнопок. */
 .singles { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px 16px; }
 @media (min-width: 760px) { .singles { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 40px 28px; } }
 .single { display: block; color: var(--text); text-decoration: none; }
-.single .cover { border-radius: var(--radius); aspect-ratio: 4 / 3; }
+.single .cover { border-radius: var(--radius); aspect-ratio: 1.9 / 1; }
 .single h3 { margin-top: 12px; font-size: 1.0625rem; letter-spacing: -.01em; }
 .single:hover h3 { color: var(--amber); }
 .single-desc { margin: 4px 0 0; color: var(--muted); font-size: .9375rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .single-price { margin: 8px 0 0; font-weight: 700; color: var(--amber); }
 @media (max-width: 480px) { .pack-code { font-size: .6875rem; padding: 28px 14px 12px; } .pack-code::after { top: 8px; right: 10px; } }
-@media (min-width: 1000px) { .phone { right: -36%; top: 14%; width: 52%; transform: rotate(9deg); } }
-@media (min-width: 1000px) and (max-width: 1499px) { .phone { right: -20%; top: 20%; width: 46%; } }
+@media (min-width: 1000px) { .phone { right: -27%; top: 6%; width: 66%; transform: rotate(8deg); } }
+@media (min-width: 1000px) and (max-width: 1499px) { .phone { right: -16%; top: 8%; width: 60%; } }

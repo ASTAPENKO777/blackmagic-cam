@@ -79,6 +79,14 @@
     document.addEventListener("keydown", (e) => { if (e.key === "Escape") lang.open = false; });
   }
 
+  // Записи екрана на картках і в плитках: грають лише частину з увімкненим LUT (data-start), без «LUT OFF».
+  document.querySelectorAll("video[data-start]").forEach((v) => {
+    const from = parseFloat(v.dataset.start) || 0;
+    v.removeAttribute("loop");
+    v.addEventListener("loadedmetadata", () => { v.currentTime = from; });
+    v.addEventListener("ended", () => { v.currentTime = from; v.play().catch(() => {}); });
+  });
+
   // Портфоліо: відео вантажиться й грає лише коли в кадрі; без руху при prefers-reduced-motion.
   const still = calm;
   if ("IntersectionObserver" in window && !still) {
@@ -88,6 +96,16 @@
     }), { threshold: 0.35 });
     document.querySelectorAll("video[data-src]").forEach((v) => vids.observe(v));
   }
+
+  // Слайдер на відео: «до» (плоска версія) і «після» грають разом; «після» веде, «до» доганяє, якщо розійшлись.
+  document.querySelectorAll("[data-vba]").forEach((ba) => {
+    const after = ba.querySelector("video.ba-after"), before = ba.querySelector("video.ba-before");
+    setInterval(() => {
+      if (after.paused || before.readyState < 2) return;
+      if (Math.abs(before.currentTime - after.currentTime) > 0.12) before.currentTime = after.currentTime;
+      if (before.paused) before.play().catch(() => {});
+    }, 250);
+  });
 
   // Стрілки стрічки портфоліо (на телефоні стрічка гортається пальцем).
   document.querySelectorAll("[data-rail-btn]").forEach((btn) => {

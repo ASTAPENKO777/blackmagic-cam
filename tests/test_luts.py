@@ -233,7 +233,7 @@ def test_packs_are_calm_alternating_rows_with_collage(client):
     html = client.get("/luts").data.decode()
     rows = re.findall(r'<article class="pack-row( flip)?">', html)
     assert rows == ["", " flip", ""]  # перший: колаж ліворуч, другий навпаки
-    assert html.count('class="collage-big"') == 3 and html.count('class="pack-text"') == 3 and html.count('class="collage-side"') >= 3
+    assert html.count('class="collage-big"') == 3 and html.count('class="pack-text"') == 3 and html.count('class="collage-tiles') >= 2
     # склад у тому ж форматі, що в картці бота: «13 LUTs / Rec.709», нумерований моноширинний список, ціна, «≈ N ⭐ per LUT»
     assert "13 LUTs / Rec.709" in html and 'class="pack-code"' in html and "1. Era" in html
     assert "per LUT" in html and html.count("Buy in Telegram") >= 3

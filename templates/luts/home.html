@@ -1,6 +1,5 @@
 {% extends "luts/base.html" %}
-{% from "luts/_m.html" import tg, cover, tile, slider, versions with context %}
-{% set phone_pair = {"name": "phone", "w": 768, "h": 1365, "widths": [480, 768]} %}
+{% from "luts/_m.html" import tg, cover, tile, slider, vslider, versions with context %}
 {% block bodyattr %} data-slug="home"{% endblock %}
 {% block head %}
 <link rel="preload" as="image" type="image/avif" fetchpriority="high" imagesrcset="{{ static_v('luts/img/bust-480.avif') }} 480w, {{ static_v('luts/img/bust-768.avif') }} 768w, {{ static_v('luts/img/bust-1080.avif') }} 1080w" imagesizes="(min-width: 1000px) 470px, 86vw" media="(max-width: 999px)">
@@ -9,7 +8,7 @@
 <section class="hero">
   <div class="wrap hero-in">
     <div class="stage">
-      <div class="phone"><div class="phone-body"><i class="pb pb-action"></i><i class="pb pb-up"></i><i class="pb pb-down"></i><i class="pb pb-power"></i><i class="pf-band pf-t"></i><i class="pf-band pf-b"></i><div class="phone-screen">{{ slider(phone_pair, alt=T.slider_label, sizes="300px") }}<i class="phone-island"><b></b></i><i class="phone-home"></i><i class="phone-glare"></i></div></div></div>
+      <div class="phone"><div class="phone-body"><i class="pb pb-action"></i><i class="pb pb-up"></i><i class="pb pb-down"></i><i class="pb pb-power"></i><i class="pf-band pf-t"></i><i class="pf-band pf-b"></i><div class="phone-screen">{% if shop.hero_clip %}{{ vslider(shop.hero_clip, alt=T.slider_label) }}{% endif %}<i class="phone-island"><b></b></i><i class="phone-home"></i><i class="phone-glare"></i></div></div></div>
       <picture class="portrait">
         <source media="(min-width: 1000px)" type="image/avif" srcset="{{ static_v('luts/img/portrait-480.avif') }} 480w, {{ static_v('luts/img/portrait-768.avif') }} 768w, {{ static_v('luts/img/portrait-1080.avif') }} 1080w" sizes="470px">
         <source media="(min-width: 1000px)" type="image/webp" srcset="{{ static_v('luts/img/portrait-480.webp') }} 480w, {{ static_v('luts/img/portrait-768.webp') }} 768w, {{ static_v('luts/img/portrait-1080.webp') }} 1080w" sizes="470px">
@@ -43,12 +42,11 @@
   <div class="packs-panel">
   {% for p in shop.packs %}
   <article class="pack-row{% if loop.index is even %} flip{% endif %}">
-    <div class="collage{% if p.side|length == 1 and p.side[0].h > p.side[0].w %} collage-tall{% endif %}">
+    <div class="collage">
       <div class="collage-big">
-        {% if p.pair_meta %}{{ slider(p.pair_meta, alt=p.title) }}{% elif p.media %}{{ tile(p.media[0], p.title) }}{% else %}{{ cover(p) }}{% endif %}
+        {% if p.big_video and p.big_video.before %}{{ vslider(p.big_video, alt=p.title) }}{% elif p.pair_meta %}{{ slider(p.pair_meta, alt=p.title) }}{% elif p.big_video %}{{ tile(p.big_video, p.title) }}{% elif p.media %}{{ tile(p.media[0], p.title) }}{% else %}{{ cover(p) }}{% endif %}
       </div>
-      {% if p.side %}<div class="collage-side">{% for m in p.side %}<div class="collage-tile">{{ tile(m, p.title) }}</div>{% endfor %}</div>{% endif %}
-      {% if p.bottom %}<div class="collage-bottom">{% for m in p.bottom %}<div class="collage-tile">{{ tile(m, p.title) }}</div>{% endfor %}</div>{% endif %}
+      {% if p.tiles %}<div class="collage-tiles n{{ p.tiles|length }}">{% for m in p.tiles %}<div class="collage-tile">{{ tile(m, p.title) }}</div>{% endfor %}</div>{% endif %}
     </div>
     <div class="pack-text">
       <h3>{{ p.title }}</h3>
@@ -74,7 +72,7 @@
   <div class="singles">
     {% for s in shop.singles %}
     <a class="single" href="{{ u('/' ~ s.slug) }}">
-      {{ cover(s) }}
+      {{ cover(s, autoplay=(s.media | rejectattr('video') | list | length == 0)) }}
       <h3>{{ s.title }}</h3>
       {% if s.desc %}<p class="single-desc">{{ s.desc.replace(" / ", " · ") }}</p>{% endif %}
       <p class="single-price">{{ (s.price_stars ~ " ⭐") | star }}</p>

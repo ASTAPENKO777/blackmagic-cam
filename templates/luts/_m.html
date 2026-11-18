@@ -16,11 +16,23 @@
 </div>
 {%- endmacro %}
 
+{% macro vslider(m, alt="") -%}
+<div class="ba ba-video" data-ba data-vba>
+  <video class="ba-before" muted loop playsinline preload="none" width="{{ m.w }}" height="{{ m.h }}" poster="{{ m.bposter }}" data-src="{{ m.before }}" aria-hidden="true"></video>
+  <video class="ba-after" muted loop playsinline preload="none" width="{{ m.w }}" height="{{ m.h }}" poster="{{ m.poster }}" data-src="{{ m.url }}" aria-label="{{ alt }}"></video>
+  <span class="ba-tag l" aria-hidden="true">{{ T.before }}</span><span class="ba-tag r" aria-hidden="true">{{ T.after }}</span>
+  <span class="ba-line" aria-hidden="true"></span>
+  <span class="ba-knob" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 6l-6 6 6 6M15 6l6 6-6 6"/></svg></span>
+  <span class="ba-hint" aria-hidden="true">{{ T.drag }}</span>
+  <input class="ba-range" type="range" min="0" max="100" step="0.1" value="36" aria-label="{{ T.slider_label }}">
+</div>
+{%- endmacro %}
+
 {% macro cover(item, autoplay=False) -%}
 {%- set video = (item.media | selectattr('video') | first) -%}
 {%- set photo = (item.media | rejectattr('video') | first) -%}
 <div class="cover">
-{%- if autoplay and video %}<video class="fit" muted loop playsinline preload="none" width="{{ video.w }}" height="{{ video.h }}"{% if video.poster %} poster="{{ video.poster }}"{% endif %} data-src="{{ video.url }}" aria-label="{{ item.title }}"></video>
+{%- if autoplay and video %}<video muted loop playsinline preload="none" width="{{ video.w }}" height="{{ video.h }}"{% if video.poster %} poster="{{ video.poster }}"{% endif %}{% if video.start %} data-start="{{ video.start }}"{% endif %} data-src="{{ video.url }}" aria-label="{{ item.title }}"></video>
 {%- elif photo %}<img src="{{ photo.url }}" width="{{ photo.w }}" height="{{ photo.h }}" alt="{{ item.title }}" loading="lazy" decoding="async">
 {%- elif video and video.poster %}<img src="{{ video.poster }}" width="{{ video.w }}" height="{{ video.h }}" alt="{{ item.title }}" loading="lazy" decoding="async">
 {%- else %}<span class="cover-empty">{{ item.title }}</span>{% endif %}
@@ -29,7 +41,7 @@
 
 {% macro tile(m, alt="") -%}
 {%- if m.video -%}
-<video muted loop playsinline preload="none" width="{{ m.w }}" height="{{ m.h }}"{% if m.poster %} poster="{{ m.poster }}"{% endif %} data-src="{{ m.url }}" aria-label="{{ alt }}"></video>
+<video muted loop playsinline preload="none" width="{{ m.w }}" height="{{ m.h }}"{% if m.poster %} poster="{{ m.poster }}"{% endif %}{% if m.start %} data-start="{{ m.start }}"{% endif %} data-src="{{ m.url }}" aria-label="{{ alt }}"></video>
 {%- else -%}
 <img src="{{ m.url }}" width="{{ m.w }}" height="{{ m.h }}" alt="{{ alt }}" loading="lazy" decoding="async">
 {%- endif -%}
