@@ -27,7 +27,7 @@ def client(monkeypatch):
         raise requests.ConnectionError("bot is down")
     monkeypatch.setattr(luts.requests, "get", offline)
     luts._cache.update(data=None, etag=None, at=0.0)  # холодний старт без бота: працює знімок
-    luts._posts.update(at=-luts.POSTS_TTL, data=[])
+    luts._posts.update(at=-luts.POSTS_TTL, data=None)
     return appmod.app.test_client()
 
 
@@ -326,21 +326,35 @@ def test_free_card_is_a_plain_single_card_that_goes_to_the_bot(client):
 
 
 TG_PAGE = (
-    '<div class="tgme_widget_message_wrap"><div data-post="blackmagicamera/10"><div class="tgme_widget_message_text">Only text</div></div></div>'
+    '<div class="tgme_channel_info_header_title"><span dir="auto">Blackmagic Camera | Settings</span></div>'
+    '<i class="tgme_page_photo_image bgcolor1"><img src="https://cdn4.telesco.pe/file/ava.jpg"></i>'
+    '<span class="counter_value">6.59K</span> <span class="counter_type">subscribers</span>'
+    '<div class="tgme_widget_message_wrap"><div data-post="blackmagicamera/10"><div class="tgme_widget_message_text">https://vt.tiktok.com/x</div>'
+    '<time datetime="2026-10-20T10:00:00+00:00"></time></div></div>'
     '<div class="tgme_widget_message_wrap"><div data-post="blackmagicamera/11"><a class="tgme_widget_message_photo_wrap" style="width:1px;background-image:url(\'https://cdn4.telesco.pe/file/a.jpg\')"></a>'
-    '<div class="tgme_widget_message_text">Shot on iPhone &amp; LUT https://vt.tiktok.com/x</div>'
+    '<div class="tgme_widget_message_text">Shot on iPhone &amp; LUT<br/>@blackmagicamera_bot <i class="emoji" style="x"><b>🔥</b></i></div>'
+    '<div class="tgme_widget_message_reactions"><span class="tgme_reaction tgme_reaction_paid"><i class="icon icon-telegram-stars"></i>5</span>'
+    '<span class="tgme_reaction"><i class="emoji" style="background-image:url(\'//telegram.org/img/emoji/40/F09F94A5.png\')"><b>🔥</b></i>4</span></div>'
     '<span class="tgme_widget_message_views">5.3K</span><time datetime="2026-10-23T17:46:43+00:00"></time></div></div>')
 
 
-def test_channel_posts_parse_only_posts_with_frames():
-    posts = luts.parse_posts(TG_PAGE)
-    assert posts == [{"url": "https://t.me/blackmagicamera/11", "img": "https://cdn4.telesco.pe/file/a.jpg", "video": False,
-                      "text": "Shot on iPhone & LUT", "date": "23.10.2026", "views": "5.3K"}]
+def test_channel_feed_parses_header_posts_reactions_and_views():
+    feed = luts.parse_channel(TG_PAGE)
+    assert feed["title"] == "Blackmagic Camera | Settings" and feed["subs"] == "6.59K" and feed["avatar"].endswith("ava.jpg")
+    assert [p["id"] for p in feed["posts"]] == [10, 11]   # від старших до новіших, як у чаті
+    post = feed["posts"][1]
+    assert post["photo"].endswith("a.jpg") and post["views"] == "5.3K" and post["time"] == "17:46" and post["day"] == "2026-10-23"
+    assert post["text"] == "Shot on iPhone & LUT\n@blackmagicamera_bot 🔥"
+    assert post["reactions"] == [{"paid": True, "img": "", "char": "", "n": "5"},
+                                 {"paid": False, "img": "https://telegram.org/img/emoji/40/F09F94A5.png", "char": "🔥", "n": "4"}]
 
 
-def test_home_shows_channel_posts_and_hides_the_block_when_telegram_is_down(client, monkeypatch):
+def test_home_shows_the_channel_as_a_telegram_chat_and_hides_it_when_telegram_is_down(client, monkeypatch):
     assert 'id="channel"' not in client.get("/uk/luts").data.decode()   # Telegram недоступний: блоку немає
-    monkeypatch.setitem(luts._posts, "data", luts.parse_posts(TG_PAGE))
+    monkeypatch.setitem(luts._posts, "data", luts.parse_channel(TG_PAGE))
     monkeypatch.setitem(luts._posts, "at", time.time())
     html = client.get("/uk/luts").data.decode()
-    assert 'id="channel"' in html and "https://t.me/blackmagicamera/11" in html and "Підписатися" in html
+    assert 'class="tg-window"' in html and "https://t.me/blackmagicamera/11" in html and "Підписатися" in html
+    assert 'href="https://t.me/blackmagicamera_bot"' in html and 'class="tg-react paid"' in html and "6.59K" in html
+    data = client.get("/luts/channel.json").get_json()
+    assert data["ids"] == [10, 11] and "tg-msg" in data["html"] and data["sig"]

@@ -1,9 +1,8 @@
-/* Заставка головної: раз за сесію і не для тих, хто вимкнув рух. Підключається синхронно в <head>, щоб клас стояв до першого кадру. */
+/* Заставка головної: при кожному відкритті, крім тих, хто вимкнув рух у системі. Підключається синхронно в <head>, щоб клас стояв до першого кадру. */
 (() => {
   const root = document.documentElement;
   try {
-    if (sessionStorage.getItem("bmc_intro") || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
-    sessionStorage.setItem("bmc_intro", "1");
+    if (matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   } catch (e) { return; }
   root.classList.add("intro-on");
   document.addEventListener("DOMContentLoaded", () => {

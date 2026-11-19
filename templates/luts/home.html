@@ -124,21 +124,24 @@
 </section>
 
 
-{% if posts %}
+{% if feed %}
 <section class="wrap sec" id="channel">
-  {#- Останні пости каналу з кадрами. Іконки: Lucide (ISC), логотип Telegram (Simple Icons). #}
-  <div class="sec-head sec-row">
-    <div><h2>{{ T.posts_title }}</h2>{% if members %}<p class="muted sec-sub">{{ T.posts_sub.format(n=members) }}</p>{% endif %}</div>
-    <a class="btn btn-tg" href="https://t.me/blackmagicamera" rel="noopener"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="#fff"/><path fill="#229ED9" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>{{ T.posts_cta }}</a>
-  </div>
-  <div class="posts">
-    {%- for p in posts %}
-    <a class="post" href="{{ p.url }}" rel="noopener" dir="ltr">
-      <div class="post-media"><img src="{{ p.img }}" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer">{% if p.video %}<span class="post-play" aria-hidden="true"><svg viewBox="0 0 24 24" fill="currentColor"><polygon points="6 3 20 12 6 21 6 3"/></svg></span>{% endif %}</div>
-      {% if p.text %}<p class="post-text">{{ p.text }}</p>{% endif %}
-      <p class="post-meta"><span>{{ p.date }}</span>{% if p.views %}<span class="post-views"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2.062 12.348a1 1 0 0 1 0-.696 10.75 10.75 0 0 1 19.876 0 1 1 0 0 1 0 .696 10.75 10.75 0 0 1-19.876 0"/><circle cx="12" cy="12" r="3"/></svg>{{ p.views }}</span>{% endif %}</p>
-    </a>
-    {%- endfor %}
+  {#- «Свіже з каналу»: виглядає як сам канал у Telegram і оновлюється наживо (s.js раз на хвилину питає /luts/channel.json). #}
+  <div class="tg-grid">
+    <div class="tg-intro">
+      <h2>{{ T.posts_title }}</h2>
+      {% if members %}<p class="muted sec-sub">{{ T.posts_sub.format(n=members) }}</p>{% endif %}
+      <a class="btn btn-primary tg-join-cta" href="https://t.me/blackmagicamera" rel="noopener">{{ T.posts_cta }}</a>
+    </div>
+    <div class="tg-window" data-feed="{{ url_for('luts.channel_json') }}">
+      <div class="tg-head" dir="ltr">
+        {% if feed.avatar %}<img class="tg-ava" src="{{ feed.avatar }}" alt="" width="42" height="42" referrerpolicy="no-referrer">{% endif %}
+        <div class="tg-who"><b>{{ feed.title }}</b><span><span class="tg-subs">{{ feed.subs }}</span> subscribers</span></div>
+        <svg class="tg-logo" viewBox="0 0 24 24" aria-hidden="true"><path fill="#229ED9" d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.321.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/></svg>
+      </div>
+      <div class="tg-chat" dir="ltr">{% include "luts/_channel.html" %}</div>
+      <a class="tg-join" href="https://t.me/blackmagicamera" rel="noopener">{{ T.posts_cta }}</a>
+    </div>
   </div>
 </section>
 {% endif %}

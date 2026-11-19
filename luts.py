@@ -2,6 +2,7 @@
 
 Поки оплата карткою не підключена (CARD_ENABLED = False), єдина дія на сторінці — перейти в Telegram-бота.
 """
+import hashlib
 import html
 import json
 import os
@@ -52,46 +53,86 @@ def get_catalog() -> dict:
 
 
 CHANNEL_FEED = "https://t.me/s/blackmagicamera"
-POSTS_TTL, POSTS_RETRY = 1800, 600
-_posts: dict = {"at": -POSTS_TTL, "data": []}
+POSTS_TTL, POSTS_RETRY = 90, 120   # «чат» на сайті майже наживо: не частіше ніж раз на 90 с ходимо в Telegram
+_posts: dict = {"at": -POSTS_TTL, "data": None}
 
 
-def parse_posts(page: str, limit: int = 3) -> list[dict]:
-    """Останні пости каналу з фото чи відео (публічна сторінка t.me/s). Текстові пропускаємо:
-    сайт показує кадри, а не оголошення."""
-    found = []
-    for block in reversed(page.split('<div class="tgme_widget_message_wrap')[1:]):
-        post = re.search(r'data-post="(\w+/\d+)"', block)
-        media = re.search(r"tgme_widget_message_(photo_wrap|video_thumb)[^>]*background-image:url\('(https://[^']+)'\)", block)
-        if not post or not media:
+def _tg_text(fragment: str) -> str:
+    """HTML тексту поста з Telegram → чистий текст з переносами (емодзі лишаються символами)."""
+    fragment = re.sub(r"<br\s*/?>", "\n", fragment)
+    fragment = re.sub(r'<i class="emoji"[^>]*><b>(.*?)</b></i>', r"\1", fragment, flags=re.S)
+    text = html.unescape(re.sub(r"<[^>]+>", "", fragment))
+    return re.sub(r"[ \t]+", " ", re.sub(r"\n{3,}", "\n\n", text)).strip()
+
+
+def _bg(block: str, cls: str) -> list[str]:
+    """URL картинок із background-image у елементах класу cls (Telegram дає їх як //cdn… або https://cdn…)."""
+    return ["https://" + m for m in re.findall(rf"{cls}[^>]*background-image:url\('(?:https?:)?//([^']+)'\)", block)]
+
+
+def parse_channel(page: str, limit: int = 8) -> dict | None:
+    """Публічна сторінка t.me/s/<канал> → шапка каналу й останні пости для «чату» на сайті.
+    Пости з текстом або медіа, від старших до новіших; реакції з кількістю, перегляди, час."""
+    posts = []
+    for block in page.split('<div class="tgme_widget_message_wrap')[1:]:
+        post = re.search(r'data-post="(\w+)/(\d+)"', block)
+        if not post:
             continue
         body = re.search(r'<div class="tgme_widget_message_text[^>]*>(.*?)</div>', block, re.S)
-        text = html.unescape(re.sub(r"<[^>]+>", " ", body.group(1))) if body else ""
-        text = re.sub(r"\s+", " ", re.sub(r"https?://\S+", "", text)).strip()
-        when = re.search(r'<time datetime="(\d{4})-(\d{2})-(\d{2})', block)
+        text = _tg_text(body.group(1)) if body else ""
+        video = re.search(r'<video[^>]+src="(https://[^"]+)"', block)
+        thumbs = _bg(block, "tgme_widget_message_video_thumb")
+        photos = _bg(block, "tgme_widget_message_photo_wrap")
+        reactions = []
+        for r in re.finditer(r'<span class="tgme_reaction( tgme_reaction_paid)?">(.*?)</span>', block, re.S):
+            inner = r.group(2)
+            count = re.search(r"([\d.,]+[KM]?)\s*$", re.sub(r"<[^>]+>", "", inner).strip())
+            img = re.search(r"background-image:url\('(?:https?:)?(//telegram\.org/img/emoji/[^']+)'\)", inner)
+            char = re.search(r"<b>(.*?)</b>", inner)
+            if count:
+                reactions.append({"paid": bool(r.group(1)), "img": "https:" + img.group(1) if img else "",
+                                  "char": html.unescape(char.group(1)) if char else "", "n": count.group(1)})
+        if not text and not video and not photos:
+            continue
+        when = re.search(r'<time datetime="([^"]+)"', block)
         views = re.search(r'tgme_widget_message_views">([^<]+)<', block)
-        found.append({"url": f"https://t.me/{post.group(1)}", "img": media.group(2), "video": media.group(1) == "video_thumb",
-                      "text": text[:150], "date": f"{when.group(3)}.{when.group(2)}.{when.group(1)}" if when else "",
-                      "views": views.group(1).strip() if views else ""})
-        if len(found) >= limit:
-            break
-    return found
+        dt = when.group(1) if when else ""
+        posts.append({"id": int(post.group(2)), "url": f"https://t.me/{post.group(1)}/{post.group(2)}", "text": text,
+                      "video": video.group(1) if video else None, "poster": (thumbs or [None])[0],
+                      "photo": None if video else (photos or [None])[0], "reactions": reactions,
+                      "views": views.group(1).strip() if views else "", "dt": dt, "day": dt[:10], "time": dt[11:16]})
+    if not posts:
+        return None
+    title = re.search(r'tgme_channel_info_header_title"><span dir="auto">(.*?)</span>', page)
+    avatar = re.search(r'tgme_page_photo_image[^>]*><img src="(https://[^"]+)"', page)
+    subs = re.search(r'counter_value">([^<]+)</span>\s*<span class="counter_type">subscribers', page)
+    return {"title": html.unescape(title.group(1)) if title else "@blackmagicamera", "avatar": avatar.group(1) if avatar else "",
+            "subs": subs.group(1) if subs else "", "posts": posts[-limit:]}
 
 
-def channel_posts() -> list[dict]:
-    """Кеш на 30 хв; Telegram недоступний — блок просто не показується, спроба знову за 10 хв."""
+def channel_feed() -> dict | None:
+    """Кеш 90 с; Telegram недоступний — лишаємо останній вдалий, а якщо його нема, блок не показується."""
     now = time.time()
     if now - _posts["at"] < POSTS_TTL:
         return _posts["data"]
     try:
         resp = requests.get(CHANNEL_FEED, timeout=2.5, headers={"User-Agent": "Mozilla/5.0"})
-        data = parse_posts(resp.text) if resp.status_code == 200 else []
+        data = parse_channel(resp.text) if resp.status_code == 200 else None
     except requests.RequestException:
-        data = []
-    if data or not _posts["data"]:
-        _posts["data"] = data
-    _posts["at"] = now if data else now - POSTS_TTL + POSTS_RETRY
+        data = None
+    if data:
+        _posts.update(data=data, at=now)
+    else:
+        _posts["at"] = now - POSTS_TTL + POSTS_RETRY
     return _posts["data"]
+
+
+def tg_text(value: str) -> Markup:
+    """Текст поста: екрануємо, посилання й @згадки клікабельні, переноси рядків зберігаємо."""
+    out = str(escape(value))
+    out = re.sub(r"(https?://[^\s<]+)", r'<a href="\1" rel="noopener nofollow">\1</a>', out)
+    out = re.sub(r"(?<![\w/])@(\w{4,32})", r'<a href="https://t.me/\1" rel="noopener">@\1</a>', out)
+    return Markup(out.replace("\n", "<br>"))
 
 
 def site_media(items: list[dict]) -> list[dict]:
@@ -252,7 +293,7 @@ def _page(template: str, lang: str, **extra) -> Response:
     bot_origin = "/".join(CATALOG_URL.split("/")[:3])  # події і медіа йдуть на бота
     resp.headers["Content-Security-Policy"] = (
         f"default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' https: data:; "
-        f"media-src 'self' {bot_origin}; connect-src 'self' {bot_origin}; frame-ancestors 'none'; base-uri 'self'; form-action 'none'")
+        f"media-src 'self' {bot_origin} https://*.telesco.pe; connect-src 'self' {bot_origin}; frame-ancestors 'none'; base-uri 'self'; form-action 'none'")
     return resp
 
 
@@ -268,12 +309,24 @@ def _route(rule: str):
 @_route("")
 def home(lang):
     shop = view_items(get_catalog(), lang)
-    return _page("home.html", lang, shop=shop, posts=channel_posts(), graph=lambda c: [
+    return _page("home.html", lang, shop=shop, feed=channel_feed(), graph=lambda c: [
         {"@type": "WebSite", "name": c["T"]["brand"], "url": c["base_url"] + c["u"]()},
         {"@type": "Person", "@id": c["base_url"] + "/luts#author", "name": "Mykhailo", "jobTitle": "LUT creator",
          "url": c["base_url"] + c["u"](), "image": c["base_url"] + "/static/luts/img/bust-768.webp",
          "sameAs": ["https://t.me/blackmagicamera"]},
         faq_ld(c["T"])])
+
+
+@bp.route("/luts/channel.json")
+def channel_json():
+    """Свіжий «чат» каналу для живого оновлення на сайті: html стрічки + підпис стану (міняється, коли є нові пости чи цифри)."""
+    feed = channel_feed()
+    if not feed:
+        return Response("{}", mimetype="application/json", headers={"Cache-Control": "no-store"})
+    html_list = render_template("luts/_channel.html", feed=feed)
+    sig = hashlib.sha1(json.dumps([[p["id"], p["views"], p["reactions"]] for p in feed["posts"]], sort_keys=True).encode()).hexdigest()[:12]
+    body = json.dumps({"sig": sig, "ids": [p["id"] for p in feed["posts"]], "html": html_list, "subs": feed["subs"]})
+    return Response(body, mimetype="application/json", headers={"Cache-Control": "public, max-age=0, s-maxage=60"})
 
 
 @_route("/free")
@@ -403,6 +456,7 @@ def desc_lines(value: str) -> list[str]:
 
 def register(app, base_url: str = "") -> None:
     app.jinja_env.filters["star_fx"] = star_fx
+    app.jinja_env.filters["tg_text"] = tg_text
     app.jinja_env.filters["h1"] = h1_lines
     app.jinja_env.filters["lines"] = desc_lines
     app.jinja_env.filters["star"] = star

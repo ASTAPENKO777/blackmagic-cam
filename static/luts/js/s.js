@@ -129,6 +129,60 @@
       .catch(() => {});
   }
 
+  // «Свіже з каналу»: час і дати місцевою мовою; поки блок у кадрі, раз на хвилину підтягуємо нові пости, реакції й перегляди.
+  const win = document.querySelector(".tg-window");
+  if (win) {
+    const chat = win.querySelector(".tg-chat"), lang = document.documentElement.lang || "en";
+    const localize = (root) => {
+      root.querySelectorAll(".tg-time").forEach((t) => {
+        const dt = new Date(t.getAttribute("datetime"));
+        if (!isNaN(dt)) t.textContent = dt.toLocaleTimeString(lang, { hour: "2-digit", minute: "2-digit" });
+      });
+      root.querySelectorAll(".tg-day time").forEach((t) => {
+        const dt = new Date(t.getAttribute("datetime"));
+        if (!isNaN(dt)) t.textContent = dt.toLocaleDateString(lang, { day: "numeric", month: "long" });
+      });
+    };
+    const playIn = (root) => {
+      if (!("IntersectionObserver" in window) || calm) return;
+      const io = new IntersectionObserver((es) => es.forEach((e) => {
+        const v = e.target;
+        if (e.isIntersecting) { if (!v.src) v.src = v.dataset.src; v.play().catch(() => {}); } else { v.pause(); }
+      }), { threshold: 0.35 });
+      root.querySelectorAll("video[data-src]").forEach((v) => io.observe(v));
+    };
+    localize(chat);
+    let sig = "", visible = false, busy = false;
+    const refresh = () => {
+      if (!visible || busy || document.hidden) return;
+      busy = true;
+      fetch(win.dataset.feed, { cache: "no-store" }).then((r) => r.json()).then((d) => {
+        if (!d.html || d.sig === sig) return;
+        const first = !sig; sig = d.sig;
+        if (first) return;   // перший запит лише запам'ятовує стан
+        const box = document.createElement("div"); box.innerHTML = d.html;
+        const known = new Set([...chat.querySelectorAll(".tg-msg")].map((m) => m.dataset.id));
+        const fresh = d.ids.some((id) => !known.has(String(id)));
+        if (fresh) {   // нові пости: міняємо стрічку, нові випливають
+          chat.innerHTML = d.html;
+          chat.querySelectorAll(".tg-msg").forEach((m) => { if (!known.has(m.dataset.id)) m.classList.add("tg-new"); });
+          localize(chat); playIn(chat);
+        } else {       // ті самі пости: оновлюємо лише реакції й перегляди, відео не перезапускаємо
+          box.querySelectorAll(".tg-msg").forEach((m) => {
+            const cur = chat.querySelector(`.tg-msg[data-id="${m.dataset.id}"]`);
+            if (!cur) return;
+            ["tg-reacts", "tg-views"].forEach((c) => { const a = cur.querySelector("." + c), b = m.querySelector("." + c); if (a && b && a.innerHTML !== b.innerHTML) a.innerHTML = b.innerHTML; });
+          });
+        }
+        const subs = win.querySelector(".tg-subs"); if (subs && d.subs) subs.textContent = d.subs;
+      }).catch(() => {}).finally(() => { busy = false; });
+    };
+    if ("IntersectionObserver" in window) {
+      new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) refresh(); }).observe(win);
+      setInterval(refresh, 60000);
+    }
+  }
+
   // Таймкод у кадрі hero: рахує від входу на сторінку, як запис у Blackmagic Camera (24 кадри/с).
   const tc = document.querySelector("[data-tc]");
   if (tc) {
