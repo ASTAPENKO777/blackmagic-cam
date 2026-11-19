@@ -63,6 +63,8 @@
   "live_free": "récupéré dans le bot",
   "live_free_lines": ["abonné de la chaîne", "{n} LUT offerts", "reçu dans le bot"],
   "live_close": "Fermer",
+  "faq_who": "Mykhailo répond",
+  "faq_hint": "Choisissez une question",
   "faq_title": "Questions",
   "faq": [
    [

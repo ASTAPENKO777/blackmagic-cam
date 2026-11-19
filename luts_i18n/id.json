@@ -63,6 +63,8 @@
   "live_free": "diambil di bot",
   "live_free_lines": ["subscriber channel", "{n} LUT gratis", "diterima di bot"],
   "live_close": "Tutup",
+  "faq_who": "Mykhailo menjawab",
+  "faq_hint": "Pilih pertanyaan",
   "faq_title": "Pertanyaan",
   "faq": [
    [

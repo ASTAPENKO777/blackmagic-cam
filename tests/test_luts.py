@@ -350,7 +350,11 @@ def test_channel_feed_parses_header_posts_reactions_and_views():
 
 
 def test_home_shows_the_channel_as_a_telegram_chat_and_hides_it_when_telegram_is_down(client, monkeypatch):
-    assert 'id="channel"' not in client.get("/uk/luts").data.decode()   # Telegram недоступний: блоку немає
+    down = client.get("/uk/luts").data.decode()
+    assert 'class="tg-window"' not in down and "data-faq" in down   # Telegram недоступний: чату немає, питання лишаються
+    faq = down[down.index("data-faq"):down.index("</dl>", down.index("data-faq"))]
+    assert faq.count('class="faq-q"') == faq.count("<dd ") >= 5 and "Михайло відповідає" in faq   # усі відповіді в HTML
+    assert down.count("<details class=\"faq\"") == 0   # старий список з плюсами прибрано
     monkeypatch.setitem(luts._posts, "data", luts.parse_channel(TG_PAGE))
     monkeypatch.setitem(luts._posts, "at", time.time())
     html = client.get("/uk/luts").data.decode()

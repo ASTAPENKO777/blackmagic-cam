@@ -83,26 +83,32 @@
           n++;
           return wantBuy ? buys[bi++ % buys.length] : frees[fi++ % frees.length];
         };
-        const card = document.createElement("a"), close = document.createElement("button"), bar = document.createElement("i");
-        card.className = "live-card"; bar.className = "live-bar";
-        close.type = "button"; close.className = "live-x"; close.setAttribute("aria-label", d.close); close.textContent = "\u00d7";
-        live.append(card, close);
+        // Картка як сповіщення iOS: рідке скло, зверху назва «застосунку» й час, тонкий хрестик усередині праворуч.
+        const card = document.createElement("div"), link = document.createElement("a"), close = document.createElement("button"), bar = document.createElement("i");
+        card.className = "live-card"; link.className = "live-link"; bar.className = "live-bar";
+        close.type = "button"; close.className = "live-x"; close.setAttribute("aria-label", d.close);
+        close.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>';
+        card.append(link, close, bar);
+        live.append(card);
         live.hidden = false;
         const render = (e) => {
           const buy = e.kind === "buy";
-          card.href = buy ? `${d.root}/${e.slug}` : d.freeHref;
-          card.replaceChildren();
+          link.href = buy ? `${d.root}/${e.slug}` : d.freeHref;
+          link.replaceChildren();
           const badge = document.createElement("span");
           badge.className = buy ? "live-ic live-buy" : "live-ic live-free";
           if (buy) badge.innerHTML = '<svg viewBox="0 0 88 84" aria-hidden="true"><use href="#tg-star-gold"/></svg>'; else badge.textContent = "FREE";
-          const text = document.createElement("span");
-          text.className = "live-text";
+          const text = document.createElement("span"); text.className = "live-text";
+          const top = document.createElement("span"); top.className = "live-top";
+          const app = document.createElement("em"); app.textContent = "blackmagicamera";
+          const when = document.createElement("time"); when.textContent = ago(e.at);
+          top.append(app, when);
           const b = document.createElement("b"); b.textContent = buy ? titles[e.slug] : d.freeTitle;
-          // «Д*** · підписник каналу · 5 годин тому»: лише перша літера імені, фрази по черзі, щоб не було однаково
+          // «Д*** · підписник каналу»: лише перша літера імені, фрази по черзі, щоб не було однаково
           const what = buy ? d.buy : (freeLines.length ? freeLines[(n - 1) % freeLines.length] : d.free);
-          const small = document.createElement("small"); small.textContent = [e.who ? `${e.who}***` : "", what, ago(e.at)].filter(Boolean).join(" · ");
-          text.append(b, small);
-          card.append(badge, text, bar);
+          const small = document.createElement("small"); small.textContent = [e.who ? `${e.who}***` : "", what].filter(Boolean).join(" · ");
+          text.append(top, b, small);
+          link.append(badge, text);
         };
         const run = (ms) => {   // шкала: тривалість = скільки лишилося показу
           started = performance.now(); left = ms;
@@ -181,6 +187,25 @@
       new IntersectionObserver((es) => { visible = es[0].isIntersecting; if (visible) refresh(); }).observe(win);
       setInterval(refresh, 60000);
     }
+  }
+
+  // Питання як діалог: Михайло «друкує» ~0.6 с, потім відповідь. Перше питання відкрите одразу.
+  const faq = document.querySelector("[data-faq]");
+  if (faq) {
+    const answers = [...faq.querySelectorAll(".faq-all dd")].map((dd) => dd.textContent);
+    const qs = [...faq.querySelectorAll(".faq-q")], out = faq.querySelector(".faq-a"), card = faq.querySelector(".faq-card");
+    let t = 0;
+    const ask = (i, instant) => {
+      qs.forEach((q, k) => q.setAttribute("aria-pressed", String(k === i)));
+      clearTimeout(t);
+      if (instant || calmFaq) { card.classList.remove("typing"); out.textContent = answers[i]; return; }
+      card.classList.add("typing"); out.textContent = "";
+      t = setTimeout(() => { card.classList.remove("typing"); out.textContent = answers[i]; out.classList.remove("faq-in"); void out.offsetWidth; out.classList.add("faq-in"); }, 650);
+    };
+    const calmFaq = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    qs.forEach((q, i) => q.addEventListener("click", () => ask(i)));
+    faq.classList.add("on");
+    ask(0, true);
   }
 
   // Таймкод у кадрі hero: рахує від входу на сторінку, як запис у Blackmagic Camera (24 кадри/с).

@@ -104,6 +104,8 @@ EN = {
     "live_free": "claimed in the bot",
     "live_free_lines": ["channel subscriber", "{n} LUTs as a gift", "received in the bot"],
     "live_close": "Close",
+    "faq_who": "Mykhailo answers",
+    "faq_hint": "Pick a question",
     "faq_title": "Questions",
     "faq": [
         ("Which apps does it work in?", "The .cube files are made for Blackmagic Camera on iPhone and Android. They also load in CapCut, VN, LumaFusion and DaVinci Resolve."),
