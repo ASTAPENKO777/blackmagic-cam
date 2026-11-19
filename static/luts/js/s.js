@@ -189,23 +189,15 @@
     }
   }
 
-  // Питання як діалог: Михайло «друкує» ~0.6 с, потім відповідь. Перше питання відкрите одразу.
-  const faq = document.querySelector("[data-faq]");
-  if (faq) {
-    const answers = [...faq.querySelectorAll(".faq-all dd")].map((dd) => dd.textContent);
-    const qs = [...faq.querySelectorAll(".faq-q")], out = faq.querySelector(".faq-a"), card = faq.querySelector(".faq-card");
-    let t = 0;
-    const ask = (i, instant) => {
-      qs.forEach((q, k) => q.setAttribute("aria-pressed", String(k === i)));
-      clearTimeout(t);
-      if (instant || calmFaq) { card.classList.remove("typing"); out.textContent = answers[i]; return; }
-      card.classList.add("typing"); out.textContent = "";
-      t = setTimeout(() => { card.classList.remove("typing"); out.textContent = answers[i]; out.classList.remove("faq-in"); void out.offsetWidth; out.classList.add("faq-in"); }, 650);
-    };
-    const calmFaq = matchMedia("(prefers-reduced-motion: reduce)").matches;
-    qs.forEach((q, i) => q.addEventListener("click", () => ask(i)));
-    faq.classList.add("on");
-    ask(0, true);
+  // Меню: розділ, що зараз у кадрі (або щойно обраний), обводиться.
+  const spyLinks = [...document.querySelectorAll(".top-nav [data-spy]")];
+  const spied = spyLinks.map((a) => document.getElementById(a.dataset.spy)).filter(Boolean);
+  if (spied.length && "IntersectionObserver" in window) {
+    const mark = (id) => spyLinks.forEach((a) => a.toggleAttribute("aria-current", a.dataset.spy === id));
+    const io = new IntersectionObserver((es) => es.forEach((e) => { if (e.isIntersecting) mark(e.target.id); }), { rootMargin: "-40% 0px -55% 0px" });
+    spied.forEach((sec) => io.observe(sec));
+    addEventListener("scroll", () => { if (scrollY < innerHeight * 0.5) mark(""); }, { passive: true });
+    spyLinks.forEach((a) => a.addEventListener("click", () => mark(a.dataset.spy)));
   }
 
   // Таймкод у кадрі hero: рахує від входу на сторінку, як запис у Blackmagic Camera (24 кадри/с).

@@ -1,6 +1,7 @@
 {
  "ui": {
   "brand": "@blackmagicamera LUTs",
+  "nav_channel": "کانال",
   "nav_free": "Starter رایگان",
   "nav_guides": "راهنماها",
   "lang_label": "زبان",

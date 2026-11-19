@@ -351,14 +351,13 @@ def test_channel_feed_parses_header_posts_reactions_and_views():
 
 def test_home_shows_the_channel_as_a_telegram_chat_and_hides_it_when_telegram_is_down(client, monkeypatch):
     down = client.get("/uk/luts").data.decode()
-    assert 'class="tg-window"' not in down and "data-faq" in down   # Telegram недоступний: чату немає, питання лишаються
-    faq = down[down.index("data-faq"):down.index("</dl>", down.index("data-faq"))]
-    assert faq.count('class="faq-q"') == faq.count("<dd ") >= 5 and "Михайло відповідає" in faq   # усі відповіді в HTML
-    assert down.count("<details class=\"faq\"") == 0   # старий список з плюсами прибрано
+    assert 'id="channel"' not in down and "data-faq" not in down and "FAQPage" not in down   # Telegram недоступний: блоку немає; питань більше нема (буде AI-помічник)
     monkeypatch.setitem(luts._posts, "data", luts.parse_channel(TG_PAGE))
     monkeypatch.setitem(luts._posts, "at", time.time())
     html = client.get("/uk/luts").data.decode()
-    assert 'class="tg-window"' in html and "https://t.me/blackmagicamera/11" in html and "Підписатися" in html
+    assert 'class="tg-window"' in html and "https://t.me/blackmagicamera/11" in html and 'class="tg-join"' in html
+    nav = html[html.index('class="top-nav"'):html.index("</nav>", html.index('class="top-nav"'))]
+    assert 'href="/uk/luts#catalog"' in nav and 'href="/uk/luts#singles"' in nav and 'href="/uk/luts#channel"' in nav and "/free" not in nav
     assert 'href="https://t.me/blackmagicamera_bot"' in html and 'class="tg-react paid"' in html and "6.59K" in html
     data = client.get("/luts/channel.json").get_json()
     assert data["ids"] == [10, 11] and "tg-msg" in data["html"] and data["sig"]

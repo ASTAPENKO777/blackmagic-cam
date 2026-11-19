@@ -14,6 +14,7 @@ I18N_DIR = os.path.join(os.path.dirname(os.path.abspath(__file__)), "luts_i18n")
 EN = {
     "brand": "@blackmagicamera LUTs",
     "brand_short": "@blackmagicamera",
+    "nav_channel": "Channel",
     "nav_free": "Free Starter",
     "nav_guides": "Guides",
     "prod_title": "{title} LUT for Blackmagic Camera ({versions})",

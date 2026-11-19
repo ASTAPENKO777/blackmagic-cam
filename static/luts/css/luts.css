@@ -22,13 +22,11 @@ a:hover { color: var(--amber-hover); }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--text); font-weight: 650; letter-spacing: -.015em; text-decoration: none; white-space: nowrap; margin-inline-end: auto; }
 .brand:hover { color: var(--text); }
 .mark { width: 40px; height: 29px; flex: none; }   /* значок LUT, як кнопка LUT у Blackmagic Camera */
-.top-nav { display: flex; align-items: center; gap: 6px; }
-.top-nav a { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; padding: 0 14px; border-radius: 999px; white-space: nowrap; text-decoration: none; font: 500 .9375rem/1 var(--font); letter-spacing: -.005em; transition: background .15s var(--ease), color .15s var(--ease), border-color .15s var(--ease); }
-.top-nav svg { width: 17px; height: 17px; flex: none; }
-.nav-link { color: #c7cbd3; }
-.nav-link:hover { color: var(--text); background: var(--surface-2); }
-.nav-free { color: var(--amber); background: rgba(240, 179, 92, .1); border: 1px solid rgba(240, 179, 92, .3); }
-.nav-free:hover { color: var(--amber-hover); background: rgba(240, 179, 92, .17); border-color: rgba(240, 179, 92, .5); }
+.top-nav { display: flex; align-items: center; gap: 2px; padding: 3px; border-radius: 999px; background: rgba(255, 255, 255, .035); border: 1px solid rgba(255, 255, 255, .07); }
+.top-nav a { display: inline-flex; align-items: center; min-height: 34px; padding: 0 14px; border-radius: 999px; border: 1px solid transparent; white-space: nowrap; text-decoration: none;
+  color: rgba(244, 242, 238, .62); font: 500 .875rem/1 var(--font); letter-spacing: -.005em; transition: color .2s var(--ease), background .25s var(--ease), border-color .25s var(--ease); }
+.top-nav a:hover { color: var(--text); }
+.top-nav a[aria-current] { color: var(--text); background: rgba(255, 255, 255, .08); border-color: rgba(255, 255, 255, .16); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1); }
 .tg-btn { display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; transition: transform .15s var(--ease), background .15s var(--ease); }
 .tg-btn svg { width: 30px; height: 30px; }
 .tg-btn:hover { background: var(--surface-2); }
@@ -43,12 +41,15 @@ a:hover { color: var(--amber-hover); }
 .lang[open] summary .chev { transform: rotate(180deg); }
 .lang-menu { position: absolute; inset-inline-end: 0; top: calc(100% + 8px); z-index: 50; min-width: 200px; padding: 6px; margin: 0; list-style: none;
   background: rgba(30, 32, 38, .72); -webkit-backdrop-filter: blur(26px) saturate(180%); backdrop-filter: blur(26px) saturate(180%); border: 1px solid rgba(255, 255, 255, .12); border-radius: 18px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 24px 60px rgba(0, 0, 0, .55); }
-.lang-menu a { display: flex; align-items: center; justify-content: space-between; min-height: var(--tap); padding: 0 12px; border-radius: 8px; color: var(--text); text-decoration: none; font-size: .9375rem; }
-.lang-menu a:hover { background: var(--surface-2); }
-.lang-menu a[aria-current] { color: var(--amber); font-weight: 600; }
-.lang-menu a[aria-current]::after { content: ""; width: 7px; height: 7px; border-radius: 50%; background: var(--amber); }
+.lang-menu { display: grid; grid-template-columns: 1fr 1fr; gap: 2px; min-width: 330px; }
+.lang-menu a { display: flex; align-items: center; gap: 10px; min-height: var(--tap); padding: 0 10px; border-radius: 12px; color: var(--text); text-decoration: none; font-size: .9063rem; transition: background .15s var(--ease); }
+.lang-menu a:hover { background: rgba(255, 255, 255, .07); }
+.lm-code { flex: none; width: 30px; font: 600 .6875rem/1 var(--mono); letter-spacing: .04em; color: rgba(244, 242, 238, .45); }
+.lm-name { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lm-check { width: 16px; height: 16px; flex: none; color: var(--amber); }
+.lang-menu a[aria-current] { background: rgba(240, 179, 92, .1); }
+.lang-menu a[aria-current] .lm-code { color: var(--amber); }
 .top-in { gap: 8px; }
-@media (max-width: 760px) { .nav-link { display: none !important; } }
 @media (max-width: 560px) { .top-nav { display: none; } }
 
 /* Герой: профіль автора. Мобільний: фото (груди й голова) зверху, далі ім'я й біографія. */
@@ -88,6 +89,7 @@ html[dir="rtl"] .hero h1 .kicker { font-family: var(--font-rtl); }
 @media (prefers-reduced-motion: reduce) { .mq-track { animation: none; } .mq-track[aria-hidden] { display: none; } .marquee { flex-wrap: wrap; } }
 
 .sec { padding-top: 84px; }
+#catalog, #singles, #channel { scroll-margin-top: 40px; }
 .sec-head { margin-bottom: 26px; }
 .sec-sub { margin: 10px 0 0; max-width: 34em; }
 .sec-quote { margin: 12px 0 0; max-width: 28em; font-size: 1.125rem; font-style: italic; color: #e8e4dc; }
@@ -157,13 +159,6 @@ html[dir="rtl"] .hero h1 .kicker { font-family: var(--font-rtl); }
 .free { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 20px; padding: 30px; background: var(--surface-2); }
 .free h2 { font-size: clamp(1.5rem, 5vw, 2rem); }
 
-.faq { border-top: 1px solid var(--line); }
-.faq:last-of-type { border-bottom: 1px solid var(--line); }
-.faq summary { cursor: pointer; padding: 18px 0; font-weight: 600; min-height: var(--tap); list-style: none; display: flex; justify-content: space-between; gap: 14px; letter-spacing: -.01em; }
-.faq summary::-webkit-details-marker { display: none; }
-.faq summary::after { content: "+"; color: var(--amber); font: 400 1.5rem/1 var(--font); }
-.faq[open] summary::after { content: "−"; }
-.faq p { margin: 0 0 18px; color: var(--muted); max-width: 44em; }
 
 /* Сторінка LUT / пака */
 .crumbs { padding-top: 16px; font-size: .875rem; }
@@ -385,11 +380,7 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 100; 
 .btn-tg svg { width: 20px; height: 20px; flex: none; }
 
 /* «Свіже з каналу» як сам Telegram (темна тема): шапка каналу, бульбашки з медіа, реакції, перегляди, час, роздільники днів, «Підписатися» знизу. */
-.tg-grid { display: grid; gap: 26px; }
-@media (min-width: 900px) { .tg-grid { grid-template-columns: minmax(0, 1fr) minmax(0, 560px); gap: 56px; align-items: center; } }
-.tg-intro h2 { margin-bottom: 10px; }
-.tg-join-cta { margin-top: 22px; }
-.tg-window { display: flex; flex-direction: column; height: min(680px, 82vh); border: 1px solid #1f2b38; border-radius: 18px; overflow: hidden;
+.tg-window { display: flex; flex-direction: column; height: min(640px, 78vh); border: 1px solid #1f2b38; border-radius: 18px; overflow: hidden;
   background: radial-gradient(120% 80% at 20% 0%, #13202d 0%, #0e1621 55%, #0b121a 100%); box-shadow: 0 30px 80px rgba(0, 0, 0, .45); }
 .tg-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; background: #17212b; border-bottom: 1px solid #101921; }
 .tg-ava { width: 42px; height: 42px; border-radius: 50%; object-fit: cover; flex: none; }
@@ -399,7 +390,7 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 100; 
 .tg-logo { width: 26px; height: 26px; margin-left: auto; flex: none; }
 .tg-chat { flex: 1; overflow-y: auto; display: flex; flex-direction: column-reverse; gap: 10px; padding: 14px 12px 16px; scrollbar-width: thin; scrollbar-color: #2b3a4a transparent; }
 .tg-msg { display: flex; }
-.tg-bubble { display: block; width: min(100%, 420px); background: #182533; color: #fff; border-radius: 14px 14px 14px 4px; overflow: hidden; box-shadow: 0 1px 2px rgba(0, 0, 0, .3); }
+.tg-bubble { display: block; width: min(100%, 520px); background: #182533; color: #fff; border-radius: 14px 14px 14px 4px; overflow: hidden; box-shadow: 0 1px 2px rgba(0, 0, 0, .3); }
 .tg-open { color: inherit; text-decoration: none; } .tg-open:hover { color: #6ab3f3; text-decoration: underline; }
 .tg-media { position: relative; background: #0b121a; }
 .tg-media img, .tg-media video { display: block; width: 100%; max-height: 420px; object-fit: cover; }
@@ -421,18 +412,18 @@ html.intro-on .intro { display: block; position: fixed; inset: 0; z-index: 100; 
 
 /* Живі сповіщення: маленька картка зліва знизу, випливає й ховається. На телефоні над прилиплою кнопкою. */
 /* Лівий край — рівно по лінії контенту (.wrap), а не в куті екрана. */
-.live { --edge: max(16px, calc(((100% - 1180px) / 2 + var(--gap)) / 2));  /* посередині між лінією контенту й краєм екрана; % у fixed = ширина вікна без смуги прокрутки */ position: fixed; z-index: 45; left: var(--edge); bottom: calc(86px + env(safe-area-inset-bottom)); display: flex; align-items: flex-start;
+.live { --edge: max(16px, calc(((100% - 1180px) / 2 + var(--gap)) * .4));  /* посередині між лінією контенту й краєм екрана; % у fixed = ширина вікна без смуги прокрутки */ position: fixed; z-index: 95; left: var(--edge); bottom: calc(86px + env(safe-area-inset-bottom)); display: flex; align-items: flex-start;
   opacity: 0; transform: translateY(18px) scale(.97); pointer-events: none; transition: opacity .7s var(--ease), transform .8s cubic-bezier(.2, .9, .25, 1.12); }
 html[dir="rtl"] .live { left: auto; right: var(--edge); }
 @media (min-width: 760px) { .live { bottom: 28px; } }
-@media (min-width: 1500px) { .live { --edge: calc(((100% - 1360px) / 2 + var(--gap)) / 2); } }
+@media (min-width: 1500px) { .live { --edge: calc(((100% - 1360px) / 2 + var(--gap)) * .4); } }
 .live.on { opacity: 1; transform: none; pointer-events: auto; }
 .live[hidden] { display: none; }
 /* Сповіщення як в iOS: рідке скло (розмиття + насичення + світлий кант зверху), велике заокруглення, хрестик тонкий усередині. */
 .live-card { position: relative; overflow: hidden; display: flex; align-items: stretch; width: min(360px, calc(100vw - 32px)); border-radius: 22px;
   background: linear-gradient(180deg, rgba(58, 62, 72, .55), rgba(30, 32, 38, .62)); -webkit-backdrop-filter: blur(28px) saturate(180%); backdrop-filter: blur(28px) saturate(180%);
   border: 1px solid rgba(255, 255, 255, .14); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .18), 0 24px 60px rgba(0, 0, 0, .55); }
-.live-link { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 12px 6px 14px 12px; color: var(--text); text-decoration: none; }
+.live-link { flex: 1; min-width: 0; display: flex; align-items: center; gap: 12px; padding: 12px 6px 22px 12px; color: var(--text); text-decoration: none; }
 .live-link:hover { color: var(--text); }
 .live-ic { flex: none; display: grid; place-items: center; width: 42px; height: 42px; border-radius: 11px; box-shadow: inset 0 1px 0 rgba(255, 255, 255, .25); }
 .live-buy { background: linear-gradient(180deg, #3a2b12, #1f170a); } .live-buy svg { width: 24px; height: 24px; }
@@ -443,6 +434,10 @@ html[dir="rtl"] .live { left: auto; right: var(--edge); }
 .live-top time { font-size: .75rem; color: rgba(235, 235, 245, .5); white-space: nowrap; }
 .live-text b { font: 600 .9375rem/1.3 var(--font); color: #fff; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .live-text small { color: rgba(235, 235, 245, .7); font-size: .8125rem; line-height: 1.3; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* Шкала як в Apple: тонка доріжка й біла смужка, що повільно спливає; під курсором зупиняється. */
+.live-card::after { content: ""; position: absolute; left: 16px; right: 16px; bottom: 9px; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .13); }
+.live-bar { position: absolute; z-index: 1; left: 16px; right: 16px; bottom: 9px; height: 3px; border-radius: 3px; background: rgba(255, 255, 255, .9); box-shadow: 0 0 8px rgba(255, 255, 255, .25); transform-origin: left; transform: scaleX(1); }
+html[dir="rtl"] .live-bar { transform-origin: right; }
 .live-x { flex: none; align-self: flex-start; display: grid; place-items: center; width: 34px; height: 34px; margin: 6px 6px 0 0; padding: 0; border: 0; border-radius: 10px; background: transparent;
   color: rgba(235, 235, 245, .45); cursor: pointer; transition: color .15s var(--ease), background .15s var(--ease); }
 .live-x svg { width: 15px; height: 15px; }
@@ -457,32 +452,4 @@ html[dir="rtl"] .live { left: auto; right: var(--edge); }
 .pack-row.rv.rv-in .pack-text > :nth-child(4) { transition-delay: .2s; } .pack-row.rv.rv-in .pack-text > :nth-child(5) { transition-delay: .26s; }
 .pack-row.rv.rv-in .pack-text > :nth-child(6) { transition-delay: .32s; }
 
-/* Питання як діалог (ліва колонка блоку каналу). Картка-відповідь — скло з «друкує…», питання — пігулки. */
-.tg-grid.solo { grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 900px) { .tg-grid { align-items: start; } .tg-intro { position: sticky; top: 96px; } }
-.faq-x { margin-top: 42px; padding-top: 28px; border-top: 1px solid var(--line); }
-.faq-h { font-size: 1.375rem; letter-spacing: -.02em; margin-bottom: 16px; }
-.faq-card { position: relative; padding: 16px 18px 18px; border-radius: 20px; min-height: 132px;
-  background: linear-gradient(180deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, .025)); border: 1px solid rgba(255, 255, 255, .1); box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1); }
-.faq-who { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
-.faq-who img { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; object-position: 50% 12%; background: #1b1e25; box-shadow: 0 0 0 1px rgba(255, 255, 255, .12); }
-.faq-who b { font: 600 .875rem/1.2 var(--font); color: var(--amber); }
-.faq-who > span { display: flex; align-items: center; gap: 10px; }
-.faq-dots { display: none; gap: 4px; }
-.faq-card.typing .faq-dots { display: inline-flex; }
-.faq-dots i { width: 6px; height: 6px; border-radius: 50%; background: rgba(244, 242, 238, .6); animation: faq-dot 1s infinite ease-in-out; }
-.faq-dots i:nth-child(2) { animation-delay: .15s; } .faq-dots i:nth-child(3) { animation-delay: .3s; }
-@keyframes faq-dot { 0%, 80%, 100% { transform: translateY(0); opacity: .4; } 40% { transform: translateY(-4px); opacity: 1; } }
-.faq-a { margin: 0; font-size: 1rem; line-height: 1.55; color: #e9e6e0; }
-.faq-a.faq-in { animation: rise .45s var(--ease) both; }
-.faq-hint { margin: 18px 0 10px; font: 600 .75rem/1 var(--font); letter-spacing: .1em; text-transform: uppercase; color: rgba(244, 242, 238, .45); }
-html[dir="rtl"] .faq-hint { letter-spacing: 0; }
-.faq-qs { display: flex; flex-wrap: wrap; gap: 8px; }
-.faq-q { padding: 10px 14px; border-radius: 999px; border: 1px solid var(--line-2); background: transparent; color: #d9d6d0; font: 500 .875rem/1.25 var(--font); text-align: start; cursor: pointer;
-  transition: background .2s var(--ease), border-color .2s var(--ease), color .2s var(--ease); }
-.faq-q:hover { border-color: rgba(255, 255, 255, .32); color: #fff; }
-.faq-q[aria-pressed="true"] { background: var(--text); border-color: var(--text); color: #0b0c0f; }
-/* без JS: питання й відповіді простим списком */
-.faq-x:not(.on) .faq-card, .faq-x:not(.on) .faq-hint, .faq-x:not(.on) .faq-qs { display: none; }
-.faq-x.on .faq-all { display: none; }
-.faq-all dt { margin-top: 16px; font-weight: 600; } .faq-all dd { margin: 4px 0 0; color: var(--muted); }
+

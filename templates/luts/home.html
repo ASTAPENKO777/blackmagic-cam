@@ -100,7 +100,7 @@
  </div>
 </section>
 
-<section class="wrap sec">
+<section class="wrap sec" id="singles">
   <div class="sec-head"><h2>{{ T.singles }}</h2><p class="muted sec-sub">{{ T.singles_sub }}</p></div>
   <div class="singles">
     {% for s in shop.singles %}
@@ -124,26 +124,11 @@
 </section>
 
 
+{% if feed %}
 <section class="wrap sec" id="channel">
-  {#- «Свіже з каналу»: виглядає як сам канал у Telegram і оновлюється наживо (s.js раз на хвилину питає /luts/channel.json). #}
-  <div class="tg-grid{% if not feed %} solo{% endif %}">
-    <div class="tg-intro">
-      <h2>{{ T.posts_title }}</h2>
-      {% if members %}<p class="muted sec-sub">{{ T.posts_sub.format(n=members) }}</p>{% endif %}
-      <a class="btn btn-primary tg-join-cta" href="https://t.me/blackmagicamera" rel="noopener">{{ T.posts_cta }}</a>
-      <div class="faq-x" data-faq>
-        {#- Питання як діалог: тиснеш питання, Михайло «друкує», з'являється відповідь. Усі відповіді є в HTML (і в FAQPage schema); без JS видно все списком. #}
-        <h3 class="faq-h">{{ T.faq_title }}</h3>
-        <div class="faq-card" aria-live="polite">
-          <div class="faq-who"><img src="{{ static_v('luts/img/bust-480.webp') }}" alt="" width="40" height="40" loading="lazy"><span><b>{{ T.faq_who }}</b><i class="faq-dots" aria-hidden="true"><i></i><i></i><i></i></i></span></div>
-          <p class="faq-a"></p>
-        </div>
-        <p class="faq-hint">{{ T.faq_hint }}</p>
-        <div class="faq-qs">{% for q, a in T.faq %}<button type="button" class="faq-q" data-i="{{ loop.index0 }}">{{ q }}</button>{% endfor %}</div>
-        <dl class="faq-all">{% for q, a in T.faq %}<dt>{{ q }}</dt><dd data-i="{{ loop.index0 }}">{{ a }}</dd>{% endfor %}</dl>
-      </div>
-    </div>
-    {% if feed %}<div class="tg-window" data-feed="{{ url_for('luts.channel_json') }}">
+  {#- «Свіже з каналу»: виглядає як сам канал у Telegram і оновлюється наживо (s.js раз на хвилину питає /luts/channel.json). Підписка — смуга внизу чату. #}
+  <div class="sec-head"><h2>{{ T.posts_title }}</h2></div>
+  <div class="tg-window" data-feed="{{ url_for('luts.channel_json') }}">
       <div class="tg-head" dir="ltr">
         {% if feed.avatar %}<img class="tg-ava" src="{{ feed.avatar }}" alt="" width="42" height="42" referrerpolicy="no-referrer">{% endif %}
         <div class="tg-who"><b>{{ feed.title }}</b><span><span class="tg-subs">{{ feed.subs }}</span> subscribers</span></div>
@@ -151,9 +136,9 @@
       </div>
       <div class="tg-chat" dir="ltr">{% include "luts/_channel.html" %}</div>
       <a class="tg-join" href="https://t.me/blackmagicamera" rel="noopener">{{ T.posts_cta }}</a>
-    </div>{% endif %}
-  </div>
+    </div>
 </section>
+{% endif %}
 
 <section class="wrap sec">
   <div class="sec-head"><h2>{{ T.how_title }}</h2></div>

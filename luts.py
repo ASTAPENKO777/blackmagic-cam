@@ -314,7 +314,7 @@ def home(lang):
         {"@type": "Person", "@id": c["base_url"] + "/luts#author", "name": "Mykhailo", "jobTitle": "LUT creator",
          "url": c["base_url"] + c["u"](), "image": c["base_url"] + "/static/luts/img/bust-768.webp",
          "sameAs": ["https://t.me/blackmagicamera"]},
-        faq_ld(c["T"])])
+    ])
 
 
 @bp.route("/luts/channel.json")
