@@ -56,7 +56,7 @@ GMAIL_APP_PASSWORD      = os.environ.get("GMAIL_APP_PASSWORD", "")
 # ("https://host\n/ru/" in all 96 sitemap URLs) and once empty. Normalize it, and
 # when it is unusable fall back to the real host on Vercel rather than to
 # localhost, which would put dead links in customers' inboxes.
-PRODUCTION_HOST         = "https://blackmagiccam.vercel.app"
+PRODUCTION_HOST         = "https://blackmagiccam.fly.dev"
 _BASE_URL_ENV           = os.environ.get("BASE_URL", "").strip().rstrip("/")
 BASE_URL                = _BASE_URL_ENV or (
     PRODUCTION_HOST if os.environ.get("VERCEL") == "1" else "http://localhost:5001"
@@ -1459,10 +1459,12 @@ def set_security_headers(resp):
             if header.lower() not in [v.lower() for v in existing]:
                 existing.append(header)
         resp.headers["Vary"] = ", ".join(existing)
+    if path.startswith("/static/") and resp.status_code in (200, 206, 304):
+        # Посилання на статику мають ?v=<хеш> (static_v), тож рік кешу безпечний. Flask сам ставить
+        # «no-cache» на send_file, тому перезаписуємо: інакше відео тягнулися б щоразу й роздували трафік.
+        resp.headers["Cache-Control"] = "public, max-age=31536000, immutable"
     if "Cache-Control" not in resp.headers:
-        if path.startswith("/static/"):
-            resp.headers["Cache-Control"] = "public, max-age=31536000, immutable"
-        elif path == "/sitemap.xml" or path == "/favicon.ico":
+        if path == "/sitemap.xml" or path == "/favicon.ico":
             resp.headers["Cache-Control"] = "public, max-age=86400"
         elif path.startswith(("/access/", "/pick/", "/crypto/", "/api/", "/checkout/", "/payhip/", "/set-lang/")):
             resp.headers["Cache-Control"] = "private, no-store"

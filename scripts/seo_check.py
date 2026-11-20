@@ -16,7 +16,7 @@ import sys
 import urllib.error
 import urllib.request
 
-DEFAULT_BASE = "https://blackmagiccam.vercel.app"
+DEFAULT_BASE = "https://blackmagiccam.fly.dev"
 TIMEOUT = 30
 UA = "bmc-seo-check/1.0"
 
@@ -28,9 +28,9 @@ def fetch(base, path):
     req = urllib.request.Request(base + path, headers={"User-Agent": UA})
     try:
         with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
-            return r.status, r.read().decode("utf-8", "replace"), dict(r.headers)
+            return r.status, r.read().decode("utf-8", "replace"), r.headers  # HTTPMessage: заголовки без урахування регістру (Fly шле їх малими)
     except urllib.error.HTTPError as e:
-        return e.code, e.read().decode("utf-8", "replace"), dict(e.headers)
+        return e.code, e.read().decode("utf-8", "replace"), e.headers
 
 
 def head_status(base, path):

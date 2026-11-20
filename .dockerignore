@@ -1,0 +1,11 @@
+.git
+.vercel
+.venv-test
+.pytest_cache
+__pycache__
+tests
+purchases.db
+.env
+static/video
+*.png
+!static/**/*.png
